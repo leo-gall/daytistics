@@ -1,0 +1,4 @@
+primary: #0E9F6E
+primary-accent: #384B41
+secondary: #0097DD
+secondary-accent: #0064A6
