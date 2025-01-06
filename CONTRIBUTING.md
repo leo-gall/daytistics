@@ -13,6 +13,9 @@ There are several ways you can contribute to Daytistics:
 - **Submitting Pull Requests**:
   If you'd like to contribute code changes, fork the Daytistics repository on GitHub. Make your changes on your local fork and create a pull request to the main repository. Ensure your code adheres to our project structure and style guidelines. Write clear and concise commit messages that describe your changes.
 
+> [!WARNING]  
+> Before working on an issue, ensure it has the approved label. Without it, there's a risk that the issue may not be merged, even if you've implemented it. Also make sure that no one else is working on the issue.
+
 ## Coding Guidelines
 
 Things need to be done before this Pull Request can be merged. Your CI also checks most of them automatically and will fail if something is not fulfilled. Please adhere to the following guidelines:
