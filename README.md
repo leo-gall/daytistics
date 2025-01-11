@@ -37,4 +37,4 @@ For more detailed information on how to contribute, please refer to the [CONTRIB
 
 ## License
 
-Daytistics © 2024-present by [Leo Gall](https://lgll.dev) is licensed under [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.de.html)
+Daytistics © 2025-present by [Leo Gall](https://lgll.dev) is licensed under the [Daytistics Software License](LICENSE.md)
