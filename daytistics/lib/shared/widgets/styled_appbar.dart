@@ -9,7 +9,7 @@ PreferredSizeWidget StyledAppBar({
     title: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(width: 4),
+        const SizedBox(width: 4),
         StyledTitle(title),
       ],
     ),

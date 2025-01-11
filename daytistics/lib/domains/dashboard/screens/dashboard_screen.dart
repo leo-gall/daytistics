@@ -40,7 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             TextButton(
               onPressed: () {},
-              child: const Text("Hey"),
+              child: const Text('Hey'),
             ),
             TableCalendar(
               firstDay: DateTime.utc(2010, 10, 16),
