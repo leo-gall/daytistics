@@ -1,8 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SupabaseSettings {
-  static final String url = dotenv.env['SUPABASE_URL']!;
+  static final String url = (kDebugMode && Platform.isAndroid)
+      ? dotenv.env['SUPABASE_ANDROID_URL']!
+      : dotenv.env['SUPABASE_URL']!;
   static final String anonKey = dotenv.env['SUPABASE_ANON_KEY']!;
 }
 
@@ -16,4 +21,12 @@ class ColorSettings {
   static const Color success = Color.fromRGBO(9, 149, 110, 1);
   static const Color warning = Color.fromRGBO(212, 172, 13, 1);
   static const Color error = Color.fromRGBO(212, 13, 13, 1);
+}
+
+class LegalSettings {
+  static const String privacyPolicyUrl =
+      'https://daytistics.com/privacy-policy';
+  static const String termsOfServiceUrl =
+      'https://daytistics.com/terms-of-service';
+  static const String imprintUrl = 'https://daytistics.com/imprint';
 }

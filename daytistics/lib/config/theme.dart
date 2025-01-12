@@ -1,4 +1,4 @@
-import 'package:daytistics_app/config/settings.dart';
+import 'package:daytistics/config/settings.dart';
 import 'package:flutter/material.dart';
 
 ThemeData daytisticsTheme = ThemeData(

@@ -1,4 +1,4 @@
-name: daytistics_app
+name: daytistics
 description: "Daytistics is a cross-platform mobile app that enhances well-being by analyzing daily activities with AI."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -42,6 +42,7 @@ dependencies:
   table_calendar: ^3.2.0
   modal_bottom_sheet: ^3.0.0
   url_launcher: ^6.3.1
+  google_sign_in: ^6.2.2
 
 dev_dependencies:
   flutter_test:

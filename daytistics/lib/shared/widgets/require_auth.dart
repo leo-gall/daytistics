@@ -1,5 +1,5 @@
-import 'package:daytistics_app/domains/auth/screens/signin_screen.dart';
-import 'package:daytistics_app/domains/auth/services/auth_service.dart';
+import 'package:daytistics/domains/auth/screens/signin_screen.dart';
+import 'package:daytistics/domains/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class RequireAuth extends StatefulWidget {

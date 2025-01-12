@@ -1,7 +1,7 @@
-import 'package:daytistics_app/domains/auth/screens/signin_screen.dart';
-import 'package:daytistics_app/domains/auth/services/auth_service.dart';
-import 'package:daytistics_app/shared/widgets/require_auth.dart';
-import 'package:daytistics_app/shared/widgets/styled_text.dart';
+import 'package:daytistics/domains/auth/screens/signin_screen.dart';
+import 'package:daytistics/domains/auth/services/auth_service.dart';
+import 'package:daytistics/shared/widgets/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 

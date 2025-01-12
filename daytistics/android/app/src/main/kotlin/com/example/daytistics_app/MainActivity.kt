@@ -1,4 +1,4 @@
-package com.daytistics.daytistics_app
+package com.daytistics.daytistics
 
 import io.flutter.embedding.android.FlutterActivity
 
