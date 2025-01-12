@@ -25,6 +25,10 @@ class AuthService {
       serverClientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_WEB_ID'],
     );
     final googleUser = await googleSignIn.signIn();
+
+    if (googleUser == null) {
+      return;
+    }
     final googleAuth = await googleUser!.authentication;
     final accessToken = googleAuth.accessToken;
     final idToken = googleAuth.idToken;
