@@ -1,4 +1,6 @@
-import 'package:daytistics_app/shared/widgets/styled_appbar.dart';
+import 'package:daytistics_app/domains/auth/screens/signin_screen.dart';
+import 'package:daytistics_app/domains/auth/services/auth_service.dart';
+import 'package:daytistics_app/shared/widgets/require_auth.dart';
 import 'package:daytistics_app/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -11,43 +13,60 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  String getGreetingMessage(String name) {
-    final hour = DateTime.now().hour;
-    if (hour >= 5 && hour < 12) {
-      return 'Good morning, $name!';
-    } else if (hour >= 12 && hour < 17) {
-      return 'Good afternoon, $name!';
-    } else if (hour >= 17 && hour < 20) {
-      return 'Good evening, $name!';
-    } else {
-      return 'Good night, $name!';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: StyledAppBar(title: 'Dashboard'),
-      body: Center(
-        child: Column(
+      appBar: AppBar(
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 16),
-            StyledHeading(
-              getGreetingMessage('John'),
-            ),
+            const SizedBox(width: 4),
             StyledText(
-              getGreetingMessage('John'),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Hey'),
-            ),
-            TableCalendar(
-              firstDay: DateTime.utc(2010, 10, 16),
-              lastDay: DateTime.utc(2030, 3, 14),
-              focusedDay: DateTime.now(),
+              'Dashboard',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ],
+        ),
+        actions: [
+          // TODO: The sign out button should be removed after implementing the settings screen.
+          IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                await AuthService.signOut();
+
+                if (!AuthService.isAuthenticated()) {
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInScreen()),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
+                }
+              }),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: RequireAuth(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Hey'),
+              ),
+              TableCalendar(
+                firstDay: DateTime.utc(2010, 10, 16),
+                lastDay: DateTime.utc(2030, 3, 14),
+                focusedDay: DateTime.now(),
+              ),
+            ],
+          ),
         ),
       ),
     );

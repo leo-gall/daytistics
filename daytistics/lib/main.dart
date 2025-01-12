@@ -1,5 +1,6 @@
 import 'package:daytistics_app/config/settings.dart';
 import 'package:daytistics_app/config/theme.dart';
+import 'package:daytistics_app/domains/auth/screens/signin_screen.dart';
 import 'package:daytistics_app/domains/dashboard/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,13 +26,15 @@ Future<void> main() async {
 class DaytisticsApp extends StatelessWidget {
   const DaytisticsApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final supabase = Supabase.instance.client;
+    final isAuthenticated = supabase.auth.currentUser != null;
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Daytistics',
       theme: daytisticsTheme,
-      home: const DashboardScreen(),
+      home: isAuthenticated ? const DashboardScreen() : const SignInScreen(),
     );
   }
 }
