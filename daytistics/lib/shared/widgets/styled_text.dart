@@ -13,7 +13,9 @@ class StyledText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
-      style: GoogleFonts.nunito().merge(style),
+      style: GoogleFonts.nunito(
+        textStyle: style,
+      ),
     );
   }
 }
