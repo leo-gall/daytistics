@@ -13,7 +13,7 @@ Daytistics is a cross-platform mobile app designed to improve the well-being of 
 - 🤖 AI-generated reports to optimize well-being
 
 > [!IMPORTANT]  
-> Daytistics is currently still in development and is therefore not yet available in the usual app stores.
+> Daytistics is currently in a prototype state. This means that code quality (tests, etc.) is secondary and the focus is on rapid development.
 
 ## Repository Overview
 

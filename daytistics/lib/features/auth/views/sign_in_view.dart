@@ -1,6 +1,7 @@
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/domains/auth/widgets/guest_signin_modal.dart';
-import 'package:daytistics/domains/auth/widgets/oauth_button.dart';
+import 'package:daytistics/features/auth/widgets/guest_signin_modal.dart';
+import 'package:daytistics/features/auth/widgets/oauth_button.dart';
+
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +9,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignInView> createState() => _SignInViewState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +25,12 @@ class _SignInScreenState extends State<SignInScreen> {
         height: double.maxFinite,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [ColorSettings.secondary, ColorSettings.primary],
+            colors: <Color>[ColorSettings.secondary, ColorSettings.primary],
             transform: GradientRotation(0.3),
           ),
         ),
         child: Column(
-          children: [
+          children: <Widget>[
             const SizedBox(height: 80),
             SvgPicture.asset(
               'assets/svg/daytistics_mono.svg',
@@ -56,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: () => _openLogInAsGuestModal(),
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
+                children: <Widget>[
                   Icon(
                     Icons.person,
                     color: Colors.white,
@@ -78,14 +79,14 @@ class _SignInScreenState extends State<SignInScreen> {
   void _openLogInAsGuestModal() {
     showMaterialModalBottomSheet(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return const GuestSignInModal();
       },
     );
   }
 
   Widget _buildLegalLinks() {
-    Map<String, String> legalLinks = {
+    Map<String, String> legalLinks = <String, String>{
       'Privacy Policy': LegalSettings.privacyPolicyUrl,
       'Terms of Service': LegalSettings.termsOfServiceUrl,
       'Imprint': LegalSettings.imprintUrl,
@@ -93,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         for (String title in legalLinks.keys)
           TextButton(
             style: ButtonStyle(

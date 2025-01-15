@@ -1,9 +1,10 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
-import 'package:daytistics/domains/auth/screens/signin_screen.dart';
-import 'package:daytistics/domains/dashboard/screens/dashboard_screen.dart';
+import 'package:daytistics/features/auth/views/sign_in_view.dart';
+import 'package:daytistics/features/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> initSupabase() async {
@@ -20,7 +21,7 @@ Future<void> main() async {
 
   await initSupabase();
 
-  runApp(const DaytisticsApp());
+  runApp(const ProviderScope(child: DaytisticsApp()));
 }
 
 class DaytisticsApp extends StatelessWidget {
@@ -28,13 +29,13 @@ class DaytisticsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final supabase = Supabase.instance.client;
-    final isAuthenticated = supabase.auth.currentUser != null;
+    final SupabaseClient supabase = Supabase.instance.client;
+    final bool isAuthenticated = supabase.auth.currentUser != null;
 
     return MaterialApp(
       title: 'Daytistics',
       theme: daytisticsTheme,
-      home: isAuthenticated ? const DashboardScreen() : const SignInScreen(),
+      home: isAuthenticated ? const DashboardView() : const SignInView(),
     );
   }
 }

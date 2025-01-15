@@ -1,25 +1,28 @@
-import 'package:daytistics/domains/auth/screens/signin_screen.dart';
-import 'package:daytistics/domains/auth/services/auth_service.dart';
+import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
+import 'package:daytistics/features/auth/views/sign_in_view.dart';
 import 'package:daytistics/shared/widgets/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class DashboardView extends ConsumerStatefulWidget {
+  const DashboardView({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardView> createState() => _DashboardViewState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   Widget build(BuildContext context) {
+    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+          children: <Widget>[
             const SizedBox(width: 4),
             StyledText(
               'Dashboard',
@@ -27,24 +30,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        actions: [
+        actions: <Widget>[
+          //
           // TODO: The sign out button should be removed after implementing the settings screen.
           IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () async {
-                await AuthService.signOut();
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await authViewModel.signOut();
 
-                if (!AuthService.isAuthenticated()) {
-                  if (context.mounted) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInScreen()),
-                      (Route<dynamic> route) => false,
-                    );
-                  }
+              if (!authViewModel.isAuthenticated()) {
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute<SignInView>(
+                      builder: (BuildContext context) => const SignInView(),
+                    ),
+                    (Route<dynamic> route) => false,
+                  );
                 }
-              }),
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {},
@@ -54,13 +60,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: RequireAuth(
         child: Center(
           child: Column(
-            children: [
+            children: <Widget>[
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {},
                 child: const Text('Hey'),
               ),
-              TableCalendar(
+              TableCalendar<dynamic>(
                 firstDay: DateTime.utc(2010, 10, 16),
                 lastDay: DateTime.utc(2030, 3, 14),
                 focusedDay: DateTime.now(),

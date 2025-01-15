@@ -1,0 +1,5 @@
+{
+    "dart.flutterRunAdditionalArgs": [
+        "--dart-define-from-file=.env"
+    ]
+}

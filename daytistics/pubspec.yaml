@@ -44,6 +44,8 @@ dependencies:
   url_launcher: ^6.3.1
   google_sign_in: ^6.2.2
   flutter_env_native: ^0.1.0
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +57,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
+  riverpod_generator: ^2.6.4
+  custom_lint: ^0.7.1
+  riverpod_lint: ^2.6.4
+  mockito: ^5.4.5
 
 
 # For information on the generic Dart part of this file, see the

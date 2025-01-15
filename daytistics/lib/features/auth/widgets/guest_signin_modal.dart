@@ -1,21 +1,24 @@
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/domains/auth/services/auth_service.dart';
-import 'package:daytistics/domains/dashboard/screens/dashboard_screen.dart';
+import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
+import 'package:daytistics/features/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GuestSignInModal extends StatelessWidget {
+class GuestSignInModal extends ConsumerWidget {
   const GuestSignInModal({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+
     return Container(
       color: ColorSettings.background,
       height: 250,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           const SizedBox(height: 10),
           StyledText(
             'Login as guest',
@@ -33,10 +36,10 @@ class GuestSignInModal extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
-              await AuthService.signInAnonymously();
+              await authViewModel.signInAnonymously();
 
               if (context.mounted) {
-                pushAndClearHistory(context, const DashboardScreen());
+                pushAndClearHistory(context, const DashboardView());
               }
             },
             child: const StyledText('Continue'),

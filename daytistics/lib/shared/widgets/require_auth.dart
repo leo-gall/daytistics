@@ -1,8 +1,9 @@
-import 'package:daytistics/domains/auth/screens/signin_screen.dart';
-import 'package:daytistics/domains/auth/services/auth_service.dart';
+import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
+import 'package:daytistics/features/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RequireAuth extends StatefulWidget {
+class RequireAuth extends ConsumerStatefulWidget {
   /// A widget that ensures the user is authenticated before displaying the child widget.
   ///
   /// If the user is not authenticated, they will be redirected to the SignInScreen.
@@ -26,18 +27,22 @@ class RequireAuth extends StatefulWidget {
   final Widget child;
 
   @override
-  State<RequireAuth> createState() => _RequireAuthState();
+  ConsumerState<RequireAuth> createState() => _RequireAuthState();
 }
 
-class _RequireAuthState extends State<RequireAuth> {
+class _RequireAuthState extends ConsumerState<RequireAuth> {
   @override
   void initState() {
-    if (AuthService.isAuthenticated()) {
+    final AuthViewModel authViewModel = ref.read(authViewModelProvider);
+
+    if (authViewModel.isAuthenticated()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!AuthService.isAuthenticated()) {
+        if (!authViewModel.isAuthenticated()) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const SignInScreen()),
+            MaterialPageRoute<SignInView>(
+              builder: (BuildContext context) => const SignInView(),
+            ),
             (Route<dynamic> route) => false,
           );
         }
