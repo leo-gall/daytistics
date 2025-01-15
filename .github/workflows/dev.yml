@@ -8,7 +8,7 @@ on:
       - dev
 
 jobs:
-  analyze:
+  linting:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,11 +21,14 @@ jobs:
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
-      - name: Analyze code
+      - name: Run built-in linter
         working-directory: ./daytistics
         run: flutter analyze
+      - name: Run custom linter
+        working-directory: ./daytistics
+        run: dart run custom_lint
 
-  tests:
+  testing:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

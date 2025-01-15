@@ -3,8 +3,8 @@
 
 # Daytistics
 
-![Linting Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=analyze)
-![Tests Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=tests)
+![Linting Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=linting)
+![Testing Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=testing)
 
 
 Daytistics is a cross-platform mobile app designed to improve the well-being of its users by analyzing their daily activities using modern AI technologies. It is built with Dart, Flutter and Firebase. It currently has the following features:
@@ -13,7 +13,7 @@ Daytistics is a cross-platform mobile app designed to improve the well-being of 
 - 🤖 AI-generated reports to optimize well-being
 
 > [!IMPORTANT]  
-> Daytistics is currently still in development and is therefore not yet available in the usual app stores.
+> Daytistics is currently in a prototype state. This means that code quality (tests, etc.) is secondary and the focus is on rapid development.
 
 ## Repository Overview
 

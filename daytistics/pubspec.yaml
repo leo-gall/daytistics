@@ -1,4 +1,4 @@
-name: daytistics_app
+name: daytistics
 description: "Daytistics is a cross-platform mobile app that enhances well-being by analyzing daily activities with AI."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,6 +40,12 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.17
   table_calendar: ^3.2.0
+  modal_bottom_sheet: ^3.0.0
+  url_launcher: ^6.3.1
+  google_sign_in: ^6.2.2
+  flutter_env_native: ^0.1.0
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -51,6 +57,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
+  riverpod_generator: ^2.6.4
+  custom_lint: ^0.7.1
+  riverpod_lint: ^2.6.4
+  mockito: ^5.4.5
 
 
 # For information on the generic Dart part of this file, see the
