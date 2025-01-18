@@ -1,6 +1,6 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
-import 'package:daytistics/features/dashboard/views/dashboard_view.dart';
+import 'package:daytistics/features/core/views/dashboard_view.dart';
 import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';

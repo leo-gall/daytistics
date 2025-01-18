@@ -1,3 +1,7 @@
+import 'package:daytistics/features/activities/models/activity_entry.dart';
+import 'package:daytistics/features/activities/viewmodels/activity_tracker_view_model.dart';
+import 'package:daytistics/features/activities/widgets/activity_modal.dart';
+import 'package:daytistics/features/activities/widgets/activity_modal.dart';
 import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
 import 'package:daytistics/features/auth/views/sign_in_view.dart';
 import 'package:daytistics/shared/widgets/require_auth.dart';
@@ -6,17 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class DashboardView extends ConsumerStatefulWidget {
+class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
 
   @override
-  ConsumerState<DashboardView> createState() => _DashboardViewState();
-}
-
-class _DashboardViewState extends ConsumerState<DashboardView> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+    final ActivityTrackerViewModel activityTrackerViewModel =
+        ref.watch(activityTrackerViewModelProvider.notifier);
+
+    final activityTrackerState = ref.watch(activityTrackerViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,9 +54,28 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               }
             },
           ),
+          Text(activityTrackerState.isActivityInProgress.toString()),
           IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {},
+            icon: Icon(
+              activityTrackerState.isActivityInProgress
+                  ? Icons.stop
+                  : Icons.play_arrow,
+            ),
+            onPressed: () {
+              if (!activityTrackerState.isActivityInProgress) {
+                activityTrackerViewModel.startActivity(
+                  ActivityEntry(
+                    name: 'Football',
+                    date: DateTime.now(),
+                  ),
+                );
+              }
+
+              ActivityModal.showModal(
+                context,
+                activityEntry: activityTrackerState.currentActivity,
+              );
+            },
           ),
         ],
       ),
@@ -61,11 +83,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         child: Center(
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {},
-                child: const Text('Hey'),
-              ),
               TableCalendar<dynamic>(
                 firstDay: DateTime.utc(2010, 10, 16),
                 lastDay: DateTime.utc(2030, 3, 14),
