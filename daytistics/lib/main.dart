@@ -1,7 +1,7 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
-import 'package:daytistics/features/auth/views/sign_in_view.dart';
-import 'package:daytistics/features/core/views/dashboard_view.dart';
+import 'package:daytistics/screens/auth/views/sign_in_view.dart';
+import 'package:daytistics/screens/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

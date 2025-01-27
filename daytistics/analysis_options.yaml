@@ -29,6 +29,7 @@ linter:
     prefer_const_constructors: true
     require_trailing_commas: true
     prefer_final_fields: true
+    
  
 
 

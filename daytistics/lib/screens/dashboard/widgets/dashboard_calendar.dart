@@ -1,0 +1,30 @@
+import 'package:daytistics/application/viewmodels/daytistics/daytistics_view_model.dart';
+import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+class DashboardCalendar extends ConsumerWidget {
+  const DashboardCalendar({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashboardViewModelState = ref.watch(dashboardViewModelProvider);
+
+    return TableCalendar<dynamic>(
+      rowHeight: 45,
+      calendarFormat: CalendarFormat.month,
+      firstDay: DateTime.utc(2010, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: dashboardViewModelState.selectedDate,
+      selectedDayPredicate: (DateTime day) {
+        return isSameDay(dashboardViewModelState.selectedDate, day);
+      },
+      onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+        ref
+            .read(dashboardViewModelProvider.notifier)
+            .setSelectedDate(selectedDay);
+      },
+    );
+  }
+}
