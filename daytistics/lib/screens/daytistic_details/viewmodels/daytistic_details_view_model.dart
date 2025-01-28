@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'daytistic_details_view_model.g.dart';
 
 class DaytisticDetailsViewModelState {
-  late Daytistic currentDaytistic;
+  Daytistic? currentDaytistic;
 
   DaytisticDetailsViewModelState copyWith({Daytistic? currentDaytistic}) {
     return DaytisticDetailsViewModelState()
@@ -12,7 +12,7 @@ class DaytisticDetailsViewModelState {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class DaytisticDetailsView extends _$DaytisticDetailsView {
   @override
   DaytisticDetailsViewModelState build() {

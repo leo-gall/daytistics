@@ -35,6 +35,20 @@ class Daytistic {
     };
   }
 
+  Daytistic copyWith({
+    String? id,
+    DateTime? date,
+    List<Activity>? activities,
+    Wellbeing? wellbeing,
+  }) {
+    return Daytistic(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      activities: activities ?? this.activities,
+      wellbeing: wellbeing ?? this.wellbeing,
+    );
+  }
+
   factory Daytistic.fromMap(Map<String, dynamic> data) {
     return Daytistic(
       id: data['id'] as String,

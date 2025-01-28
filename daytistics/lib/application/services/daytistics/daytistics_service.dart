@@ -1,22 +1,19 @@
-import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/repositories/activities/activities_repository.dart';
 import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
 import 'package:daytistics/shared/exceptions/database.dart';
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'daytistics_view_model.g.dart';
+part 'daytistics_service.g.dart';
 
-class DaytisticsViewModelState {
-  DaytisticsViewModelState();
+class DaytisticsServiceState {
+  DaytisticsServiceState();
 }
 
 @riverpod
-class DaytisticsViewModel extends _$DaytisticsViewModel {
+class DaytisticsService extends _$DaytisticsService {
   @override
-  DaytisticsViewModelState build() {
-    return DaytisticsViewModelState();
+  DaytisticsServiceState build() {
+    return DaytisticsServiceState();
   }
 
   Future<Daytistic> fetchDaytistic(DateTime date) async {

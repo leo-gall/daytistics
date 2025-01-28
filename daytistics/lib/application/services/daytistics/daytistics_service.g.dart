@@ -1,27 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'activities_view_model.dart';
+part of 'daytistics_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$activitiesViewModelHash() =>
-    r'c35cf7943ec9a6c24cbdec9d835488805741b57e';
+String _$daytisticsServiceHash() => r'444d309f5b33186ee53c306d550d52f16795cb8a';
 
-/// See also [ActivitiesViewModel].
-@ProviderFor(ActivitiesViewModel)
-final activitiesViewModelProvider = AutoDisposeNotifierProvider<
-    ActivitiesViewModel, ActivitiesViewModelState>.internal(
-  ActivitiesViewModel.new,
-  name: r'activitiesViewModelProvider',
+/// See also [DaytisticsService].
+@ProviderFor(DaytisticsService)
+final daytisticsServiceProvider = AutoDisposeNotifierProvider<DaytisticsService,
+    DaytisticsServiceState>.internal(
+  DaytisticsService.new,
+  name: r'daytisticsServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$activitiesViewModelHash,
+      : _$daytisticsServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ActivitiesViewModel = AutoDisposeNotifier<ActivitiesViewModelState>;
+typedef _$DaytisticsService = AutoDisposeNotifier<DaytisticsServiceState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

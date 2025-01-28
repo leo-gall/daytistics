@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/viewmodels/daytistics/daytistics_view_model.dart';
+import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/application/widgets/prompt_input_field.dart';
 import 'package:daytistics/screens/daytistic_details/viewmodels/daytistic_details_view_model.dart';
 import 'package:daytistics/screens/daytistic_details/widgets/add_activity_modal.dart';
@@ -11,9 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class DaytisticDetailsView extends ConsumerStatefulWidget {
-  final Daytistic daytistic;
-
-  const DaytisticDetailsView(this.daytistic, {super.key});
+  const DaytisticDetailsView({super.key});
 
   @override
   ConsumerState<DaytisticDetailsView> createState() =>
@@ -23,14 +21,14 @@ class DaytisticDetailsView extends ConsumerStatefulWidget {
 class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
   @override
   Widget build(BuildContext context) {
-    // Daytistic daytistic =
-    //     ref.watch(daytisticDetailsViewProvider).currentDaytistic;
+    Daytistic? daytistic =
+        ref.watch(daytisticDetailsViewProvider).currentDaytistic;
 
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
         title: StyledText(
-          DateFormat('MM/dd/yyyy').format(widget.daytistic.date),
+          DateFormat('MM/dd/yyyy').format(daytistic!.date),
           style: Theme.of(context).textTheme.titleMedium,
         ),
         actions: <Widget>[
@@ -77,7 +75,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
               // Reloaded 1 of 1573 libraries in 352ms (compile: 9 ms, reload: 198 ms, reassemble: 117 ms).
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.daytistic.activities.length ?? 0,
+                  itemCount: daytistic.activities.length,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   itemBuilder: (BuildContext context, int index) {
                     final randomActivity = 'Activity $index';

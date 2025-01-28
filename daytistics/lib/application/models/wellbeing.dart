@@ -26,4 +26,20 @@ class Wellbeing {
     this.mood,
     this.gratitude,
   }) : id = id ?? const Uuid().v4();
+
+  Map<String, dynamic> toSupabase() {
+    return {
+      'id': id,
+      'health': health,
+      'productivity': productivity,
+      'happiness': happiness,
+      'recovery': recovery,
+      'sleep': sleep,
+      'stress': stress,
+      'energy': energy,
+      'focus': focus,
+      'mood': mood,
+      'gratitude': gratitude,
+    };
+  }
 }

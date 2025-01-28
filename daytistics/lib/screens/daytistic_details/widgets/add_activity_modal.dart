@@ -1,6 +1,7 @@
 import 'package:daytistics/application/models/activity.dart';
-import 'package:daytistics/application/viewmodels/activities/activities_view_model.dart';
-import 'package:daytistics/application/viewmodels/daytistics/daytistics_view_model.dart';
+import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/services/activities/activities_service.dart';
+
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/screens/daytistic_details/viewmodels/daytistic_details_view_model.dart';
 import 'package:daytistics/shared/utils/alert.dart';
@@ -101,7 +102,7 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
     );
   }
 
-  void _handleAddActivity() {
+  void _handleAddActivity() async {
     if (_activityController.text.isEmpty) {
       showErrorAlert(context, 'Activity name is required');
     }
@@ -110,12 +111,20 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
       showErrorAlert(context, 'Start time cannot be after end time');
     }
 
-    ref.read(activitiesViewModelProvider.notifier).addActivity(
+    Daytistic updatedDaytistic = await ref
+        .read(activitiesServiceProvider.notifier)
+        .addActivity(
           name: _activityController.text,
-          daytistic: ref.read(daytisticDetailsViewProvider).currentDaytistic,
+          daytistic: ref.read(daytisticDetailsViewProvider).currentDaytistic!,
           startTime: _startTime,
           endTime: _endTime,
         );
+
+    ref.read(daytisticDetailsViewProvider.notifier).setCurrentDaytistic(
+          updatedDaytistic,
+        );
+
+    if (!mounted) return;
 
     Navigator.pop(context);
 

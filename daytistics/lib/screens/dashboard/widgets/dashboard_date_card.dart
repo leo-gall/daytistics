@@ -1,7 +1,9 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/viewmodels/daytistics/daytistics_view_model.dart';
+import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
+import 'package:daytistics/screens/daytistic_details/viewmodels/daytistic_details_view_model.dart'
+    show daytisticDetailsViewProvider;
 import 'package:daytistics/screens/daytistic_details/views/daytistic_details_view.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +110,7 @@ class DashboardDateCard extends ConsumerWidget {
             child: IconButton(
               onPressed: () async {
                 Daytistic daytistic = await ref
-                    .read(daytisticsViewModelProvider.notifier)
+                    .read(daytisticsServiceProvider.notifier)
                     .fetchDaytistic(
                       (dashboardViewModelState.selectedDate),
                     );
@@ -117,11 +119,16 @@ class DashboardDateCard extends ConsumerWidget {
                   return;
                 }
 
+                ref
+                    .read(daytisticDetailsViewProvider.notifier)
+                    .setCurrentDaytistic(
+                      daytistic,
+                    );
+
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        DaytisticDetailsView(daytistic),
+                    builder: (BuildContext context) => DaytisticDetailsView(),
                   ),
                 );
               },

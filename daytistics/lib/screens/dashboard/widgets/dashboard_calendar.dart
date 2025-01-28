@@ -1,4 +1,3 @@
-import 'package:daytistics/application/viewmodels/daytistics/daytistics_view_model.dart';
 import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

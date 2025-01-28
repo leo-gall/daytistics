@@ -14,7 +14,7 @@ class ActivitiesRepository {
     await _table.upsert(activity.toSupabase());
   }
 
-  Future<List<Activity>> getActivities() async {
+  Future<List<Activity>> fetchActivities() async {
     final response = await _table.select();
     return response.map((e) => Activity.fromSupabase(e)).toList();
   }

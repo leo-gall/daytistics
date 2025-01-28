@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,16 +30,16 @@ class DaytisticsRepository {
         .eq('daytistic_id', response.first['id']);
 
     // fetch wellbeing from Supabase
-
-    final wellbeingResponse = await Supabase.instance.client
-        .from(SupabaseSettings.wellbeingsTableName)
-        .select()
-        .eq('id', response.first['wellbeing_id']);
+    // TODO: Currently skipped, because wellbeing is not implemented yet
+    // final wellbeingResponse = await Supabase.instance.client
+    //     .from(SupabaseSettings.wellbeingsTableName)
+    //     .select()
+    //     .eq('id', response.first['wellbeing_id']);
 
     return Daytistic.fromSupabase(
       response.first,
       activitiesResponse,
-      wellbeingResponse.first,
+      Wellbeing().toSupabase(),
     );
   }
 
