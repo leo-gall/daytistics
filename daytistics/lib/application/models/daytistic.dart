@@ -27,13 +27,14 @@ class Daytistic {
     }
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'date': date.toIso8601String(),
-      'wellbeing_id': null, // TODO: Change to wellbeing.id
-      'user_id': Supabase.instance.client.auth.currentUser!.id,
-    };
+  Duration get totalDuration {
+    return activities.fold(
+      Duration.zero,
+      (previousValue, element) => previousValue + element.duration,
+    );
   }
+
+  // STATE MANAGEMENT METHODS
 
   Daytistic copyWith({
     String? id,
@@ -49,12 +50,15 @@ class Daytistic {
     );
   }
 
-  factory Daytistic.fromMap(Map<String, dynamic> data) {
-    return Daytistic(
-      id: data['id'] as String,
-      date: DateTime.parse(data['date'] as String),
-      wellbeing: Wellbeing(id: data['wellbeing_id'].toString()),
-    );
+  // TRANSFORMER METHODS
+
+  Map<String, dynamic> toSupabase() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'wellbeing_id': null, // TODO: Change to wellbeing.id
+      'user_id': Supabase.instance.client.auth.currentUser!.id,
+    };
   }
 
   factory Daytistic.fromSupabase(

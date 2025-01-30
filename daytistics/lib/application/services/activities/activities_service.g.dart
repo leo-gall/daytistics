@@ -6,7 +6,7 @@ part of 'activities_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$activitiesServiceHash() => r'8eb6fedda179775dbd97c3bbb0588d9cb72bdb32';
+String _$activitiesServiceHash() => r'9f3625edf79786b2369fca047ea2cd5c92a68d9d';
 
 /// See also [ActivitiesService].
 @ProviderFor(ActivitiesService)

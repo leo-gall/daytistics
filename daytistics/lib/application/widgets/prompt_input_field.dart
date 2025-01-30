@@ -32,7 +32,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
                     bottom: 10,
                   ),
                   hintText: 'What do you want to know about your well-being?',
-                  hintStyle: GoogleFonts.nunito(
+                  hintStyle: GoogleFonts.figtree(
                     color: Colors.grey,
                     fontSize: 16,
                   ),

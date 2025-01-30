@@ -21,7 +21,7 @@ class DashboardViewModel extends _$DashboardViewModel {
     return DashboardViewModelState(selectedDate: DateTime.now());
   }
 
-  void setSelectedDate(DateTime selectedDate) {
+  set selectedDate(DateTime selectedDate) {
     state = state.copyWith(selectedDate: selectedDate);
   }
 }

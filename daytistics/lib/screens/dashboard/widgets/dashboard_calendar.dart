@@ -20,9 +20,8 @@ class DashboardCalendar extends ConsumerWidget {
         return isSameDay(dashboardViewModelState.selectedDate, day);
       },
       onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-        ref
-            .read(dashboardViewModelProvider.notifier)
-            .setSelectedDate(selectedDay);
+        ref.read(dashboardViewModelProvider.notifier).selectedDate =
+            selectedDay;
       },
     );
   }

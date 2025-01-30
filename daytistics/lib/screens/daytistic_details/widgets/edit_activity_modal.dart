@@ -1,32 +1,42 @@
+import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/services/activities/activities_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/shared/utils/alert.dart';
 import 'package:daytistics/shared/widgets/styled_input_time_picker_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class AddActivityModal extends ConsumerStatefulWidget {
-  const AddActivityModal({super.key});
+class EditActivityModal extends ConsumerStatefulWidget {
+  final Activity activity;
+
+  const EditActivityModal(this.activity, {super.key});
 
   @override
-  ConsumerState<AddActivityModal> createState() => _ActivityModalState();
+  ConsumerState<EditActivityModal> createState() => _EditActivityModalState();
 
-  static void showModal(BuildContext context) {
+  static void showModal(BuildContext context, Activity activity) {
     showMaterialModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return const AddActivityModal();
+        return EditActivityModal(activity);
       },
     );
   }
 }
 
-class _ActivityModalState extends ConsumerState<AddActivityModal> {
+class _EditActivityModalState extends ConsumerState<EditActivityModal> {
   final TextEditingController _activityController = TextEditingController();
-  TimeOfDay _startTime = TimeOfDay.now();
-  TimeOfDay _endTime = TimeOfDay.now();
+  late TimeOfDay _startTime;
+  late TimeOfDay _endTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _activityController.text = widget.activity.name;
+    _startTime = TimeOfDay.fromDateTime(widget.activity.startTime);
+    _endTime = TimeOfDay.fromDateTime(widget.activity.endTime);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +96,26 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: TextButton(
-                    onPressed: () => _handleAddActivity(),
-                    child: const Text('Add Activity'),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all<Color>(
+                            Colors.red,
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.white,
+                        ),
+                        onPressed: _handleDeleteActivity,
+                      ),
+                      TextButton(
+                        onPressed: () => _handleEditActivity(),
+                        child: const Text('Save Activity'),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -99,12 +126,39 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
     );
   }
 
-  void _handleAddActivity() async {
+  Future<void> _handleEditActivity() async {
+    if (!mounted || !context.mounted) return;
+
     try {
-      await ref.read(activitiesServiceProvider.notifier).addActivity(
+      await ref.read(activitiesServiceProvider.notifier).updateActivity(
+            id: widget.activity.id,
             name: _activityController.text,
             startTime: _startTime,
             endTime: _endTime,
+          );
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      showErrorAlert(context, e.toString());
+      return;
+    }
+
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: ColorSettings.success,
+        duration: Duration(seconds: 1),
+        content: Text('Activity updated successfully'),
+      ),
+    );
+  }
+
+  Future<void> _handleDeleteActivity() async {
+    try {
+      await ref.read(activitiesServiceProvider.notifier).deleteActivity(
+            widget.activity,
           );
     } catch (e) {
       if (!mounted) return;
@@ -112,16 +166,16 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
       return;
     }
 
-    if (!mounted) return;
+    if (mounted) {
+      Navigator.pop(context);
 
-    Navigator.pop(context);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: ColorSettings.success,
-        duration: Duration(seconds: 1),
-        content: Text('Activity added successfully'),
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: ColorSettings.success,
+          duration: Duration(seconds: 1),
+          content: Text('Activity deleted successfully'),
+        ),
+      );
+    }
   }
 }

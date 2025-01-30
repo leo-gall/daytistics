@@ -1,7 +1,6 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/exceptions/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,15 +10,19 @@ part 'daytistics_repository.g.dart';
 class DaytisticsRepository {
   final _table =
       Supabase.instance.client.from(SupabaseSettings.daytisticsTableName);
+  final _userId = Supabase.instance.client.auth.currentUser!.id;
 
   Future<void> addDaytistic(Daytistic daytistic) async {
-    await _table.upsert(daytistic.toMap());
+    await _table.upsert(daytistic.toSupabase());
   }
 
-  Future<Daytistic> fetchDaytistic(DateTime date) async {
-    final response = await _table.select().eq('date', date.toIso8601String());
+  Future<Daytistic?> fetchDaytistic(DateTime date) async {
+    final response = await _table
+        .select()
+        .eq('user_id', _userId)
+        .eq('date', date.toIso8601String());
     if (response.isEmpty) {
-      throw RecordNotFoundException('Daytistic not found');
+      return null;
     }
 
     // fetch all activities from Supabase

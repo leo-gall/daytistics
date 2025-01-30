@@ -2,9 +2,9 @@ import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
-import 'package:daytistics/screens/daytistic_details/viewmodels/daytistic_details_view_model.dart'
-    show daytisticDetailsViewProvider;
 import 'package:daytistics/screens/daytistic_details/views/daytistic_details_view.dart';
+import 'package:daytistics/shared/utils/alert.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +17,16 @@ Map<String, int> ratings = {
   'energy': 2,
 };
 
-class DashboardDateCard extends ConsumerWidget {
+class DashboardDateCard extends ConsumerStatefulWidget {
   const DashboardDateCard({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardDateCard> createState() => _DashboardDateCardState();
+}
+
+class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
+  @override
+  Widget build(BuildContext context) {
     final dashboardViewModelState = ref.watch(dashboardViewModelProvider);
 
     // in format "Monday, 01/01/2021"
@@ -46,10 +51,43 @@ class DashboardDateCard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                const StyledText(
-                  '12 activities - 2 hours 30 minutes',
-                  style: TextStyle(
-                    fontSize: 16,
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: FutureBuilder<Daytistic?>(
+                    key: ValueKey(dashboardViewModelState.selectedDate),
+                    future: ref
+                        .read(daytisticsServiceProvider.notifier)
+                        .fetchDaytistic(
+                          dashboardViewModelState.selectedDate,
+                        ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const StyledText(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return StyledText(
+                          'Error: ${snapshot.error}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.red,
+                          ),
+                        );
+                      } else {
+                        final daytistic = snapshot.data;
+                        return StyledText(
+                          durationToHoursMinutes(
+                            daytistic?.totalDuration ?? Duration.zero,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -109,26 +147,27 @@ class DashboardDateCard extends ConsumerWidget {
             top: 1,
             child: IconButton(
               onPressed: () async {
-                Daytistic daytistic = await ref
-                    .read(daytisticsServiceProvider.notifier)
-                    .fetchDaytistic(
-                      (dashboardViewModelState.selectedDate),
-                    );
+                try {
+                  await ref
+                      .read(daytisticsServiceProvider.notifier)
+                      .fetchOrCreate(
+                        (dashboardViewModelState.selectedDate),
+                      );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  showErrorAlert(context, e.toString());
+                  return;
+                }
 
                 if (!context.mounted) {
                   return;
                 }
 
-                ref
-                    .read(daytisticDetailsViewProvider.notifier)
-                    .setCurrentDaytistic(
-                      daytistic,
-                    );
-
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => DaytisticDetailsView(),
+                    builder: (BuildContext context) =>
+                        const DaytisticDetailsView(),
                   ),
                 );
               },

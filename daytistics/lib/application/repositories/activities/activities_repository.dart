@@ -10,13 +10,17 @@ class ActivitiesRepository {
   final _table =
       Supabase.instance.client.from(SupabaseSettings.activitiesTableName);
 
-  Future<void> addActivity(Activity activity) async {
-    await _table.upsert(activity.toSupabase());
+  Future<void> deleteActivity(Activity activity) async {
+    await _table.delete().eq('id', activity.id);
   }
 
-  Future<List<Activity>> fetchActivities() async {
-    final response = await _table.select();
-    return response.map((e) => Activity.fromSupabase(e)).toList();
+  Future<bool> existsActivity(Activity activity) async {
+    final response = await _table.select().eq('id', activity.id);
+    return response.isNotEmpty;
+  }
+
+  Future<void> updateActivity(Activity activity) async {
+    await _table.upsert(activity.toSupabase());
   }
 }
 
