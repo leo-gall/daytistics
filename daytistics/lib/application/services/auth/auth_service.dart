@@ -9,24 +9,24 @@ class AuthServiceState {}
 
 @Riverpod(keepAlive: true)
 class AuthService extends _$AuthService {
-  late AuthRepository authRepository;
+  late AuthRepository _authRepository;
 
   @override
   AuthServiceState build() {
-    authRepository = ref.read(authRepositoryProvider);
+    _authRepository = ref.read(authRepositoryProvider);
     return AuthServiceState();
   }
 
   bool isAuthenticated() {
-    return authRepository.isAuthenticated;
+    return _authRepository.isAuthenticated;
   }
 
   Future<void> signInAnonymously() async {
-    await authRepository.signInAnonymously();
+    await _authRepository.signInAnonymously();
   }
 
   Future<void> signOut() async {
-    await authRepository.signOut();
+    await _authRepository.signOut();
   }
 
   Future<void> signInWithGoogle() async {
@@ -52,7 +52,7 @@ class AuthService extends _$AuthService {
         throw 'No ID Token found.';
       }
 
-      await authRepository.signInWithGoogle(idToken, accessToken);
+      await _authRepository.signInWithGoogle(idToken, accessToken);
     } catch (e) {
       rethrow;
     }
