@@ -1,5 +1,5 @@
-import 'package:daytistics/features/auth/viewmodels/auth_view_model.dart';
-import 'package:daytistics/features/auth/views/sign_in_view.dart';
+import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,22 +33,19 @@ class RequireAuth extends ConsumerStatefulWidget {
 class _RequireAuthState extends ConsumerState<RequireAuth> {
   @override
   void initState() {
-    final AuthViewModel authViewModel = ref.read(authViewModelProvider);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!ref.watch(authServiceProvider.notifier).isAuthenticated()) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute<SignInView>(
+            builder: (BuildContext context) => const SignInView(),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      }
+    });
 
-    if (authViewModel.isAuthenticated()) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!authViewModel.isAuthenticated()) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute<SignInView>(
-              builder: (BuildContext context) => const SignInView(),
-            ),
-            (Route<dynamic> route) => false,
-          );
-        }
-      });
-      super.initState();
-    }
+    super.initState();
   }
 
   @override

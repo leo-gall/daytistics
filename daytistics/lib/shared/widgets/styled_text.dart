@@ -13,7 +13,7 @@ class StyledText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
-      style: GoogleFonts.nunito(
+      style: GoogleFonts.figtree(
         textStyle: style,
       ),
     );

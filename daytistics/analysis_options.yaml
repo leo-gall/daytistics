@@ -27,9 +27,9 @@ linter:
   rules:
     prefer_single_quotes: true  
     prefer_const_constructors: true
-    always_specify_types: true
     require_trailing_commas: true
     prefer_final_fields: true
+    
  
 
 

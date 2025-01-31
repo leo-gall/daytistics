@@ -9,6 +9,11 @@ class SupabaseSettings {
       ? dotenv.env['SUPABASE_ANDROID_URL']!
       : dotenv.env['SUPABASE_URL']!;
   static final String anonKey = dotenv.env['SUPABASE_ANON_KEY']!;
+
+  // Tables
+  static final String daytisticsTableName = 'daytistics';
+  static final String activitiesTableName = 'activities';
+  static final String wellbeingsTableName = 'wellbeings';
 }
 
 class ColorSettings {

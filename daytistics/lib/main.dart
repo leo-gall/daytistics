@@ -1,7 +1,7 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
-import 'package:daytistics/features/auth/views/sign_in_view.dart';
-import 'package:daytistics/features/dashboard/views/dashboard_view.dart';
+import 'package:daytistics/ui/auth/views/sign_in_view.dart';
+import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +34,8 @@ class DaytisticsApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Daytistics',
+      locale: const Locale('en', 'US'),
+      debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
       home: isAuthenticated ? const DashboardView() : const SignInView(),
     );

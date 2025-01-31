@@ -51,4 +51,37 @@ ThemeData daytisticsTheme = ThemeData(
       ),
     ),
   ),
+
+  cardTheme: CardTheme(
+    color: Colors.grey[200]!,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+    ),
+  ),
+
+  inputDecorationTheme: InputDecorationTheme(
+    fillColor: Colors.grey[200],
+    contentPadding: const EdgeInsets.only(
+      left: 10,
+      right: 60,
+      top: 10,
+      bottom: 10,
+    ),
+    hintStyle: const TextStyle(
+      color: Colors.grey,
+      fontSize: 16,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+        color: Colors.grey[300]!,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+        color: Colors.grey[300]!,
+      ),
+    ),
+  ),
 );
