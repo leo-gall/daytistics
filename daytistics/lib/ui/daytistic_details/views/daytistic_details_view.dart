@@ -1,8 +1,9 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/application/providers/current_daytistic.dart';
 import 'package:daytistics/application/widgets/prompt_input_field.dart';
-import 'package:daytistics/screens/daytistic_details/widgets/add_activity_modal.dart';
-import 'package:daytistics/screens/daytistic_details/widgets/edit_activity_modal.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/add_activity_modal.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_modal.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_modal.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
@@ -22,8 +23,7 @@ class DaytisticDetailsView extends ConsumerStatefulWidget {
 class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
   @override
   Widget build(BuildContext context) {
-    Daytistic? daytistic =
-        ref.watch(daytisticsServiceProvider).currentDaytistic;
+    Daytistic? daytistic = ref.watch(currentDaytisticProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +43,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
             icon: const Icon(
               Icons.star_outline,
             ),
-            onPressed: () {},
+            onPressed: () => WellbeingRatingModal.showModal(context),
           ),
           IconButton(
             icon: const Icon(

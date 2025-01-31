@@ -77,7 +77,7 @@ class _PromptInputFieldState extends State<PromptInputField> {
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }

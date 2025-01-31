@@ -1,6 +1,6 @@
+import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/screens/auth/viewmodels/auth_view_model.dart';
-import 'package:daytistics/screens/dashboard/views/dashboard_view.dart';
+import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class GuestSignInModal extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
+    // final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
 
     return Container(
       color: ColorSettings.background,
@@ -36,7 +36,7 @@ class GuestSignInModal extends ConsumerWidget {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () async {
-              await authViewModel.signInAnonymously();
+              await ref.read(authServiceProvider.notifier).signInAnonymously();
 
               if (context.mounted) {
                 pushAndClearHistory(context, const DashboardView());

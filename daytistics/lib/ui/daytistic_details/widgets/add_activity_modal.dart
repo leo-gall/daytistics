@@ -1,6 +1,5 @@
 import 'package:daytistics/application/services/activities/activities_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/shared/utils/alert.dart';
 import 'package:daytistics/shared/widgets/styled_input_time_picker_form_field.dart';
 import 'package:flutter/material.dart';

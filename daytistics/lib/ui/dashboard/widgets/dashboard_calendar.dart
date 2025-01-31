@@ -1,4 +1,4 @@
-import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
+import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -15,6 +15,9 @@ class DashboardCalendar extends ConsumerWidget {
       calendarFormat: CalendarFormat.month,
       firstDay: DateTime.utc(2010, 10, 16),
       lastDay: DateTime.utc(2030, 3, 14),
+      availableCalendarFormats: const {
+        CalendarFormat.month: 'Month',
+      },
       focusedDay: dashboardViewModelState.selectedDate,
       selectedDayPredicate: (DateTime day) {
         return isSameDay(dashboardViewModelState.selectedDate, day);

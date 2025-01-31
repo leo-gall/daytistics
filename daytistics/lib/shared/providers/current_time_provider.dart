@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class CurrentTimeProvider extends StateNotifier<DateTime> {
   Timer? _timer;
@@ -24,4 +23,5 @@ class CurrentTimeProvider extends StateNotifier<DateTime> {
 
 final StateNotifierProvider<CurrentTimeProvider, DateTime> currentTimeProvider =
     StateNotifierProvider<CurrentTimeProvider, DateTime>(
-        (Ref ref) => CurrentTimeProvider());
+  (Ref ref) => CurrentTimeProvider(),
+);

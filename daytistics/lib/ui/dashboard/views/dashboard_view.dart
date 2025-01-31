@@ -1,8 +1,8 @@
-import 'package:daytistics/screens/auth/viewmodels/auth_view_model.dart';
-import 'package:daytistics/screens/auth/views/sign_in_view.dart';
+import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/application/widgets/prompt_input_field.dart';
-import 'package:daytistics/screens/dashboard/widgets/dashboard_calendar.dart';
-import 'package:daytistics/screens/dashboard/widgets/dashboard_date_card.dart';
+import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
+import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
 import 'package:daytistics/shared/widgets/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +13,6 @@ class DashboardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -29,13 +27,12 @@ class DashboardView extends ConsumerWidget {
         ),
         actions: <Widget>[
           //
-          // TODO: The sign out button should be removed after implementing the settings screen.
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await authViewModel.signOut();
+              await ref.read(authServiceProvider.notifier).signOut();
 
-              if (!authViewModel.isAuthenticated()) {
+              if (!ref.read(authServiceProvider.notifier).isAuthenticated) {
                 if (context.mounted) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -77,10 +74,10 @@ class DashboardView extends ConsumerWidget {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                const SizedBox(height: 20),
-                const PromptInputField(),
-                const DashboardCalendar(),
-                const DashboardDateCard(),
+                SizedBox(height: 20),
+                PromptInputField(),
+                DashboardCalendar(),
+                DashboardDateCard(),
               ],
             ),
           ),

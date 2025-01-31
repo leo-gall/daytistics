@@ -1,6 +1,6 @@
+import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/screens/auth/viewmodels/auth_view_model.dart';
-import 'package:daytistics/screens/dashboard/views/dashboard_view.dart';
+import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -39,15 +39,13 @@ class OAuthButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
-
     return SizedBox(
       width: 250,
       child: ElevatedButton(
         onPressed: () async {
           switch (provider) {
             case OAuthProvider.google:
-              await authViewModel.signInWithGoogle(context);
+              await ref.read(authServiceProvider.notifier).signInWithGoogle();
               break;
             case OAuthProvider.apple:
               throw UnimplementedError('Apple sign in is not implemented yet');
@@ -55,7 +53,8 @@ class OAuthButton extends ConsumerWidget {
               throw UnimplementedError('Unsupported provider: $provider');
           }
 
-          if (context.mounted && authViewModel.isAuthenticated()) {
+          if (context.mounted &&
+              ref.read(authServiceProvider.notifier).isAuthenticated) {
             pushAndClearHistory(context, const DashboardView());
           }
         },

@@ -1,54 +1,46 @@
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/current_daytistic.dart';
 import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
+import 'package:daytistics/application/repositories/wellbeings/wellbeings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'daytistics_service.g.dart';
 
-class DaytisticsServiceState {
-  Daytistic? currentDaytistic;
+class DaytisticsServiceState {}
 
-  DaytisticsServiceState();
-
-  DaytisticsServiceState copyWith({
-    Daytistic? currentDaytistic,
-  }) {
-    return DaytisticsServiceState()
-      ..currentDaytistic = currentDaytistic ?? this.currentDaytistic;
-  }
-}
-
-@Riverpod(keepAlive: true)
+@riverpod
 class DaytisticsService extends _$DaytisticsService {
   @override
   DaytisticsServiceState build() {
     return DaytisticsServiceState();
   }
 
-  set currentDaytistic(Daytistic? daytistic) {
-    state = state.copyWith(currentDaytistic: daytistic);
-  }
-
   Future<Daytistic?> fetchDaytistic(DateTime date) async {
     final daytistic =
-        await ref.read(daytisticsRepositoryProvider).fetchDaytistic(date);
-    currentDaytistic = daytistic;
+        await ref.read(daytisticsRepositoryProvider).selectDaytistic(date);
+
+    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
     return daytistic;
   }
 
   Future<Daytistic> fetchOrCreate(DateTime date) async {
-    final daytisticsRepository = ref.read(daytisticsRepositoryProvider);
+    DaytisticsRepository daytisticsRepository =
+        ref.read(daytisticsRepositoryProvider);
 
-    late Daytistic? daytistic;
+    Daytistic? daytistic = await daytisticsRepository.selectDaytistic(date);
 
-    daytistic = await daytisticsRepository.fetchDaytistic(date);
+    if (daytistic == null) {
+      daytistic = Daytistic(
+        date: date,
+      );
 
-    daytistic ??= Daytistic(
-      date: date,
-    );
+      await ref
+          .read(wellbeingsRepositoryProvider)
+          .insertWellbeing(daytistic.wellbeing);
+      await daytisticsRepository.upsertDaytistic(daytistic);
+    }
 
-    await daytisticsRepository.addDaytistic(daytistic);
-
-    currentDaytistic = daytistic;
+    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
     return daytistic;
   }

@@ -1,13 +1,10 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/current_daytistic.dart';
 import 'package:daytistics/application/repositories/activities/activities_repository.dart';
 import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
-import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
-import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/screens/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'activities_service.g.dart';
 
@@ -35,11 +32,15 @@ class ActivitiesService extends _$ActivitiesService {
       throw Exception('Start time cannot be after end time');
     }
 
+    if (startTime == endTime) {
+      throw Exception('Start time cannot be the same as end time');
+    }
+
     final daytisticRepository = ref.read(daytisticsRepositoryProvider);
-    Daytistic daytistic = ref.read(daytisticsServiceProvider).currentDaytistic!;
+    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (!await daytisticRepository.existsDaytistic(daytistic)) {
-      await daytisticRepository.addDaytistic(daytistic);
+      await daytisticRepository.upsertDaytistic(daytistic);
     }
 
     final startTimeAsDateTime = DateTime(
@@ -71,15 +72,14 @@ class ActivitiesService extends _$ActivitiesService {
       activities: [...daytistic.activities, activity],
     );
 
-    ref.read(daytisticsServiceProvider.notifier).currentDaytistic =
-        updatedDaytistic;
+    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
   }
 
   Future<void> deleteActivity(Activity activity) async {
     ActivitiesRepository activitiesRepository =
         ref.read(activitiesRepositoryProvider);
 
-    Daytistic daytistic = ref.read(daytisticsServiceProvider).currentDaytistic!;
+    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (!await activitiesRepository.existsActivity(activity)) {
       throw Exception('Activity does not exist');
@@ -94,8 +94,7 @@ class ActivitiesService extends _$ActivitiesService {
     Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
-    ref.read(daytisticsServiceProvider.notifier).currentDaytistic =
-        updatedDaytistic;
+    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
   }
 
   Future<void> updateActivity({
@@ -107,7 +106,7 @@ class ActivitiesService extends _$ActivitiesService {
     ActivitiesRepository activitiesRepository =
         ref.read(activitiesRepositoryProvider);
 
-    Daytistic daytistic = ref.read(daytisticsServiceProvider).currentDaytistic!;
+    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (name == null && startTime == null && endTime == null) {
       throw Exception('No changes to update');
@@ -121,6 +120,12 @@ class ActivitiesService extends _$ActivitiesService {
       if (startTime.isAfter(endTime)) {
         throw Exception('Start time cannot be after end time');
       }
+
+      if (startTime == endTime) {
+        throw Exception('Start time cannot be the same as end time');
+      }
+    } else if (startTime != null || endTime != null) {
+      throw Exception('Both start and end time must be provided');
     }
 
     final activity = Activity(
@@ -160,7 +165,6 @@ class ActivitiesService extends _$ActivitiesService {
     Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
-    ref.read(daytisticsServiceProvider.notifier).currentDaytistic =
-        updatedDaytistic;
+    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
   }
 }

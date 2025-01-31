@@ -1,19 +1,23 @@
-import 'package:daytistics/screens/auth/repositories/auth_repository.dart';
-import 'package:daytistics/shared/utils/alert.dart';
-import 'package:flutter/material.dart';
+import 'package:daytistics/application/repositories/auth/auth_repository.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'auth_view_model.g.dart';
+part 'auth_service.g.dart';
 
-class AuthViewModel {
-  final AuthRepository authRepository;
+class AuthServiceState {}
 
-  AuthViewModel(this.authRepository);
+@Riverpod(keepAlive: true)
+class AuthService extends _$AuthService {
+  late AuthRepository authRepository;
 
-  bool isAuthenticated() {
+  @override
+  AuthServiceState build() {
+    authRepository = ref.read(authRepositoryProvider);
+    return AuthServiceState();
+  }
+
+  bool get isAuthenticated {
     return authRepository.isAuthenticated;
   }
 
@@ -25,7 +29,7 @@ class AuthViewModel {
     await authRepository.signOut();
   }
 
-  Future<void> signInWithGoogle(BuildContext context) async {
+  Future<void> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_IOS_ID'],
@@ -50,18 +54,7 @@ class AuthViewModel {
 
       await authRepository.signInWithGoogle(idToken, accessToken);
     } catch (e) {
-      if (!context.mounted) {
-        return;
-      }
-
-      showErrorAlert(context, 'Failed to sign in with Google');
       rethrow;
     }
   }
-}
-
-@riverpod
-AuthViewModel authViewModel(Ref ref) {
-  final AuthRepository repository = ref.watch(authRepositoryProvider);
-  return AuthViewModel(repository);
 }
