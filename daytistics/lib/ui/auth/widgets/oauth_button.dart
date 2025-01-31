@@ -54,7 +54,7 @@ class OAuthButton extends ConsumerWidget {
           }
 
           if (context.mounted &&
-              ref.read(authServiceProvider.notifier).isAuthenticated) {
+              ref.read(authServiceProvider.notifier).isAuthenticated()) {
             pushAndClearHistory(context, const DashboardView());
           }
         },

@@ -34,7 +34,7 @@ class _RequireAuthState extends ConsumerState<RequireAuth> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!ref.watch(authServiceProvider.notifier).isAuthenticated) {
+      if (!ref.watch(authServiceProvider.notifier).isAuthenticated()) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute<SignInView>(

@@ -17,7 +17,7 @@ class AuthService extends _$AuthService {
     return AuthServiceState();
   }
 
-  bool get isAuthenticated {
+  bool isAuthenticated() {
     return authRepository.isAuthenticated;
   }
 
