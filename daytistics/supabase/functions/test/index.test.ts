@@ -3,20 +3,19 @@ import {
   assertEquals,
 } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
-console.log(JSON.stringify(Deno.env.toObject(), null, 2));
-
-const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-const options = {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-    detectSessionInUrl: false,
-  },
-};
+console.log("1" + JSON.stringify(Deno.env.toObject(), null, 2));
 
 const testHelloWorld = async () => {
-  console.log(JSON.stringify(Deno.env.toObject(), null, 2));
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+  const options = {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  };
+  console.log("2" + JSON.stringify(Deno.env.toObject(), null, 2));
   var client: SupabaseClient = createClient(supabaseUrl, supabaseKey, options);
 
   // Invoke the 'hello-world' function with a parameter
