@@ -15,6 +15,7 @@ const options = {
 };
 
 const testHelloWorld = async () => {
+  console.log(JSON.stringify(Deno.env.toObject(), null, 2));
   var client: SupabaseClient = createClient(supabaseUrl, supabaseKey, options);
 
   // Invoke the 'hello-world' function with a parameter
