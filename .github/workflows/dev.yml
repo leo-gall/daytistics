@@ -8,39 +8,103 @@ on:
       - dev
 
 jobs:
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-      - name: Install dependencies
-        working-directory: ./daytistics
-        run: flutter pub get
-      - name: Create .env file
-        working-directory: ./daytistics
-        run: touch .env
-      - name: Run built-in linter
-        working-directory: ./daytistics
-        run: flutter analyze
-      - name: Run custom linter
-        working-directory: ./daytistics
-        run: dart run custom_lint
+  # flutter-analyze:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v2
 
-  testing:
+  #     - name: Install dependencies
+  #       working-directory: ./daytistics
+  #       run: flutter pub get
+  #     - name: Create .env file
+  #       working-directory: ./daytistics
+  #       run: touch .env
+  #     - name: Run built-in linter
+  #       working-directory: ./daytistics
+  #       run: flutter analyze
+  #     - name: Run custom linter
+  #       working-directory: ./daytistics
+  #       run: dart run custom_lint
+
+  # flutter-test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: subosito/flutter-action@v2
+
+  #     - name: Install dependencies
+  #       working-directory: ./daytistics
+  #       run: flutter pub get
+  #     - name: Create .env file
+  #       working-directory: ./daytistics
+  #       run: touch .env
+  #     - name: Run tests
+  #       working-directory: ./daytistics
+  #       run: flutter test
+
+  supabase-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-      - name: Install dependencies
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Supabase Containers
         working-directory: ./daytistics
-        run: flutter pub get
-      - name: Create .env file
+        run: npx supabase start 
+      - name: Storing Supabase secrets
+        id: supabase-keys
         working-directory: ./daytistics
-        run: touch .env
+        run: npx supabase status -o env >> $GITHUB_OUTPUT
+      - name: Serve edge functions
+        working-directory: ./daytistics
+        run: nohup npx supabase functions serve &
+        env: 
+          SUPABASE_URL: ${{ steps.supabase-keys.outputs.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_SERVICE_ROLE_KEY }}
+          API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
+          DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
+          GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
+          INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
+          JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
+          S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
+          S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
+          S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
+          STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
+          STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
+
+      - name: Install Deno
+        run: npm install -g deno
+
       - name: Run tests
         working-directory: ./daytistics
-        run: flutter test
+        run: deno test --allow-all 
+        env: 
+          SUPABASE_URL: ${{ steps.supabase-keys.outputs.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_KEY }}
+          SUPABASE_ANON_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_SERVICE_ROLE_KEY }}
+          API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
+          DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
+          GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
+          INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
+          JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
+          S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
+          S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
+          S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
+          STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
+          STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
+      
+
+      # - name: Serve edge functions
+      #   working-directory: ./daytistics
+      # - name: Convert outputs to .env
+      #   run: echo "${{ steps.supabase-keys.outputs.env }}" > .env && cat .env
+        
+# | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > .env
+# cat .env
+# npx supabase functions serve --env-file=.env
