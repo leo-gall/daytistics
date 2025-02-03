@@ -62,20 +62,18 @@ jobs:
         working-directory: ./daytistics
         run: nohup npx supabase functions serve &
         env: 
-          SUPABASE_URL: ${{ steps.supabase-keys.outputs.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_KEY }}
           SUPABASE_ANON_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_SERVICE_ROLE_KEY }}
-          API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
-          DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
-          GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
-          INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
-          JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
-          S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
-          S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
-          S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
-          STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
-          STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
+          SUPABASE_API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
+          SUPABASE_DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
+          SUPABASE_GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
+          SUPABASE_INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
+          SUPABASE_JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
+          SUPABASE_S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
+          SUPABASE_S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
+          SUPABASE_S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
+          SUPABASE_STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
+          SUPABASE_STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
 
       - name: Install Deno
         run: npm install -g deno
@@ -84,20 +82,18 @@ jobs:
         working-directory: ./daytistics
         run: deno test --allow-all 
         env: 
-          SUPABASE_URL: ${{ steps.supabase-keys.outputs.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_KEY }}
           SUPABASE_ANON_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SUPABASE_SERVICE_ROLE_KEY }}
-          API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
-          DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
-          GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
-          INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
-          JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
-          S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
-          S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
-          S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
-          STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
-          STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
+          SUPABASE_API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
+          SUPABASE_DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
+          SUPABASE_GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
+          SUPABASE_INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
+          SUPABASE_JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
+          SUPABASE_S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
+          SUPABASE_S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
+          SUPABASE_S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
+          SUPABASE_STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
+          SUPABASE_STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
       
 
       # - name: Serve edge functions
