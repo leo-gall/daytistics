@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "types/": "../../_shared/types/",
+    "database/": "../../_shared/database/"
+  }
+}

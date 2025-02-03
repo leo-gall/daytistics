@@ -4,8 +4,8 @@ import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/time.dart';
-import 'package:daytistics/shared/widgets/star_rating.dart';
-import 'package:daytistics/shared/widgets/styled_text.dart';
+import 'package:daytistics/shared/widgets/application/star_rating.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
@@ -74,7 +74,6 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                         final daytistic = snapshot.data;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             StyledText(
                               durationToHoursMinutes(
@@ -99,7 +98,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                                           children: daytistic.wellbeing
                                               .toRatingMap()
                                               .keys
-                                              .map((String key) {
+                                              .map((key) {
                                             return Row(
                                               children: <Widget>[
                                                 StyledText(
@@ -155,7 +154,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                 await ref
                     .read(daytisticsServiceProvider.notifier)
                     .fetchOrCreate(
-                      (dashboardViewModelState.selectedDate),
+                      dashboardViewModelState.selectedDate,
                     );
 
                 if (!context.mounted) {
@@ -165,8 +164,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        const DaytisticDetailsView(),
+                    builder: (context) => const DaytisticDetailsView(),
                   ),
                 );
               },

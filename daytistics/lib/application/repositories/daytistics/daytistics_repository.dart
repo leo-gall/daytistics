@@ -30,13 +30,14 @@ class DaytisticsRepository {
       activitiesResponse = await Supabase.instance.client
           .from(SupabaseSettings.activitiesTableName)
           .select()
-          .eq('daytistic_id', daytisticResponse['id']);
+          .eq('daytistic_id', daytisticResponse['id'] as String);
 
       wellbeingResponse = await Supabase.instance.client
           .from(SupabaseSettings.wellbeingsTableName)
           .select()
-          .eq('id', daytisticResponse['wellbeing_id'])
+          .eq('id', daytisticResponse['wellbeing_id'] as String)
           .single();
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       return null;
     }

@@ -65,6 +65,32 @@ CREATE TABLE IF NOT EXISTS "public"."activities" (
 ALTER TABLE
     "public"."activities" OWNER TO "postgres";
 
+CREATE TABLE IF NOT EXISTS "public"."conversation_messages" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc' :: "text", "now"()) NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "timezone"('utc' :: "text", "now"()) NOT NULL,
+    "conversation_id" "uuid",
+    "upvoted" boolean DEFAULT false NOT NULL,
+    "downvoted" boolean DEFAULT false NOT NULL,
+    "copied" boolean DEFAULT false NOT NULL,
+    "query" "text" NOT NULL,
+    "reply" "text" NOT NULL
+);
+
+ALTER TABLE
+    "public"."conversation_messages" OWNER TO "postgres";
+
+CREATE TABLE IF NOT EXISTS "public"."conversations" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc' :: "text", "now"()) NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "timezone"('utc' :: "text", "now"()) NOT NULL,
+    "user_id" "uuid",
+    "title" "text"
+);
+
+ALTER TABLE
+    "public"."conversations" OWNER TO "postgres";
+
 CREATE TABLE IF NOT EXISTS "public"."daytistics" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "date" "date" NOT NULL,
@@ -181,6 +207,16 @@ ADD
     CONSTRAINT "activities_pkey" PRIMARY KEY ("id");
 
 ALTER TABLE
+    ONLY "public"."conversation_messages"
+ADD
+    CONSTRAINT "conversation_messages_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE
+    ONLY "public"."conversations"
+ADD
+    CONSTRAINT "conversations_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE
     ONLY "public"."daytistics"
 ADD
     CONSTRAINT "daytistics_pkey" PRIMARY KEY ("id");
@@ -199,6 +235,18 @@ ALTER TABLE
     ONLY "public"."activities"
 ADD
     CONSTRAINT "activities_daytistic_id_fkey" FOREIGN KEY ("daytistic_id") REFERENCES "public"."daytistics"("id") ON DELETE CASCADE;
+
+ALTER TABLE
+    ONLY "public"."conversation_messages"
+ADD
+    CONSTRAINT "conversation_messages_conversation_id_fkey" FOREIGN KEY ("conversation_id") REFERENCES "public"."conversations"("id") ON DELETE CASCADE;
+
+ALTER TABLE
+    ONLY "public"."conversations"
+ADD
+    CONSTRAINT "conversations_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE
+SET
+    NULL;
 
 ALTER TABLE
     ONLY "public"."daytistics"
@@ -227,6 +275,23 @@ CREATE POLICY "Users can delete their own activities" ON "public"."activities" F
         )
     )
 );
+
+CREATE POLICY "Users can delete their own conversation_messages" ON "public"."conversation_messages" FOR DELETE USING (
+    (
+        "auth"."uid"() = (
+            SELECT
+                "conversations"."user_id"
+            FROM
+                "public"."conversations"
+            WHERE
+                (
+                    "conversations"."id" = "conversation_messages"."conversation_id"
+                )
+        )
+    )
+);
+
+CREATE POLICY "Users can delete their own conversations" ON "public"."conversations" FOR DELETE USING (("auth"."uid"() = "user_id"));
 
 CREATE POLICY "Users can delete their own daytistics" ON "public"."daytistics" FOR DELETE USING (("auth"."uid"() = "user_id"));
 
@@ -257,6 +322,27 @@ CREATE POLICY "Users can delete their own wellbeings" ON "public"."wellbeings" F
         )
     )
 );
+
+CREATE POLICY "Users can insert conversation_messages on their own conversation" ON "public"."conversation_messages" FOR
+INSERT
+    WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can insert conversations if authenticated" ON "public"."conversations" FOR
+INSERT
+    TO "authenticated" WITH CHECK (true);
 
 CREATE POLICY "Users can insert their own activities" ON "public"."activities" FOR
 INSERT
@@ -294,9 +380,9 @@ INSERT
         )
     );
 
-CREATE POLICY "Users can insert wellbeings if they are authenticated" ON "public"."wellbeings" as PERMISSIVE for
+CREATE POLICY "Users can insert wellbeings if they are authenticated" ON "public"."wellbeings" FOR
 INSERT
-    TO authenticated WITH CHECK (true);
+    TO "authenticated" WITH CHECK (true);
 
 CREATE POLICY "Users can select their own activities" ON "public"."activities" FOR
 SELECT
@@ -312,6 +398,27 @@ SELECT
             )
         )
     );
+
+CREATE POLICY "Users can select their own conversation_messages" ON "public"."conversation_messages" FOR
+SELECT
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can select their own conversations" ON "public"."conversations" FOR
+SELECT
+    USING (("auth"."uid"() = "user_id"));
 
 CREATE POLICY "Users can select their own daytistics" ON "public"."daytistics" FOR
 SELECT
@@ -344,7 +451,7 @@ SELECT
                 FROM
                     "public"."daytistics"
                 WHERE
-                    ("daytistics"."wellbeing_id" = "daytistics"."id")
+                    ("daytistics"."wellbeing_id" = "wellbeings"."id")
             )
         )
     );
@@ -374,6 +481,27 @@ UPDATE
             )
         )
     );
+
+CREATE POLICY "Users can update their own conversation_messages" ON "public"."conversation_messages" FOR
+UPDATE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can update their own conversations" ON "public"."conversations" FOR
+UPDATE
+    USING (("auth"."uid"() = "user_id"));
 
 CREATE POLICY "Users can update their own daytistics" ON "public"."daytistics" FOR
 UPDATE
@@ -439,6 +567,12 @@ ALTER TABLE
     "public"."activities" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE
+    "public"."conversation_messages" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."conversations" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
     "public"."daytistics" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE
@@ -462,6 +596,18 @@ GRANT ALL ON TABLE "public"."activities" TO "anon";
 GRANT ALL ON TABLE "public"."activities" TO "authenticated";
 
 GRANT ALL ON TABLE "public"."activities" TO "service_role";
+
+GRANT ALL ON TABLE "public"."conversation_messages" TO "anon";
+
+GRANT ALL ON TABLE "public"."conversation_messages" TO "authenticated";
+
+GRANT ALL ON TABLE "public"."conversation_messages" TO "service_role";
+
+GRANT ALL ON TABLE "public"."conversations" TO "anon";
+
+GRANT ALL ON TABLE "public"."conversations" TO "authenticated";
+
+GRANT ALL ON TABLE "public"."conversations" TO "service_role";
 
 GRANT ALL ON TABLE "public"."daytistics" TO "anon";
 
