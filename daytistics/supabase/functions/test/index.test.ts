@@ -3,6 +3,7 @@ import {
   assertEquals,
 } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
+console.log(JSON.stringify(Deno.env.toObject(), null, 2));
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
 const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
