@@ -1,6 +1,7 @@
 import OpenAI from "https://deno.land/x/openai@v4.24.0/mod.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
-import { fetchDaytistics } from "database/daytistics.ts";
+import { fetchAllDaytistics } from "database/daytistics.ts";
+import { privateEncrypt } from "node:crypto";
 
 const SYSTEM_PROMPT = `
 You are a helpful assistant that analyzes the user's daily activities and provides insights to improve well-being and productivity.  
@@ -18,16 +19,17 @@ Do not use markdown in responses. End each response with a fitting title in this
 You have access to the following data:  
 `;
 
+const supabaseApiUrl = Deno.env.get("SUPABASE_API_URL");
+const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+
 Deno.serve(async (req) => {
   const { query } = await req.json();
   const apiKey = Deno.env.get("OPENAI_API_KEY");
 
   const authHeader = req.headers.get("Authorization")!;
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_API_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: authHeader } } }
-  );
+  const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!, {
+    global: { headers: { Authorization: authHeader } },
+  });
 
   const openai = new OpenAI({
     apiKey: apiKey,
@@ -56,3 +58,13 @@ Deno.serve(async (req) => {
     headers: { "Content-Type": "text/plain" },
   });
 });
+
+Deno.test(
+  "send_conversation_message returns data about the daytistics of a user",
+  async () => {
+    const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!, {});
+    const authResponse = await supabase.auth.signInAnonymously();
+
+    console.log(authResponse);
+  }
+);

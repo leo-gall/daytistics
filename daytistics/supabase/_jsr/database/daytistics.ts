@@ -1,7 +1,7 @@
 import { SupabaseClient } from "jsr:@supabase/supabase-js@2";
-import { Daytistic } from "../../types/daytistics.ts";
-import { DatabaseWellbeing } from "../../types/wellbeings.ts";
-import { DatabaseActivity } from "../../types/activities.ts";
+import { DatabaseActivity } from "../types/activities.ts";
+import { DatabaseWellbeing } from "../types/wellbeings.ts";
+import { Daytistic } from "../types/daytistics.ts";
 
 export async function fetchAllDaytistics(
   supabase: SupabaseClient

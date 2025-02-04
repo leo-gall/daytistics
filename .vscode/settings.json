@@ -19,6 +19,11 @@
         "http",
         "net"
     ],
+    "deno.testing.args": [
+        "--allow-all",
+        "--no-check",
+        "--env-file=./daytistics/.env",
+    ],
     "deno.enable": true,
     "deno.codeLens.implementations": true,
     "deno.codeLens.references": true,

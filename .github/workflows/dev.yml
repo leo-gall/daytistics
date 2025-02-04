@@ -47,9 +47,6 @@ jobs:
   runs-on: ubuntu-latest
   steps:
     - uses: actions/checkout@v4
-    # - uses: actions/setup-node@v4
-    #   with:
-    #     node-version: 20
     
     - uses: denoland/setup-deno@v2
       with:
@@ -92,12 +89,7 @@ jobs:
         S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
         S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
         SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
-
-    - name: Ping edge function test using curl
-      working-directory: ./daytistics
-      run: curl -s http://127.0.0.1:54321/functions/v1/test
     
-
     - name: Run tests
       working-directory: ./daytistics
       run: deno test --allow-all
