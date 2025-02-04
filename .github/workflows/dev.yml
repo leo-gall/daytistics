@@ -93,6 +93,9 @@ jobs:
         S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
         SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
 
+
+    
+
     - name: Run tests
       working-directory: ./daytistics
       run: deno test --allow-all

@@ -4,16 +4,17 @@ import {
 } from "https://deno.land/std@0.192.0/testing/asserts.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
+const supabaseUrl = Deno.env.get("SUPABASE_API_URL") ?? "";
+const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+const options = {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+    detectSessionInUrl: false,
+  },
+};
+
 const testHelloWorld = async () => {
-  const supabaseUrl = Deno.env.get("SUPABASE_API_URL") ?? "";
-  const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-  const options = {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false,
-    },
-  };
   const filteredEnv = Object.fromEntries(
     Object.entries(Deno.env.toObject()).filter(([key]) =>
       key.startsWith("SUPABASE_")
@@ -33,6 +34,7 @@ const testHelloWorld = async () => {
   if (func_error) {
     throw new Error("Invalid response: " + func_error.message);
   }
+  console.log(func_data);
 
   assertEquals(containsSUPABASE_ANON_KEY, true);
 };
