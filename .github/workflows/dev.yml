@@ -95,7 +95,7 @@ jobs:
 
     - name: Ping edge function test using curl
       working-directory: ./daytistics
-      run: curl -s http://127.0.0.1:3000/functions/v1/test
+      run: curl -s http://127.0.0.1:54321/functions/v1/test
     
 
     - name: Run tests
