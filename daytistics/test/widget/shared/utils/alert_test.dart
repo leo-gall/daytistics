@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:daytistics/shared/utils/alert.dart';
 
 void main() {
-  testWidgets('showErrorAlert displays the correct message',
-      (WidgetTester tester) async {
+  testWidgets('showErrorAlert displays the correct message', (tester) async {
     const String testMessage = 'This is a test error message';
 
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
-          builder: (BuildContext context) {
+          builder: (context) {
             return ElevatedButton(
               onPressed: () {
                 showErrorAlert(context, testMessage);
@@ -30,14 +29,13 @@ void main() {
     expect(find.text('OK'), findsOneWidget);
   });
 
-  testWidgets('showErrorAlert dismisses when OK is pressed',
-      (WidgetTester tester) async {
+  testWidgets('showErrorAlert dismisses when OK is pressed', (tester) async {
     const String testMessage = 'This is a test error message';
 
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
-          builder: (BuildContext context) {
+          builder: (context) {
             return ElevatedButton(
               onPressed: () {
                 showErrorAlert(context, testMessage);

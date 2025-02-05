@@ -1,1 +1,3 @@
-- Extract whole business logic into services
+- Create issues
+- Write tests for the edge functions
+- Fix linting

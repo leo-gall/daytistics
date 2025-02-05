@@ -73,9 +73,7 @@ class Daytistic {
     return Daytistic(
       id: daytisticData['id'] as String,
       date: DateTime.parse(daytisticData['date'] as String),
-      activities: activitiesData
-          .map((activityData) => Activity.fromSupabase(activityData))
-          .toList(),
+      activities: activitiesData.map(Activity.fromSupabase).toList(),
       wellbeing: Wellbeing(
         id: daytisticData['wellbeing_id'].toString(),
         health: wellbeingData['health'] as int?,

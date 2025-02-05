@@ -12,17 +12,16 @@ class DashboardCalendar extends ConsumerWidget {
 
     return TableCalendar<dynamic>(
       rowHeight: 45,
-      calendarFormat: CalendarFormat.month,
       firstDay: DateTime.utc(2010, 10, 16),
       lastDay: DateTime.utc(2030, 3, 14),
       availableCalendarFormats: const {
         CalendarFormat.month: 'Month',
       },
       focusedDay: dashboardViewModelState.selectedDate,
-      selectedDayPredicate: (DateTime day) {
+      selectedDayPredicate: (day) {
         return isSameDay(dashboardViewModelState.selectedDate, day);
       },
-      onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
+      onDaySelected: (selectedDay, focusedDay) {
         ref.read(dashboardViewModelProvider.notifier).selectedDate =
             selectedDay;
       },

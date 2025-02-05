@@ -1,10 +1,11 @@
 import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
+import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
+import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
-import 'package:daytistics/application/widgets/prompt_input_field.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
-import 'package:daytistics/shared/widgets/require_auth.dart';
-import 'package:daytistics/shared/widgets/styled_text.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,7 +17,6 @@ class DashboardView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const SizedBox(width: 4),
             StyledText(
@@ -28,7 +28,17 @@ class DashboardView extends ConsumerWidget {
         actions: <Widget>[
           //
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.all_inbox_outlined),
+            onPressed: () async {
+              ChatListModal.showModal(context);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.attach_money_rounded),
+            onPressed: () async {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
             onPressed: () async {
               await ref.read(authServiceProvider.notifier).signOut();
 
@@ -37,9 +47,9 @@ class DashboardView extends ConsumerWidget {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute<SignInView>(
-                      builder: (BuildContext context) => const SignInView(),
+                      builder: (context) => const SignInView(),
                     ),
-                    (Route<dynamic> route) => false,
+                    (route) => false,
                   );
                 }
               }
@@ -69,15 +79,18 @@ class DashboardView extends ConsumerWidget {
           // ),
         ],
       ),
-      body: const RequireAuth(
+      body: RequireAuth(
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                SizedBox(height: 20),
-                PromptInputField(),
-                DashboardCalendar(),
-                DashboardDateCard(),
+                const SizedBox(height: 20),
+                PromptInputField(
+                  onChat: (query, reply) =>
+                      Navigator.pushNamed(context, '/chat'),
+                ),
+                const DashboardCalendar(),
+                const DashboardDateCard(),
               ],
             ),
           ),

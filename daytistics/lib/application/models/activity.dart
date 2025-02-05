@@ -25,7 +25,7 @@ class Activity {
     return Activity(
       id: data['id'] as String,
       name: data['name'] as String,
-      daytisticId: data['daytistic_id'],
+      daytisticId: data['daytistic_id'] as String,
       startTime: DateTime.parse(data['start_time'] as String),
       endTime: DateTime.parse(data['end_time'] as String),
     );
