@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/providers/current_daytistic.dart';
+import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
 import 'package:daytistics/application/repositories/wellbeings/wellbeings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,7 +24,7 @@ class DaytisticsService extends _$DaytisticsService {
   }
 
   Future<Daytistic> fetchOrCreate(DateTime date) async {
-    DaytisticsRepository daytisticsRepository =
+    final DaytisticsRepository daytisticsRepository =
         ref.read(daytisticsRepositoryProvider);
 
     Daytistic? daytistic = await daytisticsRepository.selectDaytistic(date);

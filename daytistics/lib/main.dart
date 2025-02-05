@@ -1,6 +1,7 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
+import 'package:daytistics/ui/chat/views/chat_view.dart';
 import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +16,7 @@ Future<void> initSupabase() async {
 }
 
 Future<void> main() async {
-  await dotenv.load(fileName: '.env');
+  await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -29,15 +30,19 @@ class DaytisticsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SupabaseClient supabase = Supabase.instance.client;
-    final bool isAuthenticated = supabase.auth.currentUser != null;
-
     return MaterialApp(
       title: 'Daytistics',
       locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
-      home: isAuthenticated ? const DashboardView() : const SignInView(),
+
+      // routing
+      initialRoute: '/',
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => const DashboardView(),
+        '/signin': (BuildContext context) => const SignInView(),
+        '/chat': (BuildContext context) => const ChatView(),
+      },
     );
   }
 }

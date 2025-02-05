@@ -17,7 +17,7 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isClickable = onRatingChanged != null;
+    final bool isClickable = onRatingChanged != null;
 
     return Row(
       children: List<Widget>.generate(maxRating, (index) {

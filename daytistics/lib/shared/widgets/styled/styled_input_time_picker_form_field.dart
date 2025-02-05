@@ -57,7 +57,7 @@ class _StyledInputTimePickerFormFieldState
         border: const OutlineInputBorder(),
       ),
       onTap: () async {
-        TimeOfDay? pickedTime = await showTimePicker(
+        final TimeOfDay? pickedTime = await showTimePicker(
           context: context,
           initialTime: TimeOfDay.now(),
         );
