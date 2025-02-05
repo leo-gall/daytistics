@@ -1,70 +1,89 @@
 import OpenAI from "https://deno.land/x/openai@v4.24.0/mod.ts";
-import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
-import { fetchAllDaytistics } from "database/daytistics.ts";
-import { privateEncrypt } from "node:crypto";
+import {
+  requireAuthWrapper,
+  catchExceptionWrapper,
+} from "@daytistics/utils/wrappers.ts";
+import { fetchDaytistics } from "@daytistics/database/daytistics.ts";
 
-const SYSTEM_PROMPT = `
-You are a helpful assistant that analyzes the user's daily activities and provides insights to improve well-being and productivity.  
-You respond to user questions based on the available data, offering insights on well-being, daytistics, productivity, and any patterns you can infer.  
-
----
-
-RESPONSE:  
-Keep responses short, friendly, and positive. Use emojis and humor to make conversations engaging. If relevant, provide actionable suggestions.  
-If the user asks something unrelated to daily activities, well-being, or productivity, let them know you can't answer.  
-Do not use markdown in responses. End each response with a fitting title in this format: <title>Your Title Here</title>.  
-
----
-
-You have access to the following data:  
-`;
-
-const supabaseApiUrl = Deno.env.get("SUPABASE_API_URL");
-const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+const tools: OpenAI.ChatCompletionTool[] = [
+  {
+    type: "function",
+    function: {
+      name: "fetchDaytistics",
+      description:
+        "Fetches daytistics from the database based on the given date or date range.",
+      parameters: {
+        type: "object",
+        properties: {
+          date: {
+            type: "string",
+            format: "date",
+            description:
+              "The specific date to fetch daytistics for (YYYY-MM-DD).",
+          },
+          range: {
+            type: "object",
+            properties: {
+              start: {
+                type: "string",
+                format: "date-time",
+                description: "The start of the date range (ISO 8601 format).",
+              },
+              end: {
+                type: "string",
+                format: "date-time",
+                description: "The end of the date range (ISO 8601 format).",
+              },
+            },
+            required: ["start", "end"],
+            description:
+              "The date range to fetch daytistics for. Cannot be used with 'date'.",
+          },
+        },
+        description: "The options to fetch daytistics with.",
+      },
+    },
+  },
+];
 
 Deno.serve(async (req) => {
-  const { query } = await req.json();
-  const apiKey = Deno.env.get("OPENAI_API_KEY");
+  return await requireAuthWrapper(req, async (supabase, _user) => {
+    return await catchExceptionWrapper(async () => {
+      const { query } = await req.json();
+      const apiKey = Deno.env.get("OPENAI_API_KEY");
 
-  const authHeader = req.headers.get("Authorization")!;
-  const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!, {
-    global: { headers: { Authorization: authHeader } },
-  });
+      const openai = new OpenAI({
+        apiKey: apiKey,
+      });
 
-  const openai = new OpenAI({
-    apiKey: apiKey,
-  });
+      const d1 = await fetchDaytistics(supabase);
+      const d2 = await fetchDaytistics(supabase, {
+        range: { start: new Date(), end: new Date() },
+      });
+      const d3 = await fetchDaytistics(supabase, {
+        date: new Date(),
+      });
 
-  const token = authHeader.replace("Bearer ", "");
-  const { data } = await supabase.auth.getUser(token);
+      const chatCompletion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content:
+              "You always wanna call a function with random arguments for options",
+            //  + fetchedDaytistics,
+          },
+          { role: "user", content: query },
+        ],
+        tools: tools,
+        model: "gpt-3.5-turbo",
+        stream: false,
+      });
 
-  const fetchedDaytistics = await fetchDaytistics(supabase);
+      const reply = chatCompletion.choices[0].message.tool_calls!;
 
-  const chatCompletion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: SYSTEM_PROMPT + fetchedDaytistics,
-      },
-      { role: "user", content: query },
-    ],
-    model: "gpt-3.5-turbo",
-    stream: false,
-  });
-
-  const reply = chatCompletion.choices[0].message.content;
-
-  return new Response(reply, {
-    headers: { "Content-Type": "text/plain" },
+      return new Response(JSON.stringify({ reply }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    });
   });
 });
-
-Deno.test(
-  "send_conversation_message returns data about the daytistics of a user",
-  async () => {
-    const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!, {});
-    const authResponse = await supabase.auth.signInAnonymously();
-
-    console.log(authResponse);
-  }
-);

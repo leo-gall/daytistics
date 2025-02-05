@@ -1,0 +1,329 @@
+CREATE POLICY "Users can delete their own activities" ON "public"."activities" FOR
+DELETE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."id" = "activities"."daytistic_id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can delete their own conversation_messages" ON "public"."conversation_messages" FOR
+DELETE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can delete their own conversations" ON "public"."conversations" FOR
+DELETE
+    USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can delete their own daytistics" ON "public"."daytistics" FOR
+DELETE
+    USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can delete their own diary entries" ON "public"."diary_entries" FOR
+DELETE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    (
+                        "daytistics"."diary_entry_id" = "diary_entries"."id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can delete their own wellbeings" ON "public"."wellbeings" FOR
+DELETE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."wellbeing_id" = "wellbeings"."id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can insert conversation_messages on their own conversation" ON "public"."conversation_messages" FOR
+INSERT
+    WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can insert conversations if authenticated" ON "public"."conversations" FOR
+INSERT
+    TO "authenticated" WITH CHECK (true);
+
+CREATE POLICY "Users can insert their own activities" ON "public"."activities" FOR
+INSERT
+    WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."id" = "activities"."daytistic_id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can insert their own daytistics" ON "public"."daytistics" FOR
+INSERT
+    WITH CHECK (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can insert their own diary entries" ON "public"."diary_entries" FOR
+INSERT
+    WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    (
+                        "daytistics"."diary_entry_id" = "daytistics"."id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can insert wellbeings if they are authenticated" ON "public"."wellbeings" FOR
+INSERT
+    TO "authenticated" WITH CHECK (true);
+
+CREATE POLICY "Users can select their own activities" ON "public"."activities" FOR
+SELECT
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."id" = "activities"."daytistic_id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can select their own conversation_messages" ON "public"."conversation_messages" FOR
+SELECT
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can select their own conversations" ON "public"."conversations" FOR
+SELECT
+    USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can select their own daytistics" ON "public"."daytistics" FOR
+SELECT
+    USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can select their own diary entries" ON "public"."diary_entries" FOR
+SELECT
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    (
+                        "daytistics"."diary_entry_id" = "daytistics"."id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can select their own wellbeings" ON "public"."wellbeings" FOR
+SELECT
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."wellbeing_id" = "wellbeings"."id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can update their own activities" ON "public"."activities" FOR
+UPDATE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."id" = "activities"."daytistic_id")
+            )
+        )
+    ) WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."id" = "activities"."daytistic_id")
+            )
+        )
+    );
+
+CREATE POLICY "Users can update their own conversation_messages" ON "public"."conversation_messages" FOR
+UPDATE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "conversations"."user_id"
+                FROM
+                    "public"."conversations"
+                WHERE
+                    (
+                        "conversations"."id" = "conversation_messages"."conversation_id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can update their own conversations" ON "public"."conversations" FOR
+UPDATE
+    USING (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can update their own daytistics" ON "public"."daytistics" FOR
+UPDATE
+    USING (("auth"."uid"() = "user_id")) WITH CHECK (("auth"."uid"() = "user_id"));
+
+CREATE POLICY "Users can update their own diary entries" ON "public"."diary_entries" FOR
+UPDATE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    (
+                        "daytistics"."diary_entry_id" = "diary_entries"."id"
+                    )
+            )
+        )
+    ) WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    (
+                        "daytistics"."diary_entry_id" = "diary_entries"."id"
+                    )
+            )
+        )
+    );
+
+CREATE POLICY "Users can update their own wellbeings" ON "public"."wellbeings" FOR
+UPDATE
+    USING (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."wellbeing_id" = "wellbeings"."id")
+            )
+        )
+    ) WITH CHECK (
+        (
+            "auth"."uid"() = (
+                SELECT
+                    "daytistics"."user_id"
+                FROM
+                    "public"."daytistics"
+                WHERE
+                    ("daytistics"."wellbeing_id" = "wellbeings"."id")
+            )
+        )
+    );
+
+ALTER TABLE
+    "public"."activities" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."conversation_messages" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."conversations" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."daytistics" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."diary_entries" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE
+    "public"."wellbeings" ENABLE ROW LEVEL SECURITY;

@@ -7,7 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class SupabaseSettings {
   static final String url = (kDebugMode && Platform.isAndroid)
       ? dotenv.env['SUPABASE_ANDROID_URL']!
-      : dotenv.env['SUPABASE_API_URL']!;
+      : dotenv.env['SUPABASE_URL']!;
   static final String anonKey = dotenv.env['SUPABASE_ANON_KEY']!;
 
   // Tables

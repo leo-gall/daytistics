@@ -2,6 +2,7 @@ import { DatabaseActivity } from "./activities.ts";
 import { DatabaseWellbeing } from "./wellbeings.ts";
 
 export interface DatabaseDaytistic {
+  user_id: string;
   id: string;
   date: string;
   wellbeing_id: string;

@@ -24,6 +24,7 @@
         "--no-check",
         "--env-file=./daytistics/.env",
     ],
+    "sql-formatter.dialect": "pl/sql",
     "deno.enable": true,
     "deno.codeLens.implementations": true,
     "deno.codeLens.references": true,

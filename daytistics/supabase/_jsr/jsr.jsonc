@@ -1,6 +1,0 @@
-{
-    "name": "@daytistics/supabase-tools",
-    "version": "0.0.0",
-    "exports": "./mod.ts",
-    "license": "Daytistics Software License",
-}
