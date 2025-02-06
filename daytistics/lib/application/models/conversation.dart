@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/conversation_message.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class Conversation {
@@ -20,10 +21,6 @@ class Conversation {
     this.title = title ?? 'No title';
     this.createdAt = createdAt ?? DateTime.now();
     this.updatedAt = updatedAt ?? DateTime.now();
-  }
-
-  DateTime get lastMessageDate {
-    return messages.isNotEmpty ? messages.last.createdAt : DateTime.now();
   }
 
   Conversation copyWith({
@@ -48,6 +45,7 @@ class Conversation {
       'title': title,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'user_id': Supabase.instance.client.auth.currentUser!.id,
     };
   }
 

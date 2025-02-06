@@ -95,14 +95,16 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
-                                          children: daytistic.wellbeing
+                                          children: daytistic.wellbeing!
                                               .toRatingMap()
                                               .keys
                                               .map((key) {
                                             return Row(
                                               children: <Widget>[
                                                 StyledText(
-                                                  key.capitalize(),
+                                                  key
+                                                      .capitalize()
+                                                      .replaceAll('_', ' '),
                                                   style: const TextStyle(
                                                     fontSize: 16,
                                                   ),
@@ -110,12 +112,12 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                                                 const SizedBox(width: 5),
                                                 StarRating(
                                                   maxRating: 5,
-                                                  rating: daytistic.wellbeing
+                                                  rating: daytistic.wellbeing!
                                                       .toRatingMap()[key],
                                                 ),
                                                 const SizedBox(width: 10),
                                                 if (key !=
-                                                    daytistic.wellbeing
+                                                    daytistic.wellbeing!
                                                         .toRatingMap()
                                                         .keys
                                                         .last)
@@ -151,9 +153,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
             top: 1,
             child: IconButton(
               onPressed: () async {
-                await ref
-                    .read(daytisticsServiceProvider.notifier)
-                    .fetchOrCreate(
+                await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
                       dashboardViewModelState.selectedDate,
                     );
 
@@ -161,7 +161,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                   return;
                 }
 
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute<void>(
                     builder: (context) => const DaytisticDetailsView(),

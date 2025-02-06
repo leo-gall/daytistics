@@ -37,7 +37,7 @@ create table if not exists public .diary_entries (
 create table if not exists public .wellbeings (
     id uuid default gen_random_uuid() primary key,
     daytistic_id uuid not null,
-    time_for_me smallint,
+    me_time smallint,
     health smallint,
     productivity smallint,
     happiness smallint,
@@ -123,11 +123,11 @@ create table if not exists public .wellbeings (
                 and stress <= 5
             )
         ),
-        constraint wellbeings_time_for_me_check check (
-            time_for_me is null
+        constraint wellbeings_me_time_check check (
+            me_time is null
             or (
-                time_for_me >= 0
-                and time_for_me <= 5
+                me_time >= 0
+                and me_time <= 5
             )
         )
 );
