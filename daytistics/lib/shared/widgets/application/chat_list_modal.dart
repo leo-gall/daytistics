@@ -161,7 +161,7 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
                 )
               : StyledText(conversation.title),
           subtitle: StyledText(
-            DateFormat('MM/dd/yyyy').format(conversation.lastMessageDate),
+            DateFormat('MM/dd/yyyy').format(conversation.updatedAt),
           ),
           trailing: TextButton(
             onPressed: () {

@@ -1,31 +1,27 @@
 import 'package:uuid/uuid.dart';
 
 class ConversationMessage {
+  String query;
+  String reply;
+  String conversationId;
   late String id;
-  late String query;
-  late String reply;
   late DateTime createdAt;
-  late bool upvoted;
-  late bool downvoted;
-  late bool copied;
-  late String conversationId;
+  late DateTime updatedAt;
+  late List<String> calledFunctions;
 
   ConversationMessage({
-    String? id,
     required this.query,
     required this.reply,
+    required this.conversationId,
+    String? id,
     DateTime? createdAt,
-    bool? upvoted,
-    bool? downvoted,
-    bool? copied,
-    String? conversationId,
+    DateTime? updatedAt,
+    List<String>? calledFunctions,
   }) {
     this.id = id ?? const Uuid().v4();
     this.createdAt = createdAt ?? DateTime.now();
-    this.upvoted = upvoted ?? false;
-    this.downvoted = downvoted ?? false;
-    this.copied = copied ?? false;
-    this.conversationId = conversationId ?? const Uuid().v4();
+    this.updatedAt = updatedAt ?? DateTime.now();
+    this.calledFunctions = calledFunctions ?? [];
   }
 
   Map<String, dynamic> toSupabase() {
@@ -34,9 +30,8 @@ class ConversationMessage {
       'query': query,
       'reply': reply,
       'created_at': createdAt.toIso8601String(),
-      'upvoted': upvoted,
-      'downvoted': downvoted,
-      'copied': copied,
+      'updated_at': updatedAt.toIso8601String(),
+      'called_functions': calledFunctions,
       'conversation_id': conversationId,
     };
   }
@@ -47,9 +42,8 @@ class ConversationMessage {
       query: data['query'] as String,
       reply: data['reply'] as String,
       createdAt: DateTime.parse(data['created_at'] as String),
-      upvoted: data['upvoted'] as bool,
-      downvoted: data['downvoted'] as bool,
-      copied: data['copied'] as bool,
+      updatedAt: DateTime.parse(data['updated_at'] as String),
+      calledFunctions: (data['called_functions'] as List).cast<String>(),
       conversationId: data['conversation_id'] as String,
     );
   }
@@ -69,9 +63,8 @@ class ConversationMessage {
       query: query ?? this.query,
       reply: reply ?? this.reply,
       createdAt: createdAt ?? this.createdAt,
-      upvoted: upvoted ?? this.upvoted,
-      downvoted: downvoted ?? this.downvoted,
-      copied: copied ?? this.copied,
+      updatedAt: DateTime.now(),
+      calledFunctions: calledFunctions,
       conversationId: conversationId ?? this.conversationId,
     );
   }

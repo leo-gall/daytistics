@@ -1,29 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daytistics_repository.dart';
+part of 'supabase.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$daytisticsRepositoryHash() =>
-    r'f74ea2efcf3be8d6c3551e52cd1483b73b628f6e';
+String _$supabaseClientHash() => r'de6240783d7dddb57e07d034deb0ddf8e2fcc3e4';
 
-/// See also [daytisticsRepository].
-@ProviderFor(daytisticsRepository)
-final daytisticsRepositoryProvider =
-    AutoDisposeProvider<DaytisticsRepository>.internal(
-  daytisticsRepository,
-  name: r'daytisticsRepositoryProvider',
+/// See also [supabaseClient].
+@ProviderFor(supabaseClient)
+final supabaseClientProvider = AutoDisposeProvider<SupabaseClient>.internal(
+  supabaseClient,
+  name: r'supabaseClientProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$daytisticsRepositoryHash,
+      : _$supabaseClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DaytisticsRepositoryRef = AutoDisposeProviderRef<DaytisticsRepository>;
+typedef SupabaseClientRef = AutoDisposeProviderRef<SupabaseClient>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
