@@ -2,7 +2,6 @@ import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/application/repositories/activities/activities_repository.dart';
-import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,12 +35,7 @@ class ActivitiesService extends _$ActivitiesService {
       throw Exception('Start time cannot be the same as end time');
     }
 
-    final daytisticRepository = ref.read(daytisticsRepositoryProvider);
     final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
-
-    if (!await daytisticRepository.existsDaytistic(daytistic)) {
-      await daytisticRepository.upsertDaytistic(daytistic);
-    }
 
     final startTimeAsDateTime = DateTime(
       daytistic.date.year,

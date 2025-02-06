@@ -7,7 +7,7 @@ part of 'current_conversation.dart';
 // **************************************************************************
 
 String _$currentConversationHash() =>
-    r'429afe12d822e5b8c650e6a4ad5f247decea4dbf';
+    r'd815d58ef95b093436bc2a39d4b52b7ccde79767';
 
 /// See also [CurrentConversation].
 @ProviderFor(CurrentConversation)

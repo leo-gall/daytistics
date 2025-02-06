@@ -33,7 +33,7 @@ class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
     final Daytistic daytistic = ref.watch(currentDaytisticProvider)!;
 
     // iterate over the wellbeing ratings (daytistic)
-    final Map<String, int?> wellbeingMap = daytistic.wellbeing.toRatingMap();
+    final Map<String, int?> wellbeingMap = daytistic.wellbeing!.toRatingMap();
 
     return Container(
       height: 500,
@@ -77,7 +77,10 @@ class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
                             .read(wellbeingsServiceProvider.notifier)
                             .updateWellbeing(
                               Wellbeing.fromSupabase(
-                                {...wellbeingMap, 'id': daytistic.wellbeing.id},
+                                {
+                                  ...wellbeingMap,
+                                  'id': daytistic.wellbeing!.id
+                                },
                               ),
                             );
                       },

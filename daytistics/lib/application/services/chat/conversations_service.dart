@@ -36,6 +36,7 @@ class ConversationsService extends _$ConversationsService {
 
     ref.read(currentConversationProvider.notifier).addMessage(
           ConversationMessage(
+            conversationId: ref.read(currentConversationProvider)!.id,
             query: query,
             reply: processedReply,
           ),

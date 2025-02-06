@@ -1,33 +1,34 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 class Daytistic {
   late String id;
   DateTime date;
   late List<Activity> activities;
-  late Wellbeing wellbeing;
+  late Wellbeing? wellbeing;
+  late DateTime createdAt;
+  late DateTime updatedAt;
 
   Daytistic({
     required this.date,
+    this.wellbeing,
     String? id,
     List<Activity>? activities,
-    Wellbeing? wellbeing,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
-    // if not id is provided, generate a new one using Uuid
     this.id = id ?? const Uuid().v4();
+
+    this.createdAt = createdAt ?? DateTime.now();
+    this.updatedAt = updatedAt ?? DateTime.now();
 
     this.activities = [];
 
     if (activities != null) {
       this.activities.addAll(activities);
-    }
-
-    if (wellbeing != null) {
-      this.wellbeing = wellbeing;
-    } else {
-      this.wellbeing = Wellbeing();
     }
   }
 
@@ -45,48 +46,39 @@ class Daytistic {
     DateTime? date,
     List<Activity>? activities,
     Wellbeing? wellbeing,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return Daytistic(
       id: id ?? this.id,
       date: date ?? this.date,
       activities: activities ?? this.activities,
       wellbeing: wellbeing ?? this.wellbeing,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   // TRANSFORMER METHODS
 
-  Map<String, dynamic> toSupabase() {
+  Map<String, dynamic> toSupabase({String? userId}) {
     return {
       'id': id,
       'date': date.toIso8601String(),
-      'wellbeing_id': wellbeing.id,
-      'user_id': Supabase.instance.client.auth.currentUser!.id,
+      'user_id': userId ?? Supabase.instance.client.auth.currentUser!.id,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
   factory Daytistic.fromSupabase(
     Map<String, dynamic> daytisticData,
-    List<Map<String, dynamic>> activitiesData,
-    Map<String, dynamic> wellbeingData,
   ) {
     return Daytistic(
       id: daytisticData['id'] as String,
       date: DateTime.parse(daytisticData['date'] as String),
-      activities: activitiesData.map(Activity.fromSupabase).toList(),
-      wellbeing: Wellbeing(
-        id: daytisticData['wellbeing_id'].toString(),
-        health: wellbeingData['health'] as int?,
-        productivity: wellbeingData['productivity'] as int?,
-        happiness: wellbeingData['happiness'] as int?,
-        recovery: wellbeingData['recovery'] as int?,
-        sleep: wellbeingData['sleep'] as int?,
-        stress: wellbeingData['stress'] as int?,
-        energy: wellbeingData['energy'] as int?,
-        focus: wellbeingData['focus'] as int?,
-        mood: wellbeingData['mood'] as int?,
-        gratitude: wellbeingData['gratitude'] as int?,
-      ),
+      createdAt: DateTime.parse(daytisticData['created_at'] as String),
+      updatedAt: DateTime.parse(daytisticData['updated_at'] as String),
     );
   }
 }
