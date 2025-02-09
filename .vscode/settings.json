@@ -22,7 +22,8 @@
     "deno.testing.args": [
         "--allow-all",
         "--no-check",
-        "--env-file=./daytistics/.env",
+        "--env-file=./daytistics/supabase/.env",
+        "--fail-fast",
     ],
     "sql-formatter.dialect": "pl/sql",
     "deno.enable": true,

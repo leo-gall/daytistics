@@ -1,8 +1,10 @@
 import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { faker } from "npm:@faker-js/faker";
-import { DatabaseActivity } from "../../_shared/types/activities.ts";
-import { DatabaseDaytistic } from "../../_shared/types/daytistics.ts";
-import { DatabaseWellbeing } from "../../_shared/types/wellbeings.ts";
+import {
+  DatabaseActivity,
+  DatabaseDaytistic,
+  DatabaseWellbeing,
+} from "../../_shared/types.ts";
 
 export async function generateFakeDaytistics(
   amount: number,
@@ -20,32 +22,33 @@ export async function generateFakeDaytistics(
     const date = new Date(startingDate);
     date.setDate(startingDate.getDate() + i);
 
-    const wellbeing: DatabaseWellbeing = {
-      id: faker.string.uuid(),
-      health: faker.number.int({ min: 1, max: 10 }),
-      productivity: faker.number.int({ min: 1, max: 10 }),
-      happiness: faker.number.int({ min: 1, max: 10 }),
-      recovery: faker.number.int({ min: 1, max: 10 }),
-      sleep: faker.number.int({ min: 1, max: 10 }),
-      stress: faker.number.int({ min: 1, max: 10 }),
-      energy: faker.number.int({ min: 1, max: 10 }),
-      focus: faker.number.int({ min: 1, max: 10 }),
-      mood: faker.number.int({ min: 1, max: 10 }),
-      gratitude: faker.number.int({ min: 1, max: 10 }),
-      created_at: date.toISOString(),
-      updated_at: date.toISOString(),
-    };
-
     const daytistic: DatabaseDaytistic = {
       user_id: user.id,
       id: faker.string.uuid(),
       date: date.toISOString(),
-      wellbeing_id: wellbeing.id,
       created_at: date.toISOString(),
       updated_at: date.toISOString(),
     };
 
-    const amountOfActivities = faker.number.int({ min: 1, max: 10 });
+    const wellbeing: DatabaseWellbeing = {
+      id: faker.string.uuid(),
+      daytistic_id: daytistic.id,
+      me_time: faker.number.int({ min: 1, max: 5 }),
+      health: faker.number.int({ min: 1, max: 5 }),
+      productivity: faker.number.int({ min: 1, max: 5 }),
+      happiness: faker.number.int({ min: 1, max: 5 }),
+      recovery: faker.number.int({ min: 1, max: 5 }),
+      sleep: faker.number.int({ min: 1, max: 5 }),
+      stress: faker.number.int({ min: 1, max: 5 }),
+      energy: faker.number.int({ min: 1, max: 5 }),
+      focus: faker.number.int({ min: 1, max: 5 }),
+      mood: faker.number.int({ min: 1, max: 5 }),
+      gratitude: faker.number.int({ min: 1, max: 5 }),
+      created_at: date.toISOString(),
+      updated_at: date.toISOString(),
+    };
+
+    const amountOfActivities = faker.number.int({ min: 1, max: 5 });
 
     for (let j = 0; j < amountOfActivities; j++) {
       const activity: DatabaseActivity = {
@@ -75,8 +78,8 @@ export async function generateFakeDaytistics(
   }
 
   // insert all the data
-  await supabase.from("wellbeings").insert(wellbeings);
   await supabase.from("daytistics").insert(daytistics);
+  await supabase.from("wellbeings").insert(wellbeings);
   await supabase.from("activities").insert(activities);
 
   return { daytistics, wellbeings, activities };

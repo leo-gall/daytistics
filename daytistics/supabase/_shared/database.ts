@@ -1,7 +1,5 @@
 import { SupabaseClient } from "jsr:@supabase/supabase-js@2";
-import { DatabaseActivity } from "../types/activities.ts";
-import { DatabaseWellbeing } from "../types/wellbeings.ts";
-import { Daytistic } from "../types/daytistics.ts";
+import { DatabaseActivity, DatabaseWellbeing, Daytistic } from "./types.ts";
 
 interface FetchDaytisticsOptions {
   date?: Date;

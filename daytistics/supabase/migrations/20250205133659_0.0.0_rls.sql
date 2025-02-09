@@ -311,3 +311,22 @@ delete
                 and c .user_id = auth.uid()
         )
     );
+
+alter table
+    public .daily_token_budgets enable row level security;
+
+create policy daily_token_budgets_select_policy on public .daily_token_budgets for
+select
+    using (user_id = auth.uid());
+
+create policy daily_token_budgets_insert_policy on public .daily_token_budgets for
+insert
+    with check (user_id = auth.uid());
+
+create policy daily_token_budgets_update_policy on public .daily_token_budgets for
+update
+    using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy daily_token_budgets_delete_policy on public .daily_token_budgets for
+delete
+    using (user_id = auth.uid());
