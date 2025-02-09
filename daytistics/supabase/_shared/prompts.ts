@@ -57,8 +57,7 @@ export default (options: { timezone: string; currentDateTime: string }) => {
         Keep yourself short and concise, and provide actionable advice to the user based on their activities and well-being scores. Be polite
         but talk like a friend who wants to help. 
 
-        The user lives in the timezone ${options.timezone}. The current UTC time is ${options.currentDateTime}. 
-
+        The current UTC time is ${options.currentDateTime}.
         Do not use markdown in your responses.
         `,
   };

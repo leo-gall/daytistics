@@ -55,93 +55,76 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                           dashboardViewModelState.selectedDate,
                         ),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const StyledText(
-                          '0 hours 0 minutes',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return StyledText(
-                          'Error: ${snapshot.error}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.red,
-                          ),
-                        );
-                      } else {
-                        final daytistic = snapshot.data;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            StyledText(
-                              durationToHoursMinutes(
-                                daytistic?.totalDuration ?? Duration.zero,
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                      final daytistic = snapshot.data;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StyledText(
+                            durationToHoursMinutes(
+                              daytistic?.totalDuration ?? Duration.zero,
                             ),
-                            const SizedBox(height: 5),
-                            if (daytistic == null) const SizedBox(height: 50),
-                            if (daytistic != null)
-                              SizedBox(
-                                height:
-                                    50, // Define a height for the CarouselView
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: daytistic.wellbeing!
-                                              .toRatingMap()
-                                              .keys
-                                              .map((key) {
-                                            return Row(
-                                              children: <Widget>[
-                                                StyledText(
-                                                  key
-                                                      .capitalize()
-                                                      .replaceAll('_', ' '),
-                                                  style: const TextStyle(
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          if (daytistic == null) const SizedBox(height: 50),
+                          if (daytistic != null)
+                            SizedBox(
+                              height:
+                                  50, // Define a height for the CarouselView
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: daytistic.wellbeing!
+                                            .toRatingMap()
+                                            .keys
+                                            .map((key) {
+                                          return Row(
+                                            children: <Widget>[
+                                              StyledText(
+                                                key
+                                                    .capitalize()
+                                                    .replaceAll('_', ' '),
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 5),
+                                              StarRating(
+                                                maxRating: 5,
+                                                rating: daytistic.wellbeing!
+                                                    .toRatingMap()[key],
+                                              ),
+                                              const SizedBox(width: 10),
+                                              if (key !=
+                                                  daytistic.wellbeing!
+                                                      .toRatingMap()
+                                                      .keys
+                                                      .last)
+                                                const Text(
+                                                  '|',
+                                                  style: TextStyle(
                                                     fontSize: 16,
+                                                    color: Colors.grey,
                                                   ),
                                                 ),
-                                                const SizedBox(width: 5),
-                                                StarRating(
-                                                  maxRating: 5,
-                                                  rating: daytistic.wellbeing!
-                                                      .toRatingMap()[key],
-                                                ),
-                                                const SizedBox(width: 10),
-                                                if (key !=
-                                                    daytistic.wellbeing!
-                                                        .toRatingMap()
-                                                        .keys
-                                                        .last)
-                                                  const Text(
-                                                    '|',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                const SizedBox(width: 10),
-                                              ],
-                                            );
-                                          }).toList(),
-                                        ),
+                                              const SizedBox(width: 10),
+                                            ],
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            const SizedBox(height: 5),
-                          ],
-                        );
-                      }
+                            ),
+                          const SizedBox(height: 5),
+                        ],
+                      );
                     },
                   ),
                 ),

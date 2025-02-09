@@ -64,7 +64,7 @@ interface ConversationFeatureFlags {
 
 const inputSchema = z.object({
   query: z.string(),
-  conversation_id: z.string().optional(),
+  conversation_id: z.string().nullable(),
   timezone: z.string(),
 });
 
@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
     }
 
     let query: string;
-    let conversationId: string | undefined;
+    let conversationId: string | null;
     let timezone: string;
 
     try {
@@ -113,9 +113,9 @@ Deno.serve(async (req) => {
       query = q;
       conversationId = conversation_id;
       timezone = tz;
-    } catch {
+    } catch (error) {
       return new Response(JSON.stringify({ error: "Invalid input schema" }), {
-        status: 400,
+        status: 422,
         headers: { "Content-Type": "application/json" },
       });
     }

@@ -97,7 +97,9 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
                   },
                 ),
               ),
-              const PromptInputField(),
+              PromptInputField(
+                onChat: (query, reply) => Navigator.pushNamed(context, '/chat'),
+              ),
             ],
           ),
         ),
