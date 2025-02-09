@@ -1,5 +1,6 @@
 import {
   createClient,
+  FunctionsHttpError,
   SupabaseClient,
   User,
 } from "jsr:@supabase/supabase-js@2";
@@ -49,7 +50,11 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     }
   );
 
-  console.log(response);
+  if (response.error) {
+    const reader = (response.error.context.body as ReadableStream).getReader();
+    const { value } = await reader.read();
+    console.log(new TextDecoder().decode(value));
+  }
 
   const conversation: DatabaseConversation = (
     await supabase
