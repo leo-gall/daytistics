@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
     }
 
     let query: string;
-    let conversationId: string | null;
+    let conversationId: string | null | undefined;
     let timezone: string;
 
     try {
