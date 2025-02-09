@@ -111,11 +111,14 @@ jobs:
         run: nohup npx supabase functions serve &
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       
       - name: Run tests (Deno)
         working-directory: ./daytistics
         run: deno test --allow-all
         env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
           SUPABASE_URL: ${{ env.API_URL }}
           SUPABASE_DB_URL: ${{ env.DB_URL }}
