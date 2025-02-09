@@ -156,6 +156,20 @@ create table if not exists public .conversation_messages (
         cascade
 );
 
+CREATE TABLE IF NOT EXISTS public .daily_token_budgets (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid NOT NULL,
+    date date NOT NULL,
+    input_tokens integer NOT NULL,
+    output_tokens integer NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc' :: text, now()) NOT NULL,
+    updated_at timestamp with time zone DEFAULT timezone('utc' :: text, now()) NOT NULL,
+    CONSTRAINT daily_token_budgets_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON
+    DELETE
+        CASCADE,
+        CONSTRAINT unique_user_date UNIQUE (user_id, date)
+);
+
 create extension if not exists moddatetime schema extensions;
 
 create trigger handle_updated_at before
