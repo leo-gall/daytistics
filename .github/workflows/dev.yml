@@ -117,16 +117,14 @@ jobs:
       #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       #     POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
       #     SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-
-      - name: Test using Curl
-        working-directory: ./daytistics
-        run: curl -s http://127.0.0.1:54321/functions/v1/send_conversation_message
       
       - name: Run tests (Deno)
         working-directory: ./daytistics
         run: deno test --allow-all
         env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
           SUPABASE_URL: ${{ env.API_URL }}
           SUPABASE_DB_URL: ${{ env.DB_URL }}
