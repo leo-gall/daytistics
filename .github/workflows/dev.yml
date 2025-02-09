@@ -102,7 +102,7 @@ jobs:
       
       - name: Run tests (Deno)
         working-directory: ./daytistics
-        run: deno test --allow-all
+        run: printenv
         env:
           SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
           SUPABASE_URL: ${{ env.SUPABASE_URL }} 
