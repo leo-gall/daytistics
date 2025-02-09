@@ -63,7 +63,7 @@ interface ConversationFeatureFlags {
 
 const inputSchema = z.object({
   query: z.string(),
-  conversation_id: z.string().nullable(),
+  conversation_id: z.string().nullable().optional(),
   timezone: z.string(),
 });
 
