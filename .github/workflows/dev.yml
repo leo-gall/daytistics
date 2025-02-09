@@ -63,36 +63,45 @@ jobs:
       - name: Storing Supabase secrets
         id: supabase-keys
         working-directory: ./daytistics
-        run: npx supabase status -o env >> $GITHUB_OUTPUT
+        run: |
+          # Parse each line from supabase status and set as output
+          while IFS= read -r line; do
+            name=$(echo "$line" | cut -d '=' -f1)
+            value=$(echo "$line" | cut -d '=' -f2-)
+            echo "$name=$value" >> $GITHUB_OUTPUT
+          done < <(npx supabase status -o env)
+        shell: bash
 
       - name: Clean environment variables
         id: clean-env
         shell: bash
         run: |
-          # Remove starting and trailing double quotes from all secret variables and append them to $GITHUB_ENV
-          echo "ANON_KEY=$(echo "${ANON_KEY}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "API_URL=$(echo "${API_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "DB_URL=$(echo "${DB_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "GRAPHQL_URL=$(echo "${GRAPHQL_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "INBUCKET_URL=$(echo "${INBUCKET_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "JWT_SECRET=$(echo "${JWT_SECRET}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "S3_PROTOCOL_ACCESS_KEY_ID=$(echo "${S3_PROTOCOL_ACCESS_KEY_ID}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "S3_PROTOCOL_ACCESS_KEY_SECRET=$(echo "${S3_PROTOCOL_ACCESS_KEY_SECRET}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "S3_PROTOCOL_REGION=$(echo "${S3_PROTOCOL_REGION}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "SERVICE_ROLE_KEY=$(echo "${SERVICE_ROLE_KEY}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "STORAGE_S3_URL=$(echo "${STORAGE_S3_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
-          echo "STUDIO_URL=$(echo "${STUDIO_URL}" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          # Remove quotes from each variable and set in GitHub environment
+          echo "ANON_KEY=$(echo "$ANON_KEY" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "API_URL=$(echo "$API_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "DB_URL=$(echo "$DB_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "GRAPHQL_URL=$(echo "$GRAPHQL_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "INBUCKET_URL=$(echo "$INBUCKET_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "JWT_SECRET=$(echo "$JWT_SECRET" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "S3_ACCESS_KEY=$(echo "$S3_PROTOCOL_ACCESS_KEY_ID" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "S3_SECRET_KEY=$(echo "$S3_PROTOCOL_ACCESS_KEY_SECRET" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "S3_REGION=$(echo "$S3_PROTOCOL_REGION" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "SERVICE_ROLE_KEY=$(echo "$SERVICE_ROLE_KEY" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "STORAGE_S3_URL=$(echo "$STORAGE_S3_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
+          echo "STUDIO_URL=$(echo "$STUDIO_URL" | sed 's/^"//; s/"$//')" >> $GITHUB_ENV
         env:
-          SUPABASE_ANON_KEY: ${{ steps.supabase-keys.outputs.ANON_KEY }}
-          SUPABASE_URL: ${{ steps.supabase-keys.outputs.API_URL }}
-          SUPABASE_DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
-          SUPABASE_GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
-          SUPABASE_INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
-          SUPABASE_JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
-          SUPABASE_S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
-          SUPABASE_S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
-          SUPABASE_S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
+          ANON_KEY: ${{ steps.supabase-keys.outputs.ANON_KEY }}
+          API_URL: ${{ steps.supabase-keys.outputs.API_URL }}
+          DB_URL: ${{ steps.supabase-keys.outputs.DB_URL }}
+          GRAPHQL_URL: ${{ steps.supabase-keys.outputs.GRAPHQL_URL }}
+          INBUCKET_URL: ${{ steps.supabase-keys.outputs.INBUCKET_URL }}
+          JWT_SECRET: ${{ steps.supabase-keys.outputs.JWT_SECRET }}
+          S3_PROTOCOL_ACCESS_KEY_ID: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_ID }}
+          S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_ACCESS_KEY_SECRET }}
+          S3_PROTOCOL_REGION: ${{ steps.supabase-keys.outputs.S3_PROTOCOL_REGION }}
+          SERVICE_ROLE_KEY: ${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}
+          STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
+          STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
 
       - name: Serve edge functions
         working-directory: ./daytistics
@@ -102,20 +111,20 @@ jobs:
       
       - name: Run tests (Deno)
         working-directory: ./daytistics
-        run: printenv
+        run: deno test --allow-all
         env:
-          SUPABASE_ANON_KEY: ${{ env.SUPABASE_ANON_KEY }}
-          SUPABASE_URL: ${{ env.SUPABASE_URL }} 
-          SUPABASE_DB_URL: ${{ env.SUPABASE_DB_URL }}
-          SUPABASE_GRAPHQL_URL: ${{ env.SUPABASE_GRAPHQL_URL }}
-          SUPABASE_INBUCKET_URL: ${{ env.SUPABASE_INBUCKET_URL }}
-          SUPABASE_JWT_SECRET: ${{ env.SUPABASE_JWT_SECRET }}
-          SUPABASE_S3_PROTOCOL_ACCESS_KEY_ID: ${{ env.SUPABASE_S3_PROTOCOL_ACCESS_KEY_ID }}
-          SUPABASE_S3_PROTOCOL_ACCESS_KEY_SECRET: ${{ env.SUPABASE_S3_PROTOCOL_ACCESS_KEY_SECRET }}
-          SUPABASE_S3_PROTOCOL_REGION: ${{ env.SUPABASE_S3_PROTOCOL_REGION }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPABASE_STORAGE_S3_URL: ${{ env.SUPABASE_STORAGE_S3_URL }}
-          SUPABASE_STUDIO_URL: ${{ env.SUPABASE_STUDIO_URL }}
+          SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
+          SUPABASE_URL: ${{ env.API_URL }}
+          SUPABASE_DB_URL: ${{ env.DB_URL }}
+          SUPABASE_GRAPHQL_URL: ${{ env.GRAPHQL_URL }}
+          SUPABASE_INBUCKET_URL: ${{ env.INBUCKET_URL }}
+          SUPABASE_JWT_SECRET: ${{ env.JWT_SECRET }}
+          SUPABASE_S3_ACCESS_KEY: ${{ env.S3_ACCESS_KEY }}
+          SUPABASE_S3_SECRET_KEY: ${{ env.S3_SECRET_KEY }}
+          SUPABASE_S3_REGION: ${{ env.S3_REGION }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ env.SERVICE_ROLE_KEY }}
+          SUPABASE_STORAGE_S3_URL: ${{ env.STORAGE_S3_URL }}
+          SUPABASE_STUDIO_URL: ${{ env.STUDIO_URL }}
 
   build-android:
     runs-on: ubuntu-latest
