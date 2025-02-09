@@ -14,62 +14,62 @@ import {
 } from "@daytistics/types";
 import prompts from "@daytistics/prompts";
 
-// initSentry();
+Deno.serve(async (req) => {
+  initSentry();
 
-const tools: OpenAI.ChatCompletionTool[] = [
-  {
-    type: "function",
-    function: {
-      name: "fetchDaytistics",
-      description:
-        "Fetches daytistics from the database based on the given date or date range.",
-      parameters: {
-        type: "object",
-        properties: {
-          date: {
-            type: "string",
-            format: "date",
-            description:
-              "The specific date to fetch daytistics for (YYYY-MM-DD).",
-          },
-          range: {
-            type: "object",
-            properties: {
-              start: {
-                type: "string",
-                format: "date-time",
-                description: "The start of the date range (ISO 8601 format).",
-              },
-              end: {
-                type: "string",
-                format: "date-time",
-                description: "The end of the date range (ISO 8601 format).",
-              },
+  const tools: OpenAI.ChatCompletionTool[] = [
+    {
+      type: "function",
+      function: {
+        name: "fetchDaytistics",
+        description:
+          "Fetches daytistics from the database based on the given date or date range.",
+        parameters: {
+          type: "object",
+          properties: {
+            date: {
+              type: "string",
+              format: "date",
+              description:
+                "The specific date to fetch daytistics for (YYYY-MM-DD).",
             },
-            required: ["start", "end"],
-            description:
-              "The date range to fetch daytistics for. Cannot be used with 'date'.",
+            range: {
+              type: "object",
+              properties: {
+                start: {
+                  type: "string",
+                  format: "date-time",
+                  description: "The start of the date range (ISO 8601 format).",
+                },
+                end: {
+                  type: "string",
+                  format: "date-time",
+                  description: "The end of the date range (ISO 8601 format).",
+                },
+              },
+              required: ["start", "end"],
+              description:
+                "The date range to fetch daytistics for. Cannot be used with 'date'.",
+            },
           },
+          description: "The options to fetch daytistics with.",
         },
-        description: "The options to fetch daytistics with.",
       },
     },
-  },
-];
+  ];
 
-interface ConversationFeatureFlags {
-  max_output_tokens_per_day: number;
-  model: string;
-  title_model: string;
-}
+  interface ConversationFeatureFlags {
+    max_output_tokens_per_day: number;
+    model: string;
+    title_model: string;
+  }
 
-const inputSchema = z.object({
-  query: z.string(),
-  conversation_id: z.string().nullable().optional(),
-  timezone: z.string(),
-});
+  const inputSchema = z.object({
+    query: z.string(),
+    conversation_id: z.string().nullable().optional(),
+    timezone: z.string(),
+  });
 
-Deno.serve(async (req) => {
   let posthog;
 
   try {
