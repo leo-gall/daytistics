@@ -69,10 +69,6 @@ const inputSchema = z.object({
   timezone: z.string(),
 });
 
-const openai = new OpenAI({
-  apiKey: Deno.env.get("OPENAI_API_KEY"),
-});
-
 Deno.serve(async (req) => {
   let posthog;
 
@@ -119,6 +115,10 @@ Deno.serve(async (req) => {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    const openai = new OpenAI({
+      apiKey: Deno.env.get("OPENAI_API_KEY"),
+    });
 
     posthog = initPosthog();
 
