@@ -52,8 +52,6 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
 
   console.log(response.error);
 
-  return;
-
   const conversation: DatabaseConversation = (
     await supabase
       .from("conversations")
@@ -254,10 +252,11 @@ Deno.test(
 
     let testWithoutConversationIdResult: StepResult;
     await t.step("Without conversation ID", async () => {
-      // testWithoutConversationIdResult =
-      await testWithoutConversationId(supabase, date);
+      testWithoutConversationIdResult = await testWithoutConversationId(
+        supabase,
+        date
+      );
     });
-    return;
 
     let testWithConversationIdResult: StepResult;
     await t.step("With conversation ID", async () => {
