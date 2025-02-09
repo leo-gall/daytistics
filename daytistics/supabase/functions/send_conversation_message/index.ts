@@ -73,7 +73,7 @@ const openai = new OpenAI({
 
 Deno.serve(async (req) => {
   initSentry();
-  const posthog = initPosthog();
+  let posthog;
 
   try {
     const authHeader = req.headers.get("Authorization")!;
@@ -119,7 +119,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const posthog = initPosthog();
+    posthog = initPosthog();
 
     if (!(await posthog.isFeatureEnabled("conversations", user!.id))) {
       return new Response(
@@ -350,7 +350,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     Sentry.captureException(error);
     await Sentry.flush();
-    await posthog.shutdown();
+    await posthog!.shutdown();
     return new Response(JSON.stringify({ error: "An unknown error occured" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
