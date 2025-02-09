@@ -1,6 +1,5 @@
 import 'package:daytistics/application/services/chat/conversations_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +11,7 @@ class PromptInputField extends ConsumerStatefulWidget {
   /// - `String`: User input or message.
   /// - `String`: Response from the chat service.
   ///
-  final Function(String, String)? onChat;
+  final void Function(String, String)? onChat;
 
   const PromptInputField({
     super.key,
@@ -129,7 +128,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     });
 
     if (widget.onChat != null) {
-      widget.onChat!(_controller.text, reply);
+      widget.onChat?.call(_controller.text, reply);
     }
   }
 }

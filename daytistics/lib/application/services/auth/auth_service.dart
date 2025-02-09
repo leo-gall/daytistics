@@ -38,7 +38,7 @@ class AuthService extends _$AuthService {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        throw 'User cancelled the sign-in process.';
+        throw Exception('User cancelled the sign-in process.');
       }
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
@@ -46,10 +46,10 @@ class AuthService extends _$AuthService {
       final String? idToken = googleAuth.idToken;
 
       if (accessToken == null) {
-        throw 'No Access Token found.';
+        throw Exception('No Access Token found.');
       }
       if (idToken == null) {
-        throw 'No ID Token found.';
+        throw Exception('No ID Token found.');
       }
 
       await _authRepository.signInWithGoogle(idToken, accessToken);

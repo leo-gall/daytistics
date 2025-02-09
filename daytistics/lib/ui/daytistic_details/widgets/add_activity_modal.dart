@@ -13,7 +13,7 @@ class AddActivityModal extends ConsumerStatefulWidget {
   ConsumerState<AddActivityModal> createState() => _ActivityModalState();
 
   static void showModal(BuildContext context) {
-    showMaterialModalBottomSheet(
+    showMaterialModalBottomSheet<AddActivityModal>(
       context: context,
       builder: (context) {
         return const AddActivityModal();
@@ -105,6 +105,7 @@ class _ActivityModalState extends ConsumerState<AddActivityModal> {
             startTime: _startTime,
             endTime: _endTime,
           );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (!mounted) return;
       showErrorAlert(context, e.toString());

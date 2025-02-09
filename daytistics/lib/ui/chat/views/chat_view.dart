@@ -70,7 +70,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           PromptInputField(
             onChat: (query, reply) async {
               // scroll to the bottom of the list
-              _scrollController.animateTo(
+              await _scrollController.animateTo(
                 _scrollController.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,

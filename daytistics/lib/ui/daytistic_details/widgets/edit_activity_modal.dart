@@ -16,7 +16,7 @@ class EditActivityModal extends ConsumerStatefulWidget {
   ConsumerState<EditActivityModal> createState() => _EditActivityModalState();
 
   static void showModal(BuildContext context, Activity activity) {
-    showMaterialModalBottomSheet(
+    showMaterialModalBottomSheet<EditActivityModal>(
       context: context,
       builder: (context) {
         return EditActivityModal(activity);
@@ -136,8 +136,9 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
             startTime: _startTime,
             endTime: _endTime,
           );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      // ignore: use_build_context_synchronously
+      if (!mounted) return;
       showErrorAlert(context, e.toString());
       return;
     }
@@ -160,6 +161,7 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
       await ref.read(activitiesServiceProvider.notifier).deleteActivity(
             widget.activity,
           );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (!mounted) return;
       showErrorAlert(context, e.toString());

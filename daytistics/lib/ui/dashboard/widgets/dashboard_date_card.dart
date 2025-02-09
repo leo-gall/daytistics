@@ -1,11 +1,11 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
-import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
-import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/application/star_rating.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
+import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages

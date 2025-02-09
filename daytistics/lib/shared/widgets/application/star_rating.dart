@@ -5,7 +5,7 @@ class StarRating extends StatelessWidget {
   final int maxRating;
   final int? rating;
   final bool showFullRating;
-  final Function(int)? onRatingChanged;
+  final void Function(int)? onRatingChanged;
 
   const StarRating({
     super.key,

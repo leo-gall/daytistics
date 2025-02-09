@@ -2,10 +2,10 @@ import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,7 +44,7 @@ class DashboardView extends ConsumerWidget {
 
               if (!ref.read(authServiceProvider.notifier).isAuthenticated()) {
                 if (context.mounted) {
-                  Navigator.pushAndRemoveUntil(
+                  await Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute<SignInView>(
                       builder: (context) => const SignInView(),

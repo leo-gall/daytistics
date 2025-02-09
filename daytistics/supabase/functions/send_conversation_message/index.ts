@@ -1,7 +1,6 @@
 import OpenAI from "https://deno.land/x/openai@v4.24.0/mod.ts";
 import { z } from "npm:zod";
 import { v4 as uuidv4 } from "npm:uuid";
-import { encoding_for_model, TiktokenModel } from "npm:tiktoken";
 import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import * as Sentry from "npm:@sentry/deno";
 
@@ -113,7 +112,7 @@ Deno.serve(async (req) => {
       query = q;
       conversationId = conversation_id;
       timezone = tz;
-    } catch (error) {
+    } catch {
       return new Response(JSON.stringify({ error: "Invalid input schema" }), {
         status: 422,
         headers: { "Content-Type": "application/json" },

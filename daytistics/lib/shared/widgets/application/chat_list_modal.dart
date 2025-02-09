@@ -63,8 +63,7 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
         _conversations.addAll(conversations);
         _hasMore = conversations.length >= _pageSize;
       });
-
-      print('Fetched ${conversations.length} conversations');
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       setState(() {
         _isLoading = false;

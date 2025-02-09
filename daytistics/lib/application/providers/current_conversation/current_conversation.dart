@@ -1,7 +1,5 @@
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
-import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'current_conversation.g.dart';
@@ -13,6 +11,7 @@ class CurrentConversation extends _$CurrentConversation {
     return null;
   }
 
+  // ignore: use_setters_to_change_properties
   void setConversation(Conversation? conversation) {
     state = conversation;
   }

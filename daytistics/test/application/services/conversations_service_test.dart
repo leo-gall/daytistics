@@ -1,12 +1,10 @@
 import 'package:daytistics/application/models/conversation.dart';
-import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
 import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:daytistics/application/services/chat/conversations_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
-import 'package:riverpod/riverpod.dart';
-import 'package:supabase/supabase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../container.dart';
@@ -50,12 +48,13 @@ void main() {
       test('fetches conversations with messages in correct order', () async {
         // Insert test data
         final convos = List.generate(
-            3,
-            (i) => Conversation(
-                  id: 'convo-$i',
-                  title: 'Convo $i',
-                  updatedAt: DateTime.now().add(Duration(days: i)),
-                ));
+          3,
+          (i) => Conversation(
+            id: 'convo-$i',
+            title: 'Convo $i',
+            updatedAt: DateTime.now().add(Duration(days: i)),
+          ),
+        );
 
         for (final convo in convos) {
           await mockSupabase.from('conversations').insert(

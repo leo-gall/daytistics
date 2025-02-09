@@ -1,19 +1,17 @@
 import {
   createClient,
-  PostgrestSingleResponse,
   SupabaseClient,
   User,
 } from "jsr:@supabase/supabase-js@2";
 import {
   assertEquals,
   assert,
-  assertArrayIncludes,
   assertGreaterOrEqual,
   assertFalse,
   assertGreater,
 } from "jsr:@std/assert";
 import { generateFakeDaytistics } from "./test-utils.ts";
-import { Conversation, DatabaseConversation } from "../../_shared/types.ts";
+import { DatabaseConversation } from "../../_shared/types.ts";
 import { initPosthog } from "../../_shared/adapters.ts";
 
 const query1 =
@@ -159,8 +157,7 @@ async function testWithConversationId(
 async function testWithExceededTokenBudget(
   supabase: SupabaseClient,
   date: Date,
-  user: User,
-  accessToken: string
+  user: User
 ) {
   const posthog = initPosthog();
   const featureFlagPayload = (await posthog.getFeatureFlagPayload(
@@ -234,7 +231,7 @@ Deno.test(
     const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!);
 
     const {
-      data: { user, session },
+      data: { user },
     } = await supabase.auth.signInAnonymously();
 
     await generateFakeDaytistics(3, user!, supabase);
@@ -267,12 +264,7 @@ Deno.test(
     });
 
     await t.step("Exceeded token budget", async () => {
-      await testWithExceededTokenBudget(
-        supabase,
-        date,
-        user!,
-        session?.access_token!
-      );
+      await testWithExceededTokenBudget(supabase, date, user!);
     });
 
     await t.step("Tokens increased", () => {

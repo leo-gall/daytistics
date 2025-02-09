@@ -1,13 +1,13 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
+import 'package:daytistics/shared/widgets/security/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/add_activity_modal.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_modal.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_modal.dart';
-import 'package:daytistics/shared/utils/time.dart';
-import 'package:daytistics/shared/widgets/security/require_auth.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
