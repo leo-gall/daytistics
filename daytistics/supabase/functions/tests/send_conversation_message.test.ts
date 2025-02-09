@@ -49,6 +49,8 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     }
   );
 
+  console.log(response);
+
   const conversation: DatabaseConversation = (
     await supabase
       .from("conversations")
@@ -108,6 +110,8 @@ async function testWithConversationId(
       },
     }
   );
+
+  console.log(response);
 
   assertEquals(response.error, null);
   assertEquals(response.data.query, query2);
