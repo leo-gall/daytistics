@@ -351,9 +351,9 @@ Deno.serve(async (req) => {
   } catch (error) {
     Sentry.captureException(error);
     await Sentry.flush();
-    await posthog!.shutdown();
+    await posthog?.shutdown();
     return new Response(JSON.stringify({ error: "An unknown error occured" }), {
-      status: 500,
+      status: 600,
       headers: { "Content-Type": "application/json" },
     });
   }
