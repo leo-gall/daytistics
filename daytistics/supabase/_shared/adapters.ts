@@ -3,7 +3,7 @@ import { PostHog } from "npm:posthog-node";
 
 export function initSentry(): void {
   Sentry.init({
-    dsn: "https://7bb526cf1cedaeead0825d5990734c57@o4508760945000448.ingest.de.sentry.io/4508760947884112",
+    dsn: Deno.env.get("SENTRY_DSN")!,
     defaultIntegrations: false,
     tracesSampleRate: 1.0,
   });
