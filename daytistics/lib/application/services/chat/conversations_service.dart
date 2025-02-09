@@ -1,7 +1,9 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
-import 'package:daytistics/application/repositories/conversations/conversations_repository.dart';
+import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,64 +19,73 @@ class ConversationsService extends _$ConversationsService {
   }
 
   Future<String> sendMessage(String query) async {
-    final ConversationsRepository conversationsRepository =
-        ref.read(conversationsRepositoryProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final currentConversationNotifier =
+        ref.read(currentConversationProvider.notifier);
+    final currentConversation = ref.read(currentConversationProvider);
 
-    final reply = await Supabase.instance.client.functions
-        .invoke('conversation', body: {'query': query});
+    final response = await Supabase.instance.client.functions.invoke(
+      'send_conversation_message',
+      body: {
+        'query': query,
+        'timezone': DateTime.now().timeZoneName,
+        'conversation_id': currentConversation?.id,
+      },
+    );
 
-    final title = RegExp('<title>(.*?)</title>', dotAll: true)
-        .firstMatch(reply.data.toString())
-        ?.group(1);
-
-    final String processedReply = reply.data.toString().replaceAll(
-          RegExp('<title>.*?</title>'),
-          '',
-        );
-
-    ref.read(currentConversationProvider.notifier).updateTitle(title);
-
-    ref.read(currentConversationProvider.notifier).addMessage(
-          ConversationMessage(
-            conversationId: ref.read(currentConversationProvider)!.id,
-            query: query,
-            reply: processedReply,
-          ),
-        );
-
-    if (!await conversationsRepository.existsConversation(
-      ref.read(currentConversationProvider)!,
-    )) {
-      await conversationsRepository.insertConversation(
-        ref.read(currentConversationProvider)!,
+    if (currentConversation == null) {
+      currentConversationNotifier.setConversation(
+        await supabase
+            .from('conversations')
+            .select()
+            .eq('id', response.data['conversation_id'] as String)
+            .maybeSingle()
+            .then((data) {
+          if (data != null) {
+            return Conversation.fromSupabase(data);
+          }
+          return null;
+        }),
       );
+    } else {
+      currentConversationNotifier.updateTitle(response.data['title'] as String);
     }
 
-    await conversationsRepository.insertMessage(
+    currentConversationNotifier.addMessage(
       ConversationMessage(
-        query: query,
-        reply: processedReply,
         conversationId: ref.read(currentConversationProvider)!.id,
+        query: query,
+        reply: response.data['reply'] as String,
       ),
     );
 
-    return processedReply;
+    return response.data['reply'] as String;
   }
 
   Future<List<Conversation>> fetchConversations({
     required int start,
     int? amount,
   }) async {
-    final conversations =
-        await ref.read(conversationsRepositoryProvider).fetchConversations(
-              start: start,
-              amount: amount,
-            );
+    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+
+    final conversations = (await supabase
+            .from('conversations')
+            .select()
+            .order('updated_at', ascending: false)
+            .range(start, start + (amount ?? 10)))
+        .toList()
+        .map(Conversation.fromSupabase)
+        .toList();
 
     for (final conversation in conversations) {
-      final List<ConversationMessage> messages = await ref
-          .read(conversationsRepositoryProvider)
-          .fetchMessages(conversation.id);
+      final List<ConversationMessage> messages = (await supabase
+              .from('conversation_messages')
+              .select()
+              .eq('conversation_id', conversation.id)
+              .order('created_at', ascending: false))
+          .toList()
+          .map(ConversationMessage.fromSupabase)
+          .toList();
 
       conversation.messages = messages;
     }
@@ -82,39 +93,10 @@ class ConversationsService extends _$ConversationsService {
     return conversations;
   }
 
-  Future<void> toggleUpvote(ConversationMessage message) async {
-    final updatedMessage = message.copyWith(
-      upvoted: true,
-    );
-
-    ref.read(currentConversationProvider.notifier).updateMessage(
-          updatedMessage,
-        );
-
-    await ref
-        .read(conversationsRepositoryProvider)
-        .updateMessage(updatedMessage);
-  }
-
-  Future<void> toggleDownvote(ConversationMessage message) async {
-    final updatedMessage = message.copyWith(
-      downvoted: true,
-    );
-
-    ref.read(currentConversationProvider.notifier).updateMessage(
-          updatedMessage,
-        );
-
-    await ref
-        .read(conversationsRepositoryProvider)
-        .updateMessage(updatedMessage);
-  }
-
   Future<void> deleteConversation(Conversation conversation) async {
-    await ref
-        .read(conversationsRepositoryProvider)
-        .deleteConversation(conversation);
+    final SupabaseClient supabase = ref.read(supabaseClientProvider);
 
+    await supabase.from('conversations').delete().eq('id', conversation.id);
     final Conversation? currentConversation =
         ref.read(currentConversationProvider);
 
@@ -122,10 +104,6 @@ class ConversationsService extends _$ConversationsService {
       if (currentConversation.id == conversation.id) {
         ref.read(currentConversationProvider.notifier).clear();
       }
-    }
-
-    for (final message in conversation.messages) {
-      await ref.read(conversationsRepositoryProvider).deleteMessage(message);
     }
   }
 }

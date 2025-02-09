@@ -2,7 +2,6 @@ import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/repositories/conversations/conversations_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'current_conversation.g.dart';

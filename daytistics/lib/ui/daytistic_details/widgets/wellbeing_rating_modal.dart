@@ -79,6 +79,7 @@ class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
                               Wellbeing.fromSupabase(
                                 {
                                   ...wellbeingMap,
+                                  'daytistic_id': daytistic.id,
                                   'id': daytistic.wellbeing!.id
                                 },
                               ),

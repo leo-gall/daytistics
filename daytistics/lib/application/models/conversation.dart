@@ -39,13 +39,15 @@ class Conversation {
     );
   }
 
-  Map<String, dynamic> toSupabase() {
+  Map<String, dynamic> toSupabase({
+    required String userId,
+  }) {
     return {
       'id': id,
       'title': title,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      'user_id': Supabase.instance.client.auth.currentUser!.id,
+      'user_id': userId,
     };
   }
 
