@@ -50,7 +50,7 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     }
   );
 
-  console.log(response.error);
+  console.log(response.data.error);
 
   const conversation: DatabaseConversation = (
     await supabase
