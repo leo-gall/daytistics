@@ -17,7 +17,6 @@ import { initPosthog } from "../../_shared/adapters.ts";
 
 const query1 =
   "What would you recommend to improve my wellbeing? Based on: a) my activities in the last week, b) my activities yesterday, c) all my activities. Answer 3 times.";
-
 const query2 = "What have we talked about so far?";
 
 interface StepResult {
@@ -40,6 +39,15 @@ async function testContainsNoDailyTokenBudgets(
 }
 
 async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
+  // Debug: Before calling the edge function without conversation_id
+  console.log(
+    "DEBUG: Invoking send_conversation_message (no conversation_id)",
+    {
+      query: query1,
+      timezone: "Berlin",
+    }
+  );
+
   const response = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -48,6 +56,12 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
         timezone: "Berlin",
       },
     }
+  );
+
+  // Debug: Log the raw response
+  console.log(
+    "DEBUG: Response received from send_conversation_message",
+    response
   );
 
   if (response.data?.error) {
@@ -79,7 +93,7 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
   assertFalse(conversationMessages === null);
   assertGreaterOrEqual(conversationMessages!.length, 1);
 
-  // assert that daily token budget was created and its fields are correct
+  // Ensure the daily token budget was created and its fields are correct
   const { data: dailyTokenBudgetsData } = await supabase
     .from("daily_token_budgets")
     .select()
@@ -105,6 +119,16 @@ async function testWithConversationId(
   date: Date,
   conversationId: string
 ) {
+  // Debug: Before calling the edge function with conversation_id
+  console.log(
+    "DEBUG: Invoking send_conversation_message (with conversation_id)",
+    {
+      query: query2,
+      conversationId,
+      timezone: "Berlin",
+    }
+  );
+
   const response = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -116,7 +140,11 @@ async function testWithConversationId(
     }
   );
 
-  console.log(response);
+  // Debug: Log the raw response
+  console.log(
+    "DEBUG: Response received from send_conversation_message",
+    response
+  );
 
   assertEquals(response.error, null);
   assertEquals(response.data.query, query2);
@@ -133,8 +161,7 @@ async function testWithConversationId(
   assertFalse(conversationMessages === null);
   assertGreaterOrEqual(conversationMessages!.length, 2);
 
-  // check that daily token budget was updated
-
+  // Check that the daily token budget was updated
   const { data: dailyTokenBudgetsData } = await supabase
     .from("daily_token_budgets")
     .select()
@@ -176,6 +203,12 @@ async function testWithExceededTokenBudget(
   const maxOutputTokensPerDay =
     await featureFlagPayload?.max_output_tokens_per_day;
 
+  // Debug: Update token budget to force exceed limit
+  console.log("DEBUG: Updating daily token budget to exceed limit", {
+    currentOutputTokens: maxOutputTokensPerDay,
+    newOutputTokens: maxOutputTokensPerDay! + 1,
+  });
+
   const _ = await supabase
     .from("daily_token_budgets")
     .update({
@@ -183,6 +216,15 @@ async function testWithExceededTokenBudget(
     })
     .eq("date", date.toISOString().split("T")[0])
     .select();
+
+  // Debug: Before calling the edge function with exceeded budget
+  console.log(
+    "DEBUG: Invoking send_conversation_message with exceeded token budget",
+    {
+      query: query1,
+      timezone: "Berlin",
+    }
+  );
 
   const { error } = await supabase.functions.invoke(
     "send_conversation_message",
@@ -192,6 +234,12 @@ async function testWithExceededTokenBudget(
         timezone: "Berlin",
       },
     }
+  );
+
+  // Debug: Log error details for exceeded token budget
+  console.log(
+    "DEBUG: Received error from edge function (exceeded token budget)",
+    error
   );
 
   assertFalse(error === null);
@@ -216,6 +264,16 @@ function testConversationUpdated(
 
 async function testRequiresAuthentication(supabase: SupabaseClient) {
   await supabase.auth.signOut();
+
+  // Debug: Attempting to call edge function without authentication
+  console.log(
+    "DEBUG: Invoking send_conversation_message without authentication",
+    {
+      query: query1,
+      timezone: "Berlin",
+    }
+  );
+
   const { error } = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -226,6 +284,9 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
     }
   );
 
+  // Debug: Log error for unauthenticated call
+  console.log("DEBUG: Received error for unauthenticated call", error);
+
   assert(error !== null);
 }
 
@@ -234,7 +295,6 @@ Deno.test(
   { sanitizeResources: false },
   async (t) => {
     // Arrange
-
     const supabaseApiUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const supabase = createClient(supabaseApiUrl!, supabaseAnonKey!);
@@ -244,7 +304,6 @@ Deno.test(
     } = await supabase.auth.signInAnonymously();
 
     await generateFakeDaytistics(3, user!, supabase);
-
     const date = new Date();
 
     await t.step(
@@ -296,6 +355,7 @@ Deno.test(
 
     await supabase.auth.admin.deleteUser(user!.id);
 
+    // Cleanup: clear any active intervals or timeouts
     for (let i = 0; i < 1000; i++) {
       clearInterval(i);
       clearTimeout(i);
