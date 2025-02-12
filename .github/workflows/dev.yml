@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - leo-has-messed-up
   pull_request:
     branches:
       - dev
@@ -110,13 +111,6 @@ jobs:
           STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
           STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
 
-      # - name: Serve edge functions
-      #   working-directory: ./daytistics
-      #   run: nohup npx supabase functions serve &
-      #   env:
-      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      #     POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-      #     SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
       
       - name: Run tests (Deno)
         working-directory: ./daytistics

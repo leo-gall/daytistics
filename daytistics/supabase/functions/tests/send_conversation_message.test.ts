@@ -50,8 +50,8 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     }
   );
 
-  if (response.data.error) {
-    throw new Error(`Something went wrong: ${response.data.error}`);
+  if (response.data?.error) {
+    throw new Error(`Something went wrong: ${response.data?.error}`);
   }
 
   const conversation: DatabaseConversation = (
