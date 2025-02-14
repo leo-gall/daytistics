@@ -8,46 +8,46 @@ on:
       - dev
 
 jobs:
-  # analyze:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v2
-  #     - uses: denoland/setup-deno@v2
-  #       with:
-  #         deno-version: v2.x
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
 
-  #     - name: Install dependencies
-  #       working-directory: ./daytistics
-  #       run: flutter pub get
-  #     - name: Create .env file
-  #       working-directory: ./daytistics
-  #       run: touch .env
-  #     - name: Run built-in linter (Flutter)
-  #       working-directory: ./daytistics
-  #       run: flutter analyze
-  #     - name: Run custom linter (Flutter)
-  #       working-directory: ./daytistics
-  #       run: dart run custom_lint
-  #     - name: Run linter (Deno)
-  #       working-directory: ./daytistics
-  #       run: deno lint
+      - name: Install dependencies
+        working-directory: ./daytistics
+        run: flutter pub get
+      - name: Create .env file
+        working-directory: ./daytistics
+        run: touch .env
+      - name: Run built-in linter (Flutter)
+        working-directory: ./daytistics
+        run: flutter analyze
+      - name: Run custom linter (Flutter)
+        working-directory: ./daytistics
+        run: dart run custom_lint
+      - name: Run linter (Deno)
+        working-directory: ./daytistics
+        run: deno lint
 
-  # unit-tests:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v2
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
 
-  #     - name: Install dependencies
-  #       working-directory: ./daytistics
-  #       run: flutter pub get
-  #     - name: Create .env file
-  #       working-directory: ./daytistics
-  #       run: touch .env
-  #     - name: Run tests (Flutter)
-  #       working-directory: ./daytistics
-  #       run: flutter test
+      - name: Install dependencies
+        working-directory: ./daytistics
+        run: flutter pub get
+      - name: Create .env file
+        working-directory: ./daytistics
+        run: touch .env
+      - name: Run tests (Flutter)
+        working-directory: ./daytistics
+        run: flutter test
 
   e2e-tests:
     name: E2E Tests
@@ -61,7 +61,7 @@ jobs:
 
       - name: Run Supabase Containers
         working-directory: ./daytistics
-        run: npx supabase start -x studio,vector,realtime
+        run: npx supabase start
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
@@ -130,20 +130,20 @@ jobs:
         working-directory: ./daytistics
         run: deno test --env-file=.env --allow-all
    
-  # build-android:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v2
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
 
-  #     - name: Install dependencies
-  #       working-directory: ./daytistics
-  #       run: flutter pub get
-  #     - name: Create .env file
-  #       working-directory: ./daytistics
-  #       run: touch .env
-  #     - name: Build APK 
-  #       working-directory: ./daytistics
-  #       run: flutter build apk --release
+      - name: Install dependencies
+        working-directory: ./daytistics
+        run: flutter pub get
+      - name: Create .env file
+        working-directory: ./daytistics
+        run: touch .env
+      - name: Build APK 
+        working-directory: ./daytistics
+        run: flutter build apk --release
 
           
