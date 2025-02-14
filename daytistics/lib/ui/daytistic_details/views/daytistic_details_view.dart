@@ -37,7 +37,8 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context);
-            final _ = ref.refresh(dashboardViewModelProvider);
+            final notifier = ref.refresh(dashboardViewModelProvider.notifier);
+            notifier.updateSelectedDate(daytistic.date);
           },
         ),
         actions: <Widget>[
