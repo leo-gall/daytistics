@@ -114,21 +114,21 @@ jobs:
         working-directory: ./daytistics
         run: |
           touch .env
-          echo SUPABASE_URL="${{ steps.supabase-keys.outputs.API_URL }}" >> .env
-          echo SUPABASE_SERVICE_ROLE_KEY="${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}" >> .env
-          echo OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" >> .env
-          echo POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}" >> .env
-          echo SENTRY_DSN="${{ secrets.SENTRY_DSN }}" >> .env
+          echo SUPABASE_URL="${{ steps.supabase-keys.outputs.API_URL }}" >> .env.github
+          echo SUPABASE_SERVICE_ROLE_KEY="${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}" >> .env.github
+          echo OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" >> .env.github
+          echo POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}" >> .env.github
+          echo SENTRY_DSN="${{ secrets.SENTRY_DSN }}" >> .env.github
           cat .env
 
       - name: Run edge functions
         working-directory: ./daytistics
-        run: nohup npx supabase functions serve --env-file=./.env &
+        run: nohup npx supabase functions serve --env-file=./.env.github &
 
 
       - name: Run tests (Deno)
         working-directory: ./daytistics
-        run: deno test --env-file=supabase/.env --allow-all
+        run: deno test --env-file=./.env.github --allow-all
    
   build-android:
     runs-on: ubuntu-latest
