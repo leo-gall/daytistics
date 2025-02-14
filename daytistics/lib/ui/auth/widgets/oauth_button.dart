@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/routing.dart';
@@ -49,7 +50,7 @@ class OAuthButton extends ConsumerWidget {
           }
 
           if (context.mounted &&
-              ref.read(authServiceProvider.notifier).isAuthenticated()) {
+              ref.watch(supabaseClientProvider).auth.currentUser != null) {
             pushAndClearHistory(context, const DashboardView());
           }
         },
