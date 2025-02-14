@@ -123,7 +123,7 @@ jobs:
 
       - name: Run edge functions
         working-directory: ./daytistics
-        run: nohup supabase functions serve --env-file=.env &
+        run: nohup npx supabase functions serve --env-file=./.env &
 
 
       - name: Run tests (Deno)
