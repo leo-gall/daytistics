@@ -110,7 +110,7 @@ jobs:
           STORAGE_S3_URL: ${{ steps.supabase-keys.outputs.STORAGE_S3_URL }}
           STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
 
-      - name: 'Create env file'
+      - name: Create .env file
         working-directory: ./daytistics
         run: |
           touch .env
@@ -128,7 +128,7 @@ jobs:
 
       - name: Run tests (Deno)
         working-directory: ./daytistics
-        run: deno test --env-file=.env --allow-all
+        run: deno test --env-file=supabase/.env --allow-all
    
   build-android:
     runs-on: ubuntu-latest

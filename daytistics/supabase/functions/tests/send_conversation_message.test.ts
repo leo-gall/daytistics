@@ -38,15 +38,6 @@ async function testContainsNoDailyTokenBudgets(
 }
 
 async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
-  // Debug: Before calling the edge function without conversation_id
-  console.log(
-    "DEBUG: Invoking send_conversation_message (no conversation_id)",
-    {
-      query: query1,
-      timezone: "Berlin",
-    }
-  );
-
   const response = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -56,18 +47,6 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
       },
     }
   );
-
-  // Debug: Log the raw response
-  console.log(
-    "DEBUG: Response received from send_conversation_message",
-    response
-  );
-
-  if (response.data?.error) {
-    throw new Error(`Something went wrong: ${response.data?.error}`);
-  } else {
-    console.log(`Response is ${response}`);
-  }
 
   const conversation: DatabaseConversation = (
     await supabase
@@ -118,16 +97,6 @@ async function testWithConversationId(
   date: Date,
   conversationId: string
 ) {
-  // Debug: Before calling the edge function with conversation_id
-  console.log(
-    "DEBUG: Invoking send_conversation_message (with conversation_id)",
-    {
-      query: query2,
-      conversationId,
-      timezone: "Berlin",
-    }
-  );
-
   const response = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -137,12 +106,6 @@ async function testWithConversationId(
         timezone: "Berlin",
       },
     }
-  );
-
-  // Debug: Log the raw response
-  console.log(
-    "DEBUG: Response received from send_conversation_message",
-    response
   );
 
   assertEquals(response.error, null);
@@ -202,12 +165,6 @@ async function testWithExceededTokenBudget(
   const maxOutputTokensPerDay =
     await featureFlagPayload?.max_output_tokens_per_day;
 
-  // Debug: Update token budget to force exceed limit
-  console.log("DEBUG: Updating daily token budget to exceed limit", {
-    currentOutputTokens: maxOutputTokensPerDay,
-    newOutputTokens: maxOutputTokensPerDay! + 1,
-  });
-
   const _ = await supabase
     .from("daily_token_budgets")
     .update({
@@ -215,15 +172,6 @@ async function testWithExceededTokenBudget(
     })
     .eq("date", date.toISOString().split("T")[0])
     .select();
-
-  // Debug: Before calling the edge function with exceeded budget
-  console.log(
-    "DEBUG: Invoking send_conversation_message with exceeded token budget",
-    {
-      query: query1,
-      timezone: "Berlin",
-    }
-  );
 
   const { error } = await supabase.functions.invoke(
     "send_conversation_message",
@@ -233,12 +181,6 @@ async function testWithExceededTokenBudget(
         timezone: "Berlin",
       },
     }
-  );
-
-  // Debug: Log error details for exceeded token budget
-  console.log(
-    "DEBUG: Received error from edge function (exceeded token budget)",
-    error
   );
 
   assertFalse(error === null);
@@ -264,15 +206,6 @@ function testConversationUpdated(
 async function testRequiresAuthentication(supabase: SupabaseClient) {
   await supabase.auth.signOut();
 
-  // Debug: Attempting to call edge function without authentication
-  console.log(
-    "DEBUG: Invoking send_conversation_message without authentication",
-    {
-      query: query1,
-      timezone: "Berlin",
-    }
-  );
-
   const { error } = await supabase.functions.invoke(
     "send_conversation_message",
     {
@@ -282,9 +215,6 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
       },
     }
   );
-
-  // Debug: Log error for unauthenticated call
-  console.log("DEBUG: Received error for unauthenticated call", error);
 
   assert(error !== null);
 }
