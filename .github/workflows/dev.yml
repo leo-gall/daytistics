@@ -61,7 +61,7 @@ jobs:
 
       - name: Run Supabase Containers
         working-directory: ./daytistics
-        run: npx supabase start -x studio
+        run: npx supabase start -x studio,vector,realtime
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
@@ -111,40 +111,25 @@ jobs:
           STUDIO_URL: ${{ steps.supabase-keys.outputs.STUDIO_URL }}
 
       - name: 'Create env file'
+        working-directory: ./daytistics
         run: |
           touch .env
           echo SUPABASE_URL="${{ steps.supabase-keys.outputs.API_URL }}" >> .env
-          echo SUPABASE_SERVICE_ROLE_JEY="${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}" >> .env
+          echo SUPABASE_SERVICE_ROLE_KEY="${{ steps.supabase-keys.outputs.SERVICE_ROLE_KEY }}" >> .env
           echo OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" >> .env
           echo POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}" >> .env
           echo SENTRY_DSN="${{ secrets.SENTRY_DSN }}" >> .env
           cat .env
 
-      - name: 'Recat env file'
-        run: |
-          cat .env
+      - name: Run edge functions
+        working-directory: ./daytistics
+        run: nohup supabase functions serve --env-file=.env &
 
 
-      # - name: Run tests (Deno)
-      #   working-directory: ./daytistics
-      #   run: deno test --allow-all
-      #   env:
-      #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      #     POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-      #     SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-      #     SUPABASE_ANON_KEY: ${{ env.ANON_KEY }}
-      #     SUPABASE_URL: ${{ env.API_URL }}
-      #     SUPABASE_DB_URL: ${{ env.DB_URL }}
-      #     SUPABASE_GRAPHQL_URL: ${{ env.GRAPHQL_URL }}
-      #     SUPABASE_INBUCKET_URL: ${{ env.INBUCKET_URL }}
-      #     SUPABASE_JWT_SECRET: ${{ env.JWT_SECRET }}
-      #     SUPABASE_S3_ACCESS_KEY: ${{ env.S3_ACCESS_KEY }}
-      #     SUPABASE_S3_SECRET_KEY: ${{ env.S3_SECRET_KEY }}
-      #     SUPABASE_S3_REGION: ${{ env.S3_REGION }}
-      #     SUPABASE_SERVICE_ROLE_KEY: ${{ env.SERVICE_ROLE_KEY }}
-      #     SUPABASE_STORAGE_S3_URL: ${{ env.STORAGE_S3_URL }}
-      #     SUPABASE_STUDIO_URL: ${{ env.STUDIO_URL }}
-
+      - name: Run tests (Deno)
+        working-directory: ./daytistics
+        run: deno test --env-file=.env --allow-all
+   
   # build-android:
   #   runs-on: ubuntu-latest
   #   steps:
