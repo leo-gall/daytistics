@@ -1,11 +1,11 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
-import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
-import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/time.dart';
-import 'package:daytistics/shared/widgets/star_rating.dart';
-import 'package:daytistics/shared/widgets/styled_text.dart';
+import 'package:daytistics/shared/widgets/application/star_rating.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
+import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
@@ -55,92 +55,76 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                           dashboardViewModelState.selectedDate,
                         ),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const StyledText(
-                          '0 hours 0 minutes',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return StyledText(
-                          'Error: ${snapshot.error}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.red,
-                          ),
-                        );
-                      } else {
-                        final daytistic = snapshot.data;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            StyledText(
-                              durationToHoursMinutes(
-                                daytistic?.totalDuration ?? Duration.zero,
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
+                      final daytistic = snapshot.data;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StyledText(
+                            durationToHoursMinutes(
+                              daytistic?.totalDuration ?? Duration.zero,
                             ),
-                            const SizedBox(height: 5),
-                            if (daytistic == null) const SizedBox(height: 50),
-                            if (daytistic != null)
-                              SizedBox(
-                                height:
-                                    50, // Define a height for the CarouselView
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: daytistic.wellbeing
-                                              .toRatingMap()
-                                              .keys
-                                              .map((String key) {
-                                            return Row(
-                                              children: <Widget>[
-                                                StyledText(
-                                                  key.capitalize(),
-                                                  style: const TextStyle(
+                            style: const TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          if (daytistic == null) const SizedBox(height: 50),
+                          if (daytistic != null)
+                            SizedBox(
+                              height:
+                                  50, // Define a height for the CarouselView
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: daytistic.wellbeing!
+                                            .toRatingMap()
+                                            .keys
+                                            .map((key) {
+                                          return Row(
+                                            children: <Widget>[
+                                              StyledText(
+                                                key
+                                                    .capitalize()
+                                                    .replaceAll('_', ' '),
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 5),
+                                              StarRating(
+                                                maxRating: 5,
+                                                rating: daytistic.wellbeing!
+                                                    .toRatingMap()[key],
+                                              ),
+                                              const SizedBox(width: 10),
+                                              if (key !=
+                                                  daytistic.wellbeing!
+                                                      .toRatingMap()
+                                                      .keys
+                                                      .last)
+                                                const Text(
+                                                  '|',
+                                                  style: TextStyle(
                                                     fontSize: 16,
+                                                    color: Colors.grey,
                                                   ),
                                                 ),
-                                                const SizedBox(width: 5),
-                                                StarRating(
-                                                  maxRating: 5,
-                                                  rating: daytistic.wellbeing
-                                                      .toRatingMap()[key],
-                                                ),
-                                                const SizedBox(width: 10),
-                                                if (key !=
-                                                    daytistic.wellbeing
-                                                        .toRatingMap()
-                                                        .keys
-                                                        .last)
-                                                  const Text(
-                                                    '|',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                const SizedBox(width: 10),
-                                              ],
-                                            );
-                                          }).toList(),
-                                        ),
+                                              const SizedBox(width: 10),
+                                            ],
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            const SizedBox(height: 5),
-                          ],
-                        );
-                      }
+                            ),
+                          const SizedBox(height: 5),
+                        ],
+                      );
                     },
                   ),
                 ),
@@ -152,21 +136,18 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
             top: 1,
             child: IconButton(
               onPressed: () async {
-                await ref
-                    .read(daytisticsServiceProvider.notifier)
-                    .fetchOrCreate(
-                      (dashboardViewModelState.selectedDate),
+                await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
+                      dashboardViewModelState.selectedDate,
                     );
 
                 if (!context.mounted) {
                   return;
                 }
 
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        const DaytisticDetailsView(),
+                    builder: (context) => const DaytisticDetailsView(),
                   ),
                 );
               },

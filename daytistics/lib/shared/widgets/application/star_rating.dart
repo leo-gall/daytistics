@@ -5,7 +5,7 @@ class StarRating extends StatelessWidget {
   final int maxRating;
   final int? rating;
   final bool showFullRating;
-  final Function(int)? onRatingChanged;
+  final void Function(int)? onRatingChanged;
 
   const StarRating({
     super.key,
@@ -17,7 +17,7 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isClickable = onRatingChanged != null;
+    final bool isClickable = onRatingChanged != null;
 
     return Row(
       children: List<Widget>.generate(maxRating, (index) {

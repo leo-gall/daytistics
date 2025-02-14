@@ -1,8 +1,8 @@
 import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/shared/utils/routing.dart';
-import 'package:daytistics/shared/widgets/styled_text.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,15 +15,12 @@ class OAuthButton extends ConsumerWidget {
 
   SvgPicture _buildIcon() {
     final String iconPath;
-    switch (provider) {
-      case OAuthProvider.google:
-        iconPath = 'assets/svg/google_mono.svg';
-        break;
-      case OAuthProvider.apple:
-        iconPath = 'assets/svg/apple_mono.svg';
-        break;
-      default:
-        throw UnimplementedError('Unsupported provider: $provider');
+    if (provider == OAuthProvider.google) {
+      iconPath = 'assets/svg/google_mono.svg';
+    } else if (provider == OAuthProvider.apple) {
+      iconPath = 'assets/svg/apple_mono.svg';
+    } else {
+      throw UnimplementedError('Unsupported provider: $provider');
     }
 
     return SvgPicture.asset(
@@ -43,14 +40,12 @@ class OAuthButton extends ConsumerWidget {
       width: 250,
       child: ElevatedButton(
         onPressed: () async {
-          switch (provider) {
-            case OAuthProvider.google:
-              await ref.read(authServiceProvider.notifier).signInWithGoogle();
-              break;
-            case OAuthProvider.apple:
-              throw UnimplementedError('Apple sign in is not implemented yet');
-            default:
-              throw UnimplementedError('Unsupported provider: $provider');
+          if (provider == OAuthProvider.google) {
+            await ref.read(authServiceProvider.notifier).signInWithGoogle();
+          } else if (provider == OAuthProvider.apple) {
+            throw UnimplementedError('Apple sign in is not implemented yet');
+          } else {
+            throw UnimplementedError('Unsupported provider: $provider');
           }
 
           if (context.mounted &&

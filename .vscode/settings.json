@@ -1,4 +1,41 @@
 {
+    "deno.enablePaths": [
+        "./daytistics/supabase/functions",
+        "./daytistics/supabase/_shared",
+    ],
+    "deno.lint": true,
+    "deno.unstable": [
+        "bare-node-builtins",
+        "byonm",
+        "sloppy-imports",
+        "unsafe-proto",
+        "webgpu",
+        "broadcast-channel",
+        "worker-options",
+        "cron",
+        "kv",
+        "ffi",
+        "fs",
+        "http",
+        "net"
+    ],
+    "deno.testing.args": [
+        "--allow-all",
+        "--no-check",
+        "--env-file=./daytistics/supabase/.env",
+        "--fail-fast",
+    ],
+    "sql-formatter.dialect": "pl/sql",
+    "deno.enable": true,
+    "deno.codeLens.implementations": true,
+    "deno.codeLens.references": true,
+    "deno.suggest.imports.hosts": {
+        "https://deno.land": false,
+        "jsr:": true
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "dart.flutterRunAdditionalArgs": [
         "--dart-define-from-file=.env"
     ]

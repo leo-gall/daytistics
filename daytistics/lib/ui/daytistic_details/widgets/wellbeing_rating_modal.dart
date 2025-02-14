@@ -1,14 +1,13 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/current_daytistic.dart';
+import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/application/services/wellbeings/wellbeings_service.dart';
-import 'package:daytistics/shared/widgets/star_rating.dart';
-import 'package:daytistics/shared/widgets/styled_text.dart';
+import 'package:daytistics/shared/extensions/string.dart';
+import 'package:daytistics/shared/widgets/application/star_rating.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
-import 'package:daytistics/shared/extensions/string.dart';
 
 class WellbeingRatingModal extends ConsumerStatefulWidget {
   const WellbeingRatingModal({super.key});
@@ -18,9 +17,9 @@ class WellbeingRatingModal extends ConsumerStatefulWidget {
       _WellbeingRatingModalState();
 
   static void showModal(BuildContext context) {
-    showMaterialModalBottomSheet(
+    showMaterialModalBottomSheet<WellbeingRatingModal>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return const WellbeingRatingModal();
       },
     );
@@ -30,10 +29,10 @@ class WellbeingRatingModal extends ConsumerStatefulWidget {
 class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
   @override
   Widget build(BuildContext context) {
-    Daytistic daytistic = ref.watch(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.watch(currentDaytisticProvider)!;
 
     // iterate over the wellbeing ratings (daytistic)
-    Map<String, int?> wellbeingMap = daytistic.wellbeing.toRatingMap();
+    final Map<String, int?> wellbeingMap = daytistic.wellbeing!.toRatingMap();
 
     return Container(
       height: 500,
@@ -77,7 +76,11 @@ class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
                             .read(wellbeingsServiceProvider.notifier)
                             .updateWellbeing(
                               Wellbeing.fromSupabase(
-                                {...wellbeingMap, 'id': daytistic.wellbeing.id},
+                                {
+                                  ...wellbeingMap,
+                                  'daytistic_id': daytistic.id,
+                                  'id': daytistic.wellbeing!.id,
+                                },
                               ),
                             );
                       },

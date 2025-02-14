@@ -53,7 +53,7 @@ ThemeData daytisticsTheme = ThemeData(
   ),
 
   cardTheme: CardTheme(
-    color: Colors.grey[200]!,
+    color: Colors.grey[200],
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(10)),
     ),

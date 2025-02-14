@@ -9,7 +9,7 @@ class CurrentTimeProvider extends StateNotifier<DateTime> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       state = DateTime.now();
     });
   }
@@ -23,5 +23,5 @@ class CurrentTimeProvider extends StateNotifier<DateTime> {
 
 final StateNotifierProvider<CurrentTimeProvider, DateTime> currentTimeProvider =
     StateNotifierProvider<CurrentTimeProvider, DateTime>(
-  (Ref ref) => CurrentTimeProvider(),
+  (ref) => CurrentTimeProvider(),
 );

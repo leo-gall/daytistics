@@ -2,7 +2,7 @@ import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/services/activities/activities_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/alert.dart';
-import 'package:daytistics/shared/widgets/styled_input_time_picker_form_field.dart';
+import 'package:daytistics/shared/widgets/styled/styled_input_time_picker_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -16,9 +16,9 @@ class EditActivityModal extends ConsumerStatefulWidget {
   ConsumerState<EditActivityModal> createState() => _EditActivityModalState();
 
   static void showModal(BuildContext context, Activity activity) {
-    showMaterialModalBottomSheet(
+    showMaterialModalBottomSheet<EditActivityModal>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return EditActivityModal(activity);
       },
     );
@@ -77,7 +77,7 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
                     children: <Widget>[
                       Expanded(
                         child: StyledInputTimePickerFormField(
-                          onChanged: (TimeOfDay time) => _startTime = time,
+                          onChanged: (time) => _startTime = time,
                           title: 'Start Time',
                           initialTime: _startTime,
                         ),
@@ -85,7 +85,7 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: StyledInputTimePickerFormField(
-                          onChanged: (TimeOfDay time) => _endTime = time,
+                          onChanged: (time) => _endTime = time,
                           title: 'End Time',
                           initialTime: _endTime,
                         ),
@@ -112,7 +112,7 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
                         onPressed: _handleDeleteActivity,
                       ),
                       TextButton(
-                        onPressed: () => _handleEditActivity(),
+                        onPressed: _handleEditActivity,
                         child: const Text('Save Activity'),
                       ),
                     ],
@@ -136,8 +136,9 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
             startTime: _startTime,
             endTime: _endTime,
           );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      // ignore: use_build_context_synchronously
+      if (!mounted) return;
       showErrorAlert(context, e.toString());
       return;
     }
@@ -160,6 +161,7 @@ class _EditActivityModalState extends ConsumerState<EditActivityModal> {
       await ref.read(activitiesServiceProvider.notifier).deleteActivity(
             widget.activity,
           );
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       if (!mounted) return;
       showErrorAlert(context, e.toString());

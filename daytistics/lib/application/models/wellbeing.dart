@@ -2,6 +2,9 @@ import 'package:uuid/uuid.dart';
 
 class Wellbeing {
   String id;
+  String daytisticId;
+
+  int? meTime;
   int? health;
   int? productivity;
   int? happiness;
@@ -15,6 +18,8 @@ class Wellbeing {
 
   Wellbeing({
     String? id,
+    required this.daytisticId,
+    this.meTime,
     this.health,
     this.productivity,
     this.happiness,
@@ -29,6 +34,8 @@ class Wellbeing {
 
   Wellbeing copyWith({
     String? id,
+    required String daytisticId,
+    int? meTime,
     int? health,
     int? productivity,
     int? happiness,
@@ -42,6 +49,8 @@ class Wellbeing {
   }) {
     return Wellbeing(
       id: id,
+      daytisticId: daytisticId,
+      meTime: meTime ?? this.meTime,
       health: health ?? this.health,
       productivity: productivity ?? this.productivity,
       happiness: happiness ?? this.happiness,
@@ -58,6 +67,8 @@ class Wellbeing {
   Map<String, dynamic> toSupabase() {
     return {
       'id': id,
+      'daytistic_id': daytisticId,
+      'me_time': meTime,
       'health': health,
       'productivity': productivity,
       'happiness': happiness,
@@ -73,6 +84,7 @@ class Wellbeing {
 
   Map<String, int?> toRatingMap() {
     return {
+      'me_time': meTime,
       'health': health,
       'productivity': productivity,
       'happiness': happiness,
@@ -89,6 +101,8 @@ class Wellbeing {
   factory Wellbeing.fromSupabase(Map<String, dynamic> data) {
     return Wellbeing(
       id: data['id'] as String,
+      meTime: data['me_time'] as int?,
+      daytisticId: data['daytistic_id'] as String,
       health: data['health'] as int?,
       productivity: data['productivity'] as int?,
       happiness: data['happiness'] as int?,

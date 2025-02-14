@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 void showErrorAlert(BuildContext context, String message) {
-  showDialog(
+  showDialog<AlertDialog>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (context) {
       return AlertDialog(
         title: const Text('An error occurred '),
         content: Text(message),

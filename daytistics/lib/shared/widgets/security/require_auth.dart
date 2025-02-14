@@ -38,9 +38,9 @@ class _RequireAuthState extends ConsumerState<RequireAuth> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute<SignInView>(
-            builder: (BuildContext context) => const SignInView(),
+            builder: (context) => const SignInView(),
           ),
-          (Route<dynamic> route) => false,
+          (route) => false,
         );
       }
     });

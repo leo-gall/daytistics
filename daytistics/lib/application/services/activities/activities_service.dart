@@ -1,8 +1,7 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/providers/current_daytistic.dart';
+import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/application/repositories/activities/activities_repository.dart';
-import 'package:daytistics/application/repositories/daytistics/daytistics_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,12 +35,7 @@ class ActivitiesService extends _$ActivitiesService {
       throw Exception('Start time cannot be the same as end time');
     }
 
-    final daytisticRepository = ref.read(daytisticsRepositoryProvider);
-    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
-
-    if (!await daytisticRepository.existsDaytistic(daytistic)) {
-      await daytisticRepository.upsertDaytistic(daytistic);
-    }
+    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     final startTimeAsDateTime = DateTime(
       daytistic.date.year,
@@ -68,7 +62,7 @@ class ActivitiesService extends _$ActivitiesService {
 
     await ref.read(activitiesRepositoryProvider).updateActivity(activity);
 
-    Daytistic updatedDaytistic = daytistic.copyWith(
+    final Daytistic updatedDaytistic = daytistic.copyWith(
       activities: [...daytistic.activities, activity],
     );
 
@@ -76,10 +70,10 @@ class ActivitiesService extends _$ActivitiesService {
   }
 
   Future<void> deleteActivity(Activity activity) async {
-    ActivitiesRepository activitiesRepository =
+    final ActivitiesRepository activitiesRepository =
         ref.read(activitiesRepositoryProvider);
 
-    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (!await activitiesRepository.existsActivity(activity)) {
       throw Exception('Activity does not exist');
@@ -91,7 +85,7 @@ class ActivitiesService extends _$ActivitiesService {
         .where((element) => element.id != activity.id)
         .toList();
 
-    Daytistic updatedDaytistic =
+    final Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
@@ -103,10 +97,10 @@ class ActivitiesService extends _$ActivitiesService {
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-    ActivitiesRepository activitiesRepository =
+    final ActivitiesRepository activitiesRepository =
         ref.read(activitiesRepositoryProvider);
 
-    Daytistic daytistic = ref.read(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (name == null && startTime == null && endTime == null) {
       throw Exception('No changes to update');
@@ -162,7 +156,7 @@ class ActivitiesService extends _$ActivitiesService {
         .map((element) => element.id == activity.id ? activity : element)
         .toList();
 
-    Daytistic updatedDaytistic =
+    final Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;

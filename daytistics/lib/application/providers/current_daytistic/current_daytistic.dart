@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_setters_without_getters
+
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
