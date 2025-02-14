@@ -1,6 +1,5 @@
 import {
   createClient,
-  FunctionsHttpError,
   SupabaseClient,
   User,
 } from "jsr:@supabase/supabase-js@2";
