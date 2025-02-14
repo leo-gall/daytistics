@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
@@ -42,7 +43,7 @@ class DashboardView extends ConsumerWidget {
             onPressed: () async {
               await ref.read(authServiceProvider.notifier).signOut();
 
-              if (!ref.read(authServiceProvider.notifier).isAuthenticated()) {
+              if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
                 if (context.mounted) {
                   await Navigator.pushAndRemoveUntil(
                     context,
