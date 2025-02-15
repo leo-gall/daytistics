@@ -85,3 +85,5 @@ ThemeData daytisticsTheme = ThemeData(
     ),
   ),
 );
+
+ThemeData daytisticsThemeDark = daytisticsTheme.copyWith();

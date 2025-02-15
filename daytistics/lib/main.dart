@@ -35,6 +35,7 @@ class DaytisticsApp extends StatelessWidget {
       locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
+      darkTheme: daytisticsThemeDark,
 
       // routing
       initialRoute: '/',
