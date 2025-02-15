@@ -39,7 +39,7 @@ async function testContainsNoDailyTokenBudgets(
 
 async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
   const response = await supabase.functions.invoke(
-    "send_conversation_message",
+    "send-conversation-message",
     {
       body: {
         query: query1,
@@ -98,7 +98,7 @@ async function testWithConversationId(
   conversationId: string
 ) {
   const response = await supabase.functions.invoke(
-    "send_conversation_message",
+    "send-conversation-message",
     {
       body: {
         query: query2,
@@ -174,7 +174,7 @@ async function testWithExceededTokenBudget(
     .select();
 
   const { error } = await supabase.functions.invoke(
-    "send_conversation_message",
+    "send-conversation-message",
     {
       body: {
         query: query1,
@@ -207,7 +207,7 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
   await supabase.auth.signOut();
 
   const { error } = await supabase.functions.invoke(
-    "send_conversation_message",
+    "send-conversation-message",
     {
       body: {
         query: query1,
@@ -220,7 +220,7 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
 }
 
 Deno.test(
-  "send_conversation_message",
+  "send-conversation-message",
   { sanitizeResources: false },
   async (t) => {
     // Arrange

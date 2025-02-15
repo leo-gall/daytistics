@@ -25,7 +25,7 @@ class ConversationsService extends _$ConversationsService {
     final currentConversation = ref.read(currentConversationProvider);
 
     final response = await Supabase.instance.client.functions.invoke(
-      'send_conversation_message',
+      'send-conversation-message',
       body: {
         'query': query,
         'timezone': DateTime.now().timeZoneName,
