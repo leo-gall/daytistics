@@ -20,6 +20,9 @@ class AuthService extends _$AuthService {
   }
 
   Future<void> signOut() async {
+    final bool isAnonymous =
+        ref.read(supabaseClientProvider).auth.currentUser?.isAnonymous ?? true;
+    if (isAnonymous) await deleteAccount();
     await ref.read(supabaseClientProvider).auth.signOut();
   }
 
@@ -54,5 +57,9 @@ class AuthService extends _$AuthService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> deleteAccount() async {
+    await ref.read(supabaseClientProvider).rpc<dynamic>('delete_account');
   }
 }

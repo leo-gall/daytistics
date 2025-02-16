@@ -26,13 +26,13 @@ ThemeData daytisticsTheme = ThemeData(
       fontWeight: FontWeight.bold,
     ),
     headlineMedium: TextStyle(
-      color: ColorSettings.text,
+      color: ColorSettings.textDark,
       fontSize: 20,
       fontWeight: FontWeight.bold,
       letterSpacing: 1,
     ),
     bodyMedium: TextStyle(
-      color: ColorSettings.text,
+      color: ColorSettings.textDark,
       fontSize: 16,
       letterSpacing: 1,
     ),

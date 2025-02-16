@@ -134,7 +134,7 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
         ),
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
-        child: const Icon(Icons.delete, color: ColorSettings.text),
+        child: const Icon(Icons.delete, color: ColorSettings.textDark),
       ),
       onDismissed: (direction) async {
         await ref
@@ -148,8 +148,8 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
               ? ShaderMask(
                   shaderCallback: (bounds) => LinearGradient(
                     colors: [
-                      ColorSettings.text,
-                      ColorSettings.text.withAlpha(50),
+                      ColorSettings.textDark,
+                      ColorSettings.textDark.withAlpha(50),
                     ],
                     stops: const [0.7, 1.0],
                   ).createShader(bounds),

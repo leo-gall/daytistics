@@ -26,7 +26,7 @@ class LLMChatMessage extends ConsumerWidget {
                     children: [
                       StyledText(
                         message.reply,
-                        style: const TextStyle(color: ColorSettings.text),
+                        style: const TextStyle(color: ColorSettings.textDark),
                       ),
                       // Row(
                       //   mainAxisAlignment: MainAxisAlignment.end,
@@ -36,7 +36,7 @@ class LLMChatMessage extends ConsumerWidget {
                       //         Icons.thumb_up,
                       //         color: message.upvoted
                       //             ? ColorSettings.primary
-                      //             : ColorSettings.text,
+                      //             : ColorSettings.textDark,
                       //         size: 20,
                       //       ),
                       //       onPressed: () => ref
@@ -46,7 +46,7 @@ class LLMChatMessage extends ConsumerWidget {
                       //     IconButton(
                       //       icon: const Icon(
                       //         Icons.thumb_down,
-                      //         color: ColorSettings.text,
+                      //         color: ColorSettings.textDark,
                       //         size: 20,
                       //       ),
                       //       onPressed: () {},
@@ -54,7 +54,7 @@ class LLMChatMessage extends ConsumerWidget {
                       //     IconButton(
                       //       icon: const Icon(
                       //         Icons.copy,
-                      //         color: ColorSettings.text,
+                      //         color: ColorSettings.textDark,
                       //         size: 20,
                       //       ),
                       //       onPressed: () {},

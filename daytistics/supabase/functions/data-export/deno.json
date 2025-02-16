@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@daytistics/types": "../../_shared/types.ts",
+    "@daytistics/database": "../../_shared/database.ts",
+    "@daytistics/prompts": "../../_shared/prompts.ts",
+    "@daytistics/adapters": "../../_shared/adapters.ts"
+  }
+}

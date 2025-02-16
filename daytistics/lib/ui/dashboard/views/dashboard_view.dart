@@ -35,25 +35,23 @@ class DashboardView extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.attach_money_rounded),
-            onPressed: () async {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.person_2_outlined),
             onPressed: () async {
-              await ref.read(authServiceProvider.notifier).signOut();
+              // await ref.read(authServiceProvider.notifier).signOut();
 
-              if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
-                if (context.mounted) {
-                  await Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute<SignInView>(
-                      builder: (context) => const SignInView(),
-                    ),
-                    (route) => false,
-                  );
-                }
-              }
+              // if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
+              //   if (context.mounted) {
+              //     await Navigator.pushAndRemoveUntil(
+              //       context,
+              //       MaterialPageRoute<SignInView>(
+              //         builder: (context) => const SignInView(),
+              //       ),
+              //       (route) => false,
+              //     );
+              //   }
+              // }
+
+              await Navigator.pushNamed(context, '/profile');
             },
           ),
           // IconButton(
