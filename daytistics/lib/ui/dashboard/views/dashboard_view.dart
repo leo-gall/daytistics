@@ -1,10 +1,7 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
 import 'package:flutter/material.dart';
@@ -35,25 +32,23 @@ class DashboardView extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.attach_money_rounded),
-            onPressed: () async {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.person_2_outlined),
             onPressed: () async {
-              await ref.read(authServiceProvider.notifier).signOut();
+              // await ref.read(authServiceProvider.notifier).signOut();
 
-              if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
-                if (context.mounted) {
-                  await Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute<SignInView>(
-                      builder: (context) => const SignInView(),
-                    ),
-                    (route) => false,
-                  );
-                }
-              }
+              // if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
+              //   if (context.mounted) {
+              //     await Navigator.pushAndRemoveUntil(
+              //       context,
+              //       MaterialPageRoute<SignInView>(
+              //         builder: (context) => const SignInView(),
+              //       ),
+              //       (route) => false,
+              //     );
+              //   }
+              // }
+
+              await Navigator.pushNamed(context, '/profile');
             },
           ),
           // IconButton(

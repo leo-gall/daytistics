@@ -170,6 +170,18 @@ CREATE TABLE IF NOT EXISTS public .daily_token_budgets (
         CONSTRAINT unique_user_date UNIQUE (user_id, date)
 );
 
+create table if not exists public .user_settings (
+    id uuid default gen_random_uuid() primary key,
+    user_id uuid not null unique,
+    conversation_analytics boolean default false,
+    notifications boolean default true,
+    created_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    constraint user_settings_user_id_fkey foreign key(user_id) references auth.users(id) on
+    delete
+        cascade
+);
+
 create extension if not exists moddatetime schema extensions;
 
 create trigger handle_updated_at before
@@ -195,3 +207,11 @@ update
 create trigger handle_updated_at before
 update
     on public .conversation_messages for each row execute procedure moddatetime (updated_at);
+
+create trigger handle_updated_at before
+update
+    on public .daily_token_budgets for each row execute procedure moddatetime (updated_at);
+
+create trigger handle_updated_at before
+update
+    on public .user_settings for each row execute procedure moddatetime (updated_at);
