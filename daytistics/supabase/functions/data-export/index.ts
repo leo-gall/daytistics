@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
 
     const resend = initResend();
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Daytistics System <system@daytistics.com>",
       to: Deno.env.get("DATA_EXPORT_EMAIL")!,
       subject: "Data Export Request",

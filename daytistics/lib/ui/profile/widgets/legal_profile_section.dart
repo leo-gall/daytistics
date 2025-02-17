@@ -16,8 +16,11 @@ class LegalProfileSection extends AbstractSettingsSection {
           title: const StyledText('Legal'),
           tiles: [
             SettingsTile.navigation(
-              leading: const Icon(Icons.book,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.book,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,
@@ -31,8 +34,11 @@ class LegalProfileSection extends AbstractSettingsSection {
               },
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.privacy_tip,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.privacy_tip,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,
@@ -46,8 +52,11 @@ class LegalProfileSection extends AbstractSettingsSection {
               },
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.gavel,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.gavel,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,
@@ -61,8 +70,11 @@ class LegalProfileSection extends AbstractSettingsSection {
               },
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.article,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.article,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               title: const StyledText(
                 'Licenses',
                 style: TextStyle(color: ColorSettings.textLight),

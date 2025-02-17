@@ -1,8 +1,5 @@
-import 'package:daytistics/application/models/conversation.dart';
-import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
 import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:daytistics/application/providers/user/user.dart';
-import 'package:daytistics/application/services/chat/conversations_service.dart';
 import 'package:daytistics/application/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

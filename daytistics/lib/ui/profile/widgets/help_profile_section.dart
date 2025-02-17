@@ -17,8 +17,11 @@ class HelpProfileSection extends AbstractSettingsSection {
           title: const StyledText('Help & Feedback'),
           tiles: [
             SettingsTile.navigation(
-              leading: const Icon(Icons.feedback,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.feedback,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,
@@ -32,8 +35,11 @@ class HelpProfileSection extends AbstractSettingsSection {
               },
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.bug_report,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.bug_report,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,
@@ -47,8 +53,11 @@ class HelpProfileSection extends AbstractSettingsSection {
               },
             ),
             SettingsTile.navigation(
-              leading: const Icon(Icons.support,
-                  color: ColorSettings.primary, size: 25),
+              leading: const Icon(
+                Icons.support,
+                color: ColorSettings.primary,
+                size: 25,
+              ),
               trailing: const Icon(
                 Icons.open_in_new,
                 color: ColorSettings.textLight,

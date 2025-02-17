@@ -9,7 +9,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_dotenv: '^5.2.1'
-  flutter_email_sender: ^7.0.0
   flutter_env_native: '^0.1.0'
   flutter_riverpod: '^2.6.1'
   flutter_svg: '^2.0.17'

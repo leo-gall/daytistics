@@ -1,8 +1,6 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-import 'package:daytistics/ui/profile/widgets/delete_account_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';

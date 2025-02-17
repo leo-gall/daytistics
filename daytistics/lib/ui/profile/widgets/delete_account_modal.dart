@@ -1,19 +1,17 @@
 import 'package:daytistics/application/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DeleteAccountModal extends ConsumerStatefulWidget {
   const DeleteAccountModal({super.key});
 
-  static void showModal(BuildContext context) async {
+  static Future<void> showModal(BuildContext context) async {
     await showDialog<AlertDialog>(
       context: context,
       builder: (context) {
-        return DeleteAccountModal();
+        return const DeleteAccountModal();
       },
     );
   }
@@ -71,8 +69,10 @@ class _DeleteAccountModalState extends ConsumerState<DeleteAccountModal> {
               onPressed: () async {
                 if (_canDeleteAccount) {
                   await ref.read(authServiceProvider.notifier).deleteAccount();
-                  Navigator.of(context).pop();
-                  await Navigator.pushNamed(context, '/signin');
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    await Navigator.pushNamed(context, '/signin');
+                  }
                 } else {
                   setState(() {
                     _canDeleteAccount = true;
