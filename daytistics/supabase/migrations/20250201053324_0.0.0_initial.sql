@@ -171,6 +171,7 @@ CREATE TABLE IF NOT EXISTS public .daily_token_budgets (
 );
 
 create table if not exists public .user_settings (
+    id uuid default gen_random_uuid() primary key,
     user_id uuid not null unique,
     conversation_analytics boolean default false,
     notifications boolean default true,

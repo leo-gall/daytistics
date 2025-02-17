@@ -1,27 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'conversations_service.dart';
+part of 'settings_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$conversationsServiceHash() =>
-    r'198648e61b3ada53d88775ad4812576497257d17';
+String _$settingsServiceHash() => r'b3659557a4075a4242db67c03efcf54e6e3627f5';
 
-/// See also [ConversationsService].
-@ProviderFor(ConversationsService)
-final conversationsServiceProvider =
-    NotifierProvider<ConversationsService, ConversationsServiceState>.internal(
-  ConversationsService.new,
-  name: r'conversationsServiceProvider',
+/// See also [SettingsService].
+@ProviderFor(SettingsService)
+final settingsServiceProvider =
+    AutoDisposeNotifierProvider<SettingsService, SettingsServiceState>.internal(
+  SettingsService.new,
+  name: r'settingsServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$conversationsServiceHash,
+      : _$settingsServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ConversationsService = Notifier<ConversationsServiceState>;
+typedef _$SettingsService = AutoDisposeNotifier<SettingsServiceState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

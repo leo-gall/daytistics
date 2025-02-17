@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-class CriticalActionsSettingsSection extends AbstractSettingsSection {
-  const CriticalActionsSettingsSection({super.key});
+class CriticalActionsProfileSection extends AbstractSettingsSection {
+  const CriticalActionsProfileSection({super.key});
 
   @override
   Widget build(BuildContext context) {

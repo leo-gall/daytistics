@@ -1,3 +1,5 @@
+import 'package:daytistics/application/models/user_settings.dart';
+import 'package:daytistics/application/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +13,24 @@ class SettingsProfileSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        final UserSettings? userSettings =
+            ref.watch(settingsServiceProvider).userSettings;
+        if (userSettings == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(settingsServiceProvider.notifier).init();
+          });
+          return const Center(child: CircularProgressIndicator());
+        }
         return SettingsSection(
           title: const StyledText('Settings'),
           tiles: [
             SettingsTile.switchTile(
-              onToggle: (value) {},
-              initialValue: true,
+              onToggle: (value) async {
+                await ref
+                    .read(settingsServiceProvider.notifier)
+                    .toggleConversationAnalytics();
+              },
+              initialValue: userSettings.conversationAnalytics,
               leading: const Icon(
                 Icons.analytics,
                 color: ColorSettings.primary,
@@ -27,8 +41,12 @@ class SettingsProfileSection extends AbstractSettingsSection {
               ),
             ),
             SettingsTile.switchTile(
-              onToggle: (value) {},
-              initialValue: true,
+              onToggle: (value) async {
+                await ref
+                    .read(settingsServiceProvider.notifier)
+                    .toggleNotifications();
+              },
+              initialValue: userSettings.notifications,
               leading: const Icon(
                 Icons.notifications,
                 color: ColorSettings.primary,
