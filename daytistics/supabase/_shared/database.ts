@@ -1,4 +1,4 @@
-import { SupabaseClient } from "jsr:@supabase/supabase-js@2";
+import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { DatabaseActivity, DatabaseWellbeing, Daytistic } from "./types.ts";
 
 interface FetchDaytisticsOptions {
@@ -46,4 +46,17 @@ export async function fetchDaytistics(
     daytistic.activities = activities.data as DatabaseActivity[];
   }
   return daytistics.data ?? [];
+}
+
+export async function hasConversationAnalyticsEnabled(
+  user: User,
+  supabase: SupabaseClient
+): Promise<boolean> {
+  const { data: settings } = await supabase
+    .from("user_settings")
+    .select("conversation_analytics")
+    .eq("user_id", user.id)
+    .single();
+
+  return settings?.conversation_analytics ?? false;
 }
