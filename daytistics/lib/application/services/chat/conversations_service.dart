@@ -4,6 +4,7 @@ import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
 import 'package:daytistics/application/providers/supabase/supabase.dart';
+import 'package:daytistics/shared/utils/encryption.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -63,31 +64,25 @@ class ConversationsService extends _$ConversationsService {
   }
 
   Future<List<Conversation>> fetchConversations({
-    required int start,
+    required int offset,
     int? amount,
   }) async {
     final SupabaseClient supabase = ref.read(supabaseClientProvider);
 
-    final conversations = (await supabase
-            .from('conversations')
-            .select()
-            .order('updated_at', ascending: false)
-            .range(start, start + (amount ?? 10)))
-        .toList()
-        .map(Conversation.fromSupabase)
-        .toList();
+    final response = await supabase.functions.invoke(
+      'fetch-conversations',
+      body: {
+        'offset': offset,
+        'amount': amount,
+      },
+    );
 
-    for (final conversation in conversations) {
-      final List<ConversationMessage> messages = (await supabase
-              .from('conversation_messages')
-              .select()
-              .eq('conversation_id', conversation.id)
-              .order('created_at', ascending: false))
-          .toList()
-          .map(ConversationMessage.fromSupabase)
-          .toList();
+    final conversations = <Conversation>[];
+    final List<dynamic> responseData = response.data as List<dynamic>;
 
-      conversation.messages = messages;
+    for (final conversation in responseData) {
+      conversations
+          .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
     }
 
     return conversations;

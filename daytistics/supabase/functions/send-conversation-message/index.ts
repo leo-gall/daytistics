@@ -11,14 +11,14 @@ import {
   fetchDaytistics,
   hasConversationAnalyticsEnabled,
 } from "@daytistics/database";
+import { decrypt, encrypt } from "@daytistics/encryption";
 import {
-  DatabaseConversation,
-  DatabaseConversationMessage,
+  Conversation,
+  ConversationMessage,
   Daytistic,
 } from "@daytistics/types";
 import prompts from "@daytistics/prompts";
 import { ChatCompletion } from "https://deno.land/x/openai@v4.24.0/resources/chat/completions.ts";
-import { open } from "node:fs";
 import { ChatCompletionMessageToolCall } from "https://deno.land/x/openai@v4.24.0/resources/mod.ts";
 
 Deno.serve(async (req) => {
@@ -357,7 +357,7 @@ Deno.serve(async (req) => {
           id: conversationId_,
           title: title,
           updated_at: new Date().toISOString(),
-        } as DatabaseConversation,
+        } as Conversation,
       ]);
     } else {
       await supabase
@@ -368,11 +368,15 @@ Deno.serve(async (req) => {
         .eq("id", conversationId_);
     }
 
+    const encryptedQuery = await encrypt(query);
+    const encryptedReply = await encrypt(reply!);
+
     await supabase.from("conversation_messages").insert([
       {
         id: uuidv4(),
-        query: query,
-        reply: reply!,
+        // Store the encrypted message as a JSON string (so that IV and ciphertext are kept together)
+        query: encryptedQuery,
+        reply: encryptedReply,
         conversation_id: conversationId_,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -380,7 +384,7 @@ Deno.serve(async (req) => {
           toolCalls?.map((toolCall: ChatCompletionMessageToolCall) =>
             JSON.stringify(toolCall)
           ) || [],
-      } as DatabaseConversationMessage,
+      } as ConversationMessage,
     ]);
 
     if (dailyTokensResponse.error) {
@@ -406,8 +410,8 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        query: query,
-        reply: reply!,
+        query: await decrypt(encryptedQuery),
+        reply: await decrypt(encryptedReply),
         conversation_id: conversationId_,
         title: title,
         called_functions:

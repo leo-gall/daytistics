@@ -1,5 +1,12 @@
 import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
-import { DatabaseActivity, DatabaseWellbeing, Daytistic } from "./types.ts";
+import {
+  Conversation,
+  ConversationMessage,
+  DatabaseActivity,
+  DatabaseWellbeing,
+  Daytistic,
+} from "./types.ts";
+import { decrypt } from "./encryption.ts";
 
 interface FetchDaytisticsOptions {
   date?: Date;
@@ -59,4 +66,62 @@ export async function hasConversationAnalyticsEnabled(
     .single();
 
   return settings?.conversation_analytics ?? false;
+}
+
+export async function fetchConversations(
+  user: User,
+  supabase: SupabaseClient,
+  options?: { encrypted: boolean; offset?: number; amount?: number }
+): Promise<Conversation[]> {
+  const offset = options?.offset ?? 0;
+  const amount = options?.amount ?? 10;
+  const { data: conversationsData, error: conversationsError } = await supabase
+    .from("conversations")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false })
+    .range(offset, offset + amount);
+
+  const conversations: Conversation[] = [];
+  const messages: ConversationMessage[] = [];
+
+  if (!conversationsError && conversationsData) {
+    for (const conversation of conversationsData) {
+      const { data: messagesData, error: messagesError } = await supabase
+        .from("conversation_messages")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .eq("conversation_id", conversation.id);
+
+      if (!messagesError && messagesData) {
+        if (!options?.encrypted) {
+          const decryptedMessages = await Promise.all(
+            messagesData.map(async (message) => {
+              return {
+                ...message,
+                query: await decrypt(message.query),
+                reply: await decrypt(message.reply),
+              };
+            })
+          );
+          messages.push(...decryptedMessages);
+        } else {
+          messages.push(...messagesData);
+        }
+      }
+    }
+
+    conversations.push(
+      ...conversationsData.map((conversation) => {
+        return {
+          ...conversation,
+          messages: messages.filter(
+            (message) => message.conversation_id === conversation.id
+          ),
+        };
+      })
+    );
+  }
+
+  return conversations;
 }

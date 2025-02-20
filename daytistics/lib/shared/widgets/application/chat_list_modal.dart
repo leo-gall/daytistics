@@ -53,9 +53,11 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
       final conversations = await ref
           .read(conversationsServiceProvider.notifier)
           .fetchConversations(
-            start: _currentPage * _pageSize,
+            offset: _currentPage * _pageSize,
             amount: _pageSize,
           );
+
+      print('fetching conversations: ${conversations.length}');
 
       setState(() {
         _currentPage++;
