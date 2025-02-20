@@ -8,6 +8,7 @@ import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> initSupabase() async {
@@ -24,7 +25,12 @@ Future<void> main() async {
 
   await initSupabase();
 
-  runApp(const ProviderScope(child: DaytisticsApp()));
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN'];
+    },
+    appRunner: () => runApp(const ProviderScope(child: DaytisticsApp())),
+  );
 }
 
 class DaytisticsApp extends StatelessWidget {

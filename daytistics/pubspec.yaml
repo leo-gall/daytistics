@@ -17,7 +17,9 @@ dependencies:
   google_sign_in: '^6.2.2'
   mock_supabase_http_client: '^0.0.3+1'
   modal_bottom_sheet: '^3.0.0'
+  posthog_flutter: ^4.10.2
   riverpod_annotation: '^2.6.1'
+  sentry_flutter: ^8.13.2
   settings_ui: ^2.0.2
   supabase_flutter: '^2.8.3'
   table_calendar: '^3.2.0'
