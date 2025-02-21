@@ -1,9 +1,14 @@
 import { z } from "npm:zod";
 
-export function validateZodSchema<T>(schema: z.ZodType<T>, data: unknown): T {
+export function validateZodSchema<T>(schema: z.ZodType<T>, data: unknown) {
   try {
-    return schema.parse(data);
+    return { body: schema.parse(data), error: null };
   } catch (error) {
-    throw new Error(`Validation failed: ${error}`);
+    return {
+      body: null,
+      error: new Response(JSON.stringify({ error: (error as Error).message }), {
+        status: 422,
+      }),
+    };
   }
 }

@@ -9,12 +9,16 @@ import { z } from "npm:zod";
 initSentry();
 
 const fetchConversationsSchema = z.object({
-  amount: z.number().optional(),
-  offset: z.number().optional(),
+  amount: z.coerce.number().int().nonnegative().optional().default(10),
+  offset: z.coerce.number().int().nonnegative().optional().default(0),
 });
 
 Deno.serve(async (req) => {
-  const body = validateZodSchema(fetchConversationsSchema, await req.json());
+  const { data: query, error } = validateZodSchema(
+    fetchConversationsSchema,
+    new URL(req.url).searchParams
+  );
+  if (error) return error;
 
   try {
     const authHeader = req.headers.get("Authorization")!;
@@ -40,10 +44,10 @@ Deno.serve(async (req) => {
       );
     }
 
-    let conversations = await fetchConversations(user!, supabase, {
+    const conversations = await fetchConversations(user!, supabase, {
       encrypted: false,
-      offset: body.offset,
-      amount: body.amount,
+      offset: query.offset,
+      amount: query.amount,
     });
 
     return new Response(JSON.stringify(conversations), {

@@ -129,13 +129,15 @@ export class Conversation {
     );
   }
 
-  toSupabase(): supabaseData {
+  toSupabase() {
     return {
-      id: this.id,
-      title: this.title,
-      created_at: this.created_at,
-      updated_at: this.updated_at,
-      user_id: this.user_id,
+      conversation: {
+        id: this.id,
+        title: this.title,
+        created_at: this.created_at,
+        updated_at: this.updated_at,
+        user_id: this.user_id,
+      },
       messages: this.messages.map((message) => message.toSupabase()),
     };
   }

@@ -1,10 +1,27 @@
-import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
+import { Session, SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { faker } from "npm:@faker-js/faker";
+import { v4 as uuidv4 } from "npm:uuid";
 import {
+  Conversation,
   DatabaseActivity,
   DatabaseDaytistic,
   DatabaseWellbeing,
 } from "../../_shared/types.ts";
+
+export async function doAsTempUser(
+  supabase: SupabaseClient,
+  callback: (user: User, session: Session) => Promise<void>
+) {
+  const {
+    data: { user, session },
+    error,
+  } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+
+  await callback(user!, session!);
+
+  await supabase.auth.signOut();
+}
 
 export async function generateFakeDaytistics(
   amount: number,
@@ -83,4 +100,65 @@ export async function generateFakeDaytistics(
   await supabase.from("activities").insert(activities);
 
   return { daytistics, wellbeings, activities };
+}
+
+export async function generateConversations(
+  user: User,
+  supabase: SupabaseClient,
+  conversationsCount: number,
+  messagesPerConversation: number
+) {
+  for (let i = 0; i < conversationsCount; i++) {
+    const conversationId = uuidv4();
+    const conv: Conversation = {
+      id: conversationId,
+      title: `Conversation ${i}`,
+      user_id: user.id,
+      created_at: new Date(Date.now() - i * 86400000).toISOString(),
+      updated_at: new Date().toISOString(),
+      messages: Array.from({
+        length: messagesPerConversation,
+      }).map(() => ({
+        id: uuidv4(),
+        query: faker.lorem.sentence(),
+        reply: faker.lorem.sentence(),
+        conversation_id: conversationId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        called_functions: [],
+        toSupabase: function () {
+          return {
+            id: this.id,
+            query: this.query,
+            reply: this.reply,
+            conversation_id: this.conversation_id,
+            created_at: this.created_at,
+            updated_at: this.updated_at,
+            called_functions: this.called_functions,
+          };
+        },
+      })),
+      toSupabase: function () {
+        return {
+          conversation: {
+            id: this.id,
+            title: this.title,
+            user_id: this.user_id,
+            created_at: this.created_at,
+            updated_at: this.updated_at,
+          },
+          messages: this.messages.map((msg) => msg.toSupabase()),
+        };
+      },
+    };
+    const { error } = await supabase
+      .from("conversations")
+      .insert(conv.toSupabase().conversation);
+    if (error) throw error;
+
+    const { error: messagesError } = await supabase
+      .from("conversation_messages")
+      .insert(conv.toSupabase().messages);
+    if (messagesError) throw messagesError;
+  }
 }
