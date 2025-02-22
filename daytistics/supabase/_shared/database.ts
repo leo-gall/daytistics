@@ -99,8 +99,8 @@ export async function fetchConversations(
             messagesData.map(async (message) => {
               return {
                 ...message,
-                query: await decrypt(message.query),
-                reply: await decrypt(message.reply),
+                query: await decrypt(message.query, user),
+                reply: await decrypt(message.reply, user),
               };
             })
           );
