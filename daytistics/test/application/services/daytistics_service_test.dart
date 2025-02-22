@@ -1,6 +1,7 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
@@ -14,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../container.dart';
+import '../../fakes.dart';
 
 void main() {
   late DaytisticsService daytisticsService;
@@ -45,6 +47,7 @@ void main() {
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
         userDependencyProvider.overrideWith((ref) => mockUser),
+        posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
       ],
     );
     daytisticsService = container.read(daytisticsServiceProvider.notifier);

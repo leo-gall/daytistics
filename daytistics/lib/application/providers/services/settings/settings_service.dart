@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/user_settings.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/config/settings.dart';
@@ -42,6 +43,15 @@ class SettingsService extends _$SettingsService {
         notifications: !state.userSettings!.notifications,
       ),
     );
+
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'settings_changed',
+      properties: {
+        'field': 'notifications',
+        'old_value': !state.userSettings!.notifications,
+        'new_value': state.userSettings!.notifications,
+      },
+    );
   }
 
   Future<void> toggleConversationAnalytics() async {
@@ -58,6 +68,15 @@ class SettingsService extends _$SettingsService {
       userSettings: state.userSettings!.copyWith(
         conversationAnalytics: !state.userSettings!.conversationAnalytics,
       ),
+    );
+
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'settings_changed',
+      properties: {
+        'field': 'conversation_analytics',
+        'old_value': !state.userSettings!.conversationAnalytics,
+        'new_value': state.userSettings!.conversationAnalytics,
+      },
     );
   }
 

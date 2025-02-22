@@ -1,7 +1,10 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/application/repositories/activities/activities_repository.dart';
+import 'package:daytistics/config/settings.dart';
+
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -60,26 +63,40 @@ class ActivitiesService extends _$ActivitiesService {
       endTime: endTimeAsDateTime,
     );
 
-    await ref.read(activitiesRepositoryProvider).updateActivity(activity);
+    await ref
+        .read(supabaseClientDependencyProvider)
+        .from(SupabaseSettings.activitiesTableName)
+        .upsert(activity.toSupabase());
+
 
     final Daytistic updatedDaytistic = daytistic.copyWith(
       activities: [...daytistic.activities, activity],
     );
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'activity_added',
+      properties: {
+        'name': name,
+        'start_time': startTimeAsDateTime.toIso8601String(),
+        'end_time': endTimeAsDateTime.toIso8601String(),
+      },
+    );
   }
 
   Future<void> deleteActivity(Activity activity) async {
-    final ActivitiesRepository activitiesRepository =
-        ref.read(activitiesRepositoryProvider);
-
     final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
-    if (!await activitiesRepository.existsActivity(activity)) {
+    if (!await existsActivity(activity)) {
       throw Exception('Activity does not exist');
     }
 
-    await activitiesRepository.deleteActivity(activity);
+    await ref
+        .read(supabaseClientDependencyProvider)
+        .from(SupabaseSettings.activitiesTableName)
+        .delete()
+        .eq('id', activity.id);
 
     final updatedActivities = daytistic.activities
         .where((element) => element.id != activity.id)
@@ -89,6 +106,16 @@ class ActivitiesService extends _$ActivitiesService {
         daytistic.copyWith(activities: updatedActivities);
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'activity_deleted',
+      properties: {
+        'name': activity.name,
+        'start_time': activity.startTime.toIso8601String(),
+        'end_time': activity.endTime.toIso8601String(),
+      },
+    );
+
   }
 
   Future<void> updateActivity({
@@ -97,8 +124,6 @@ class ActivitiesService extends _$ActivitiesService {
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-    final ActivitiesRepository activitiesRepository =
-        ref.read(activitiesRepositoryProvider);
 
     final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
@@ -146,11 +171,15 @@ class ActivitiesService extends _$ActivitiesService {
           : DateTime.now(),
     );
 
-    if (!await activitiesRepository.existsActivity(activity)) {
+    if (!await existsActivity(activity)) {
       throw Exception('Activity does not exist');
     }
 
-    await activitiesRepository.updateActivity(activity);
+    await ref
+        .read(supabaseClientDependencyProvider)
+        .from(SupabaseSettings.activitiesTableName)
+        .upsert(activity.toSupabase());
+
 
     final updatedActivities = daytistic.activities
         .map((element) => element.id == activity.id ? activity : element)
@@ -160,5 +189,24 @@ class ActivitiesService extends _$ActivitiesService {
         daytistic.copyWith(activities: updatedActivities);
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+
+
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'activity_updated',
+      properties: {
+        'name': activity.name,
+        'start_time': activity.startTime.toIso8601String(),
+        'end_time': activity.endTime.toIso8601String(),
+      },
+    );
+  }
+
+  Future<bool> existsActivity(Activity activity) async {
+    return (await ref
+            .read(supabaseClientDependencyProvider)
+            .from(SupabaseSettings.activitiesTableName)
+            .select()
+            .eq('id', activity.id))
+        .isNotEmpty;
   }
 }

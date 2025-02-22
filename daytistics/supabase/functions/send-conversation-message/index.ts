@@ -3,16 +3,23 @@ import { z } from "npm:zod";
 import { v4 as uuidv4 } from "npm:uuid";
 import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import * as Sentry from "npm:@sentry/deno";
+import { OpenAI as PostHogOpenAI } from "npm:@posthog/ai";
 
 import { initPosthog, initSentry } from "@daytistics/adapters";
 
-import { fetchDaytistics } from "@daytistics/database";
 import {
-  DatabaseConversation,
-  DatabaseConversationMessage,
+  fetchDaytistics,
+  hasConversationAnalyticsEnabled,
+} from "@daytistics/database";
+import { decrypt, encrypt } from "@daytistics/encryption";
+import {
+  Conversation,
+  ConversationMessage,
   Daytistic,
 } from "@daytistics/types";
 import prompts from "@daytistics/prompts";
+import { ChatCompletion } from "https://deno.land/x/openai@v4.24.0/resources/chat/completions.ts";
+import { ChatCompletionMessageToolCall } from "https://deno.land/x/openai@v4.24.0/resources/mod.ts";
 
 Deno.serve(async (req) => {
   initSentry();
@@ -116,11 +123,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const openai = new OpenAI({
-      apiKey: Deno.env.get("OPENAI_API_KEY"),
-    });
-
     posthog = initPosthog();
+    let openai: OpenAI | PostHogOpenAI;
+
+    if (await hasConversationAnalyticsEnabled(user!, supabase)) {
+      openai = new PostHogOpenAI({
+        apiKey: Deno.env.get("OPENAI_API_KEY") as string,
+        posthog: posthog,
+      });
+    } else {
+      openai = new OpenAI({
+        apiKey: Deno.env.get("OPENAI_API_KEY") as string,
+      });
+    }
 
     if (!(await posthog.isFeatureEnabled("conversations", user!.id))) {
       return new Response(
@@ -198,21 +213,39 @@ Deno.serve(async (req) => {
     let outputTokens = 0;
     let inputTokens = 0;
 
-    const completion = await openai.chat.completions.create({
-      messages: messages,
-      tools: tools,
-      model: conversationFeatureFlags.model,
-      stream: false,
-    });
+    let completion: ChatCompletion | undefined;
 
-    outputTokens += completion.usage?.completion_tokens || 0;
-    inputTokens += completion.usage?.prompt_tokens || 0;
+    if (openai instanceof PostHogOpenAI) {
+      completion = (await openai.chat.completions.create({
+        messages: messages,
+        tools: tools,
+        model: conversationFeatureFlags.model,
+        stream: false,
+        posthogDistinctId: user!.id,
+        posthogTraceId: user!.id,
+        // posthogProperties: { conversation_id: "abc123", paid: true }, // optional
+        // posthogGroups: { company: "company_id_in_your_db" }, // optional
+        // posthogPrivacyMode: false, // optional
+      })) as ChatCompletion;
+    } else if (openai instanceof OpenAI) {
+      completion = await openai.chat.completions.create({
+        messages: messages,
+        tools: tools,
+        model: conversationFeatureFlags.model,
+        stream: false,
+      });
+    } else {
+      throw new Error("Unsupported OpenAI client");
+    }
 
-    const toolCalls = completion.choices[0].message.tool_calls;
+    outputTokens += completion!.usage?.completion_tokens || 0;
+    inputTokens += completion!.usage?.prompt_tokens || 0;
+
+    const toolCalls = completion!.choices[0].message.tool_calls;
 
     let reply: string | null;
     if (toolCalls) {
-      messages.push(completion.choices[0].message);
+      messages.push(completion!.choices[0].message);
       for (const toolCall of toolCalls) {
         if (toolCall.function.name === "fetchDaytistics") {
           const args = JSON.parse(toolCall.function.arguments);
@@ -239,19 +272,33 @@ Deno.serve(async (req) => {
         }
       }
 
-      const feededCompletion = await openai.chat.completions.create({
-        messages: messages,
-        tools: tools,
-        model: conversationFeatureFlags.model,
-        stream: false,
-      });
+      let feededCompletion;
+      if (openai instanceof PostHogOpenAI) {
+        feededCompletion = await openai.chat.completions.create({
+          messages: messages,
+          tools: tools,
+          model: conversationFeatureFlags.model,
+          stream: false,
+          posthogDistinctId: user!.id,
+          posthogTraceId: user!.id,
+        });
+      } else if (openai instanceof OpenAI) {
+        feededCompletion = await openai.chat.completions.create({
+          messages: messages,
+          tools: tools,
+          model: conversationFeatureFlags.model,
+          stream: false,
+        });
+      } else {
+        throw new Error("Unsupported OpenAI client");
+      }
 
       outputTokens += feededCompletion.usage?.completion_tokens || 0;
       inputTokens += feededCompletion.usage?.prompt_tokens || 0;
 
       reply = feededCompletion.choices[0].message.content;
     } else {
-      reply = completion.choices[0].message.content;
+      reply = completion!.choices[0].message.content;
     }
 
     const conversation = await supabase
@@ -266,18 +313,38 @@ Deno.serve(async (req) => {
     if (!conversation.data) {
       const messages_ = messages.filter((message) => message.role !== "system");
 
-      const titleCompletion = await openai.chat.completions.create({
-        messages: [
-          {
-            role: "system",
-            content:
-              "Generate a short (1-3 words) title for this conversation.",
-          },
-          ...messages_,
-        ],
-        model: conversationFeatureFlags.title_model,
-        stream: false,
-      });
+      let titleCompletion;
+      if (openai instanceof PostHogOpenAI) {
+        titleCompletion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "Generate a short (1-3 words) title for this conversation.",
+            },
+            ...messages_,
+          ],
+          model: conversationFeatureFlags.title_model,
+          stream: false,
+          posthogDistinctId: user!.id,
+          posthogTraceId: user!.id,
+        });
+      } else if (openai instanceof OpenAI) {
+        titleCompletion = await openai.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "Generate a short (1-3 words) title for this conversation.",
+            },
+            ...messages_,
+          ],
+          model: conversationFeatureFlags.title_model,
+          stream: false,
+        });
+      } else {
+        throw new Error("Unsupported OpenAI client");
+      }
 
       outputTokens += titleCompletion.usage?.completion_tokens || 0;
       inputTokens += titleCompletion.usage?.prompt_tokens || 0;
@@ -290,7 +357,7 @@ Deno.serve(async (req) => {
           id: conversationId_,
           title: title,
           updated_at: new Date().toISOString(),
-        } as DatabaseConversation,
+        } as Conversation,
       ]);
     } else {
       await supabase
@@ -301,17 +368,23 @@ Deno.serve(async (req) => {
         .eq("id", conversationId_);
     }
 
+    const encryptedQuery = await encrypt(query, user!);
+    const encryptedReply = await encrypt(reply!, user!);
+
     await supabase.from("conversation_messages").insert([
       {
         id: uuidv4(),
-        query: query,
-        reply: reply!,
+        // Store the encrypted message as a JSON string (so that IV and ciphertext are kept together)
+        query: encryptedQuery,
+        reply: encryptedReply,
         conversation_id: conversationId_,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         called_functions:
-          toolCalls?.map((toolCall) => JSON.stringify(toolCall)) || [],
-      } as DatabaseConversationMessage,
+          toolCalls?.map((toolCall: ChatCompletionMessageToolCall) =>
+            JSON.stringify(toolCall)
+          ) || [],
+      } as ConversationMessage,
     ]);
 
     if (dailyTokensResponse.error) {
@@ -337,12 +410,14 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        query: query,
-        reply: reply!,
+        query: await decrypt(encryptedQuery, user!),
+        reply: await decrypt(encryptedReply, user!),
         conversation_id: conversationId_,
         title: title,
         called_functions:
-          toolCalls?.map((toolCall) => JSON.stringify(toolCall)) || [],
+          toolCalls?.map((toolCall: ChatCompletionMessageToolCall) =>
+            JSON.stringify(toolCall)
+          ) || [],
       }),
       {
         headers: { "Content-Type": "application/json" },

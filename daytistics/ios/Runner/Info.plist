@@ -57,5 +57,7 @@
 				</array>
 			</dict>
 		</array>
+		<key>com.posthog.posthog.AUTO_INIT</key>
+		<false />
 	</dict>
 </plist>

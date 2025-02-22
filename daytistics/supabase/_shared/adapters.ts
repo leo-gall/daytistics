@@ -7,6 +7,7 @@ export function initSentry(): void {
     dsn: Deno.env.get("SENTRY_DSN")!,
     defaultIntegrations: false,
     tracesSampleRate: 1.0,
+    environment: Deno.env.get("ENVIRONMENT")!.toLowerCase(),
   });
 }
 

@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -36,6 +37,9 @@ class NewsProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://bsky.app/profile/daytistics.com');
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'bluesky_opened');
               },
             ),
             SettingsTile.navigation(
@@ -58,6 +62,9 @@ class NewsProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://github.com/leo-gall/daytistics');
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'github_opened');
               },
             ),
             SettingsTile.navigation(
@@ -76,6 +83,9 @@ class NewsProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com');
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'newsletter_opened');
               },
             ),
           ],

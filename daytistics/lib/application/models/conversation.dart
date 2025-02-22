@@ -56,6 +56,15 @@ class Conversation {
       title: data['title'] as String,
       createdAt: DateTime.parse(data['created_at'] as String),
       updatedAt: DateTime.parse(data['updated_at'] as String),
+      messages: data['messages'] != null
+          ? (data['messages'] as List)
+              .map(
+                (message) => ConversationMessage.fromSupabase(
+                  message as Map<String, dynamic>,
+                ),
+              )
+              .toList()
+          : null,
     );
   }
 }

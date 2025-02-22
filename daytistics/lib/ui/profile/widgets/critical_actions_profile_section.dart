@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -29,6 +30,10 @@ class CriticalActionsProfileSection extends AbstractSettingsSection {
                     .read(supabaseClientDependencyProvider)
                     .functions
                     .invoke('data-export');
+
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'data_export_requested');
                 if (context.mounted) {
                   if (response.status == 200) {
                     await showDialog<void>(

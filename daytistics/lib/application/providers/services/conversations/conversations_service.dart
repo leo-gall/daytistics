@@ -2,6 +2,7 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,6 +24,7 @@ class ConversationsService extends _$ConversationsService {
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
     final currentConversation = ref.read(currentConversationProvider);
+    final posthog = ref.read(posthogDependencyProvider);
 
     final response = await Supabase.instance.client.functions.invoke(
       'send-conversation-message',
@@ -59,36 +61,39 @@ class ConversationsService extends _$ConversationsService {
       ),
     );
 
+    if (currentConversation?.id == null) {
+      await posthog.capture(eventName: 'conversation_started');
+    }
+    await posthog.capture(eventName: 'conversation_message_sent');
+
     return response.data['reply'] as String;
   }
 
   Future<List<Conversation>> fetchConversations({
-    required int start,
+    required int offset,
     int? amount,
   }) async {
     final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
-    final conversations = (await supabase
-            .from('conversations')
-            .select()
-            .order('updated_at', ascending: false)
-            .range(start, start + (amount ?? 10)))
-        .toList()
-        .map(Conversation.fromSupabase)
-        .toList();
+    final response = await supabase.functions.invoke(
+      'fetch-conversations',
+      body: {
+        'offset': offset,
+        'amount': amount,
+      },
+    );
 
-    for (final conversation in conversations) {
-      final List<ConversationMessage> messages = (await supabase
-              .from('conversation_messages')
-              .select()
-              .eq('conversation_id', conversation.id)
-              .order('created_at', ascending: false))
-          .toList()
-          .map(ConversationMessage.fromSupabase)
-          .toList();
+    final conversations = <Conversation>[];
+    final List<dynamic> responseData = response.data as List<dynamic>;
 
-      conversation.messages = messages;
+    for (final conversation in responseData) {
+      conversations
+          .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
     }
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'conversations_fetched');
 
     return conversations;
   }
@@ -105,5 +110,9 @@ class ConversationsService extends _$ConversationsService {
         ref.read(currentConversationProvider.notifier).clear();
       }
     }
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'conversation_deleted');
   }
 }

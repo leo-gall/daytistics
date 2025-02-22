@@ -11,7 +11,7 @@ import {
   assertGreater,
 } from "jsr:@std/assert";
 import { generateFakeDaytistics } from "./test-utils.ts";
-import { DatabaseConversation } from "../../_shared/types.ts";
+import { Conversation } from "../../_shared/types.ts";
 import { initPosthog } from "../../_shared/adapters.ts";
 
 const query1 =
@@ -19,7 +19,7 @@ const query1 =
 const query2 = "What have we talked about so far?";
 
 interface StepResult {
-  conversation: DatabaseConversation;
+  conversation: Conversation;
   inputTokens: number;
   outputTokens: number;
 }
@@ -48,7 +48,7 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     }
   );
 
-  const conversation: DatabaseConversation = (
+  const conversation: Conversation = (
     await supabase
       .from("conversations")
       .select()
@@ -137,7 +137,7 @@ async function testWithConversationId(
   assertEquals(typeof inputTokens, "number");
   assertEquals(typeof outputTokens, "number");
 
-  const conversation: DatabaseConversation = (
+  const conversation: Conversation = (
     await supabase
       .from("conversations")
       .select()
