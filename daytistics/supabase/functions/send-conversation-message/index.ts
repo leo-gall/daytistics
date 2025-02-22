@@ -1,4 +1,5 @@
-import OpenAI from "https://deno.land/x/openai@v4.24.0/mod.ts";
+import OpenAI from "jsr:@openai/openai";
+
 import { z } from "npm:zod";
 import { v4 as uuidv4 } from "npm:uuid";
 import { createClient, User } from "jsr:@supabase/supabase-js@2";
@@ -17,9 +18,6 @@ import {
   ConversationMessage,
   Daytistic,
 } from "@daytistics/types";
-import prompts from "@daytistics/prompts";
-import { ChatCompletion } from "https://deno.land/x/openai@v4.24.0/resources/chat/completions.ts";
-import { ChatCompletionMessageToolCall } from "https://deno.land/x/openai@v4.24.0/resources/mod.ts";
 
 Deno.serve(async (req) => {
   initSentry();
@@ -66,9 +64,11 @@ Deno.serve(async (req) => {
   ];
 
   interface ConversationFeatureFlags {
-    max_output_tokens_per_day: number;
+    max_free_output_tokens_per_day: number;
     model: string;
+    prompt: string;
     title_model: string;
+    title_prompt: string;
   }
 
   const inputSchema = z.object({
@@ -163,7 +163,7 @@ Deno.serve(async (req) => {
     if (
       !dailyTokensResponse.error &&
       dailyTokensResponse.data.output_tokens >=
-        conversationFeatureFlags.max_output_tokens_per_day
+        conversationFeatureFlags.max_free_output_tokens_per_day
     ) {
       return new Response(
         JSON.stringify({ error: "Daily token budget exceeded" }),
@@ -177,10 +177,9 @@ Deno.serve(async (req) => {
     const messages: OpenAI.ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: prompts({
-          timezone: timezone,
-          currentDateTime: new Date().toISOString(),
-        }).send_conversation_message,
+        content: `${
+          conversationFeatureFlags.prompt
+        } - The current time in your timezone is ${new Date().toISOString()} and you are using UTC`,
       },
     ];
 
@@ -213,7 +212,7 @@ Deno.serve(async (req) => {
     let outputTokens = 0;
     let inputTokens = 0;
 
-    let completion: ChatCompletion | undefined;
+    let completion: OpenAI.Chat.ChatCompletion | undefined;
 
     if (openai instanceof PostHogOpenAI) {
       completion = (await openai.chat.completions.create({
@@ -223,10 +222,7 @@ Deno.serve(async (req) => {
         stream: false,
         posthogDistinctId: user!.id,
         posthogTraceId: user!.id,
-        // posthogProperties: { conversation_id: "abc123", paid: true }, // optional
-        // posthogGroups: { company: "company_id_in_your_db" }, // optional
-        // posthogPrivacyMode: false, // optional
-      })) as ChatCompletion;
+      })) as OpenAI.Chat.ChatCompletion;
     } else if (openai instanceof OpenAI) {
       completion = await openai.chat.completions.create({
         messages: messages,
@@ -334,8 +330,7 @@ Deno.serve(async (req) => {
           messages: [
             {
               role: "system",
-              content:
-                "Generate a short (1-3 words) title for this conversation.",
+              content: conversationFeatureFlags.title_prompt,
             },
             ...messages_,
           ],
@@ -381,8 +376,9 @@ Deno.serve(async (req) => {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         called_functions:
-          toolCalls?.map((toolCall: ChatCompletionMessageToolCall) =>
-            JSON.stringify(toolCall)
+          toolCalls?.map(
+            (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
+              JSON.stringify(toolCall)
           ) || [],
       } as ConversationMessage,
     ]);
@@ -415,8 +411,9 @@ Deno.serve(async (req) => {
         conversation_id: conversationId_,
         title: title,
         called_functions:
-          toolCalls?.map((toolCall: ChatCompletionMessageToolCall) =>
-            JSON.stringify(toolCall)
+          toolCalls?.map(
+            (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
+              JSON.stringify(toolCall)
           ) || [],
       }),
       {
