@@ -39,7 +39,7 @@ export async function fetchDaytistics(
       await supabase
         .from("wellbeings")
         .select("*")
-        .eq("id", daytistic.wellbeing_id)
+        .eq("daytistic_id", daytistic.id)
         .single()
     ).data as DatabaseWellbeing;
     if (wellbeing) {
