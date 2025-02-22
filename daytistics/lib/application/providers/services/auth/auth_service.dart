@@ -42,6 +42,7 @@ class AuthService extends _$AuthService {
           eventName: 'apple_sign_in',
         );
     throw UnimplementedError();
+
   }
 
   Future<void> signInWithGoogle() async {
@@ -76,6 +77,7 @@ class AuthService extends _$AuthService {
       await ref.read(posthogDependencyProvider).capture(
             eventName: 'google_sign_in',
           );
+
     } catch (e) {
       rethrow;
     }
