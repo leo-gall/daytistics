@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/application/star_rating.dart';

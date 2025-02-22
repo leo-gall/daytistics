@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';

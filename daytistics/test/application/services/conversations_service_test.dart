@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/conversation.dart';
-import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/services/chat/conversations_service.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
+import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
@@ -28,7 +28,7 @@ void main() {
   setUp(() {
     container = createContainer(
       overrides: [
-        supabaseClientProvider.overrideWith((ref) => mockSupabase),
+        supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
       ],
     );
     conversationsService =

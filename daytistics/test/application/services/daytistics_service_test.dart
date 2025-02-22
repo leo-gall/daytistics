@@ -1,10 +1,10 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/providers/user/user.dart';
-import 'package:daytistics/application/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
+import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,8 +43,8 @@ void main() {
   setUp(() {
     container = createContainer(
       overrides: [
-        supabaseClientProvider.overrideWith((ref) => mockSupabase),
-        userProvider.overrideWith((ref) => mockUser),
+        supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
+        userDependencyProvider.overrideWith((ref) => mockUser),
       ],
     );
     daytisticsService = container.read(daytisticsServiceProvider.notifier);

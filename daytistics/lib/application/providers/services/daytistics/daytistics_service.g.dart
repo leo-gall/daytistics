@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'settings_service.dart';
+part of 'daytistics_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$settingsServiceHash() => r'b3659557a4075a4242db67c03efcf54e6e3627f5';
+String _$daytisticsServiceHash() => r'ff0e70b23c20116cdc70109090f15650dbd973e8';
 
-/// See also [SettingsService].
-@ProviderFor(SettingsService)
-final settingsServiceProvider =
-    AutoDisposeNotifierProvider<SettingsService, SettingsServiceState>.internal(
-  SettingsService.new,
-  name: r'settingsServiceProvider',
+/// See also [DaytisticsService].
+@ProviderFor(DaytisticsService)
+final daytisticsServiceProvider = AutoDisposeNotifierProvider<DaytisticsService,
+    DaytisticsServiceState>.internal(
+  DaytisticsService.new,
+  name: r'daytisticsServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$settingsServiceHash,
+      : _$daytisticsServiceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$SettingsService = AutoDisposeNotifier<SettingsServiceState>;
+typedef _$DaytisticsService = AutoDisposeNotifier<DaytisticsServiceState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

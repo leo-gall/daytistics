@@ -1,9 +1,9 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/providers/user/user.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,12 +21,12 @@ class DaytisticsService extends _$DaytisticsService {
   }
 
   Future<Daytistic> fetchDaytistic(DateTime date) async {
-    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
     final daytisticMap = await supabase
         .from(SupabaseSettings.daytisticsTableName)
         .select()
-        .eq('user_id', ref.read(userProvider)!.id)
+        .eq('user_id', ref.read(userDependencyProvider)!.id)
         .eq('date', date.toIso8601String())
         .maybeSingle();
 
@@ -58,7 +58,7 @@ class DaytisticsService extends _$DaytisticsService {
   }
 
   Future<Daytistic> fetchOrAdd(DateTime date) async {
-    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
     late Daytistic daytistic;
 
@@ -73,9 +73,9 @@ class DaytisticsService extends _$DaytisticsService {
         daytisticId: daytistic.id,
       );
 
-      await supabase
-          .from(SupabaseSettings.daytisticsTableName)
-          .upsert(daytistic.toSupabase(userId: ref.read(userProvider)!.id));
+      await supabase.from(SupabaseSettings.daytisticsTableName).upsert(
+            daytistic.toSupabase(userId: ref.read(userDependencyProvider)!.id),
+          );
 
       await supabase
           .from(SupabaseSettings.wellbeingsTableName)
