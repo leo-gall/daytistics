@@ -368,8 +368,8 @@ Deno.serve(async (req) => {
         .eq("id", conversationId_);
     }
 
-    const encryptedQuery = await encrypt(query);
-    const encryptedReply = await encrypt(reply!);
+    const encryptedQuery = await encrypt(query, user!);
+    const encryptedReply = await encrypt(reply!, user!);
 
     await supabase.from("conversation_messages").insert([
       {
@@ -410,8 +410,8 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        query: await decrypt(encryptedQuery),
-        reply: await decrypt(encryptedReply),
+        query: await decrypt(encryptedQuery, user!),
+        reply: await decrypt(encryptedReply, user!),
         conversation_id: conversationId_,
         title: title,
         called_functions:

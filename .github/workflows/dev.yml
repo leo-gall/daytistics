@@ -62,10 +62,6 @@ jobs:
       - name: Run Supabase Containers
         working-directory: ./daytistics
         run: npx supabase start
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
       - name: Storing Supabase secrets
         id: supabase-keys
@@ -119,6 +115,8 @@ jobs:
           echo OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" >> .env.github
           echo POSTHOG_API_KEY="${{ secrets.POSTHOG_API_KEY }}" >> .env.github
           echo SENTRY_DSN="${{ secrets.SENTRY_DSN }}" >> .env.github
+          echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env.github
+          echo ENVIRONMENT="pipeline" >> .env.github
           cat .env
 
       - name: Run edge functions
