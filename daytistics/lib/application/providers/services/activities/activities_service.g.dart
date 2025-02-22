@@ -8,6 +8,7 @@ part of 'activities_service.dart';
 
 String _$activitiesServiceHash() => r'91720aab6980589c2592245494a8e2eb65d8da6a';
 
+
 /// See also [ActivitiesService].
 @ProviderFor(ActivitiesService)
 final activitiesServiceProvider = AutoDisposeNotifierProvider<ActivitiesService,

@@ -8,6 +8,7 @@ part of 'auth_service.dart';
 
 String _$authServiceHash() => r'55ca106754b65393ff48ee5231d7fcb5ab460097';
 
+
 /// See also [AuthService].
 @ProviderFor(AuthService)
 final authServiceProvider =
