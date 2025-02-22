@@ -4,7 +4,6 @@ import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
 import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/shared/utils/encryption.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
