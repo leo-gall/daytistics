@@ -1,4 +1,4 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,14 +16,18 @@ class AuthService extends _$AuthService {
   }
 
   Future<void> signInAnonymously() async {
-    await ref.read(supabaseClientProvider).auth.signInAnonymously();
+    await ref.read(supabaseClientDependencyProvider).auth.signInAnonymously();
   }
 
   Future<void> signOut() async {
-    final bool isAnonymous =
-        ref.read(supabaseClientProvider).auth.currentUser?.isAnonymous ?? true;
+    final bool isAnonymous = ref
+            .read(supabaseClientDependencyProvider)
+            .auth
+            .currentUser
+            ?.isAnonymous ??
+        true;
     if (isAnonymous) await deleteAccount();
-    await ref.read(supabaseClientProvider).auth.signOut();
+    await ref.read(supabaseClientDependencyProvider).auth.signOut();
   }
 
   Future<void> signInWithGoogle() async {
@@ -49,7 +53,7 @@ class AuthService extends _$AuthService {
         throw Exception('No ID Token found.');
       }
 
-      await ref.read(supabaseClientProvider).auth.signInWithIdToken(
+      await ref.read(supabaseClientDependencyProvider).auth.signInWithIdToken(
             provider: OAuthProvider.google,
             idToken: idToken,
             accessToken: accessToken,
@@ -60,6 +64,8 @@ class AuthService extends _$AuthService {
   }
 
   Future<void> deleteAccount() async {
-    await ref.read(supabaseClientProvider).rpc<dynamic>('delete_account');
+    await ref
+        .read(supabaseClientDependencyProvider)
+        .rpc<dynamic>('delete_account');
   }
 }

@@ -1,4 +1,4 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/profile/widgets/delete_account_modal.dart';
@@ -26,7 +26,7 @@ class CriticalActionsProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 final response = await ref
-                    .read(supabaseClientProvider)
+                    .read(supabaseClientDependencyProvider)
                     .functions
                     .invoke('data-export');
                 if (context.mounted) {

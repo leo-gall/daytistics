@@ -1,5 +1,5 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -40,7 +40,11 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             onPressed: () async {
               await ref.read(authServiceProvider.notifier).signOut();
 
-              if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
+              if (ref
+                      .watch(supabaseClientDependencyProvider)
+                      .auth
+                      .currentUser ==
+                  null) {
                 if (context.mounted) {
                   await Navigator.pushNamed(context, '/signin');
                 }

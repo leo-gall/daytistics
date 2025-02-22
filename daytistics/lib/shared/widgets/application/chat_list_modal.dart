@@ -1,6 +1,6 @@
 import 'package:daytistics/application/models/conversation.dart';
-import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
-import 'package:daytistics/application/services/chat/conversations_service.dart';
+import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
+import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';

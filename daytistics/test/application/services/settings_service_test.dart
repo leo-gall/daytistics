@@ -1,6 +1,6 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/providers/user/user.dart';
-import 'package:daytistics/application/services/settings/settings_service.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,8 +28,8 @@ void main() {
   setUp(() {
     container = createContainer(
       overrides: [
-        supabaseClientProvider.overrideWith((ref) => mockSupabase),
-        userProvider.overrideWith(
+        supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
+        userDependencyProvider.overrideWith(
           (ref) => User(
             id: 'user-1',
             aud: 'authenticated',

@@ -6,22 +6,24 @@ part of 'supabase.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supabaseClientHash() => r'de6240783d7dddb57e07d034deb0ddf8e2fcc3e4';
+String _$supabaseClientDependencyHash() =>
+    r'd0b8bc8877b153e4a42f09ff3ab8c2d03eab6166';
 
-/// See also [supabaseClient].
-@ProviderFor(supabaseClient)
-final supabaseClientProvider = AutoDisposeProvider<SupabaseClient>.internal(
-  supabaseClient,
-  name: r'supabaseClientProvider',
+/// See also [supabaseClientDependency].
+@ProviderFor(supabaseClientDependency)
+final supabaseClientDependencyProvider =
+    AutoDisposeProvider<SupabaseClient>.internal(
+  supabaseClientDependency,
+  name: r'supabaseClientDependencyProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$supabaseClientHash,
+      : _$supabaseClientDependencyHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SupabaseClientRef = AutoDisposeProviderRef<SupabaseClient>;
+typedef SupabaseClientDependencyRef = AutoDisposeProviderRef<SupabaseClient>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

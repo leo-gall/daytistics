@@ -7,7 +7,7 @@ part of 'conversations_service.dart';
 // **************************************************************************
 
 String _$conversationsServiceHash() =>
-    r'198648e61b3ada53d88775ad4812576497257d17';
+    r'1ce68fd2809df29cf252de65807b86c65d91b7a4';
 
 /// See also [ConversationsService].
 @ProviderFor(ConversationsService)

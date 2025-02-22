@@ -1,5 +1,5 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,7 +35,8 @@ class _RequireAuthState extends ConsumerState<RequireAuth> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
+      if (ref.watch(supabaseClientDependencyProvider).auth.currentUser ==
+          null) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute<SignInView>(
