@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/user_settings.dart';
-import 'package:daytistics/application/services/settings/settings_service.dart';
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';

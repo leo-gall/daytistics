@@ -1,4 +1,4 @@
-import 'package:daytistics/application/providers/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -68,7 +68,7 @@ class HelpProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl(
-                  'mailto:contact@daytistics.com?subject=Support+${ref.read(supabaseClientProvider).auth.currentUser!.id}',
+                  'mailto:contact@daytistics.com?subject=Support+${ref.read(supabaseClientDependencyProvider).auth.currentUser!.id}',
                 );
               },
             ),

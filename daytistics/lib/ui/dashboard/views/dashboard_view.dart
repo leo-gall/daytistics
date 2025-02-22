@@ -36,7 +36,7 @@ class DashboardView extends ConsumerWidget {
             onPressed: () async {
               // await ref.read(authServiceProvider.notifier).signOut();
 
-              // if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
+              // if (ref.watch(supabaseClientDependencyProvider).auth.currentUser == null) {
               //   if (context.mounted) {
               //     await Navigator.pushAndRemoveUntil(
               //       context,

@@ -6,7 +6,7 @@ part of 'daytistics_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$daytisticsServiceHash() => r'88242f4250a9a46a6359467bdc655099f0f17d62';
+String _$daytisticsServiceHash() => r'ff0e70b23c20116cdc70109090f15650dbd973e8';
 
 /// See also [DaytisticsService].
 @ProviderFor(DaytisticsService)

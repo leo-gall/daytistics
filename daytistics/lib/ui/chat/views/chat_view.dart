@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/conversation_message.dart';
-import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
+import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
