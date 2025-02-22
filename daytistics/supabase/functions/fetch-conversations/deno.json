@@ -1,9 +1,13 @@
 {
   "imports": {
-    "@daytistics/types": "../../_shared/types.ts",
-    "@daytistics/database": "../../_shared/database.ts",
-    "@daytistics/encryption": "../../_shared/encryption.ts",
-    "@daytistics/utils": "../../_shared/utils.ts",
-    "@daytistics/adapters": "../../_shared/adapters.ts"
+    "@shared/types": "../../_shared/types.ts",
+    "@shared/database": "../../_shared/database.ts",
+    "@shared/prompts": "../../_shared/prompts.ts",
+    "@shared/encryption": "../../_shared/encryption.ts",
+    "@shared/adapters": "../../_shared/adapters.ts",
+    "@shared/validation": "../../_shared/validation.ts",
+    "@application/conversations": "../../_application/conversations.ts",
+    "@application/tokens_budgets": "../../_application/tokens_budgets.ts",
+    "@application/daytistics": "../../_application/daytistics.ts"
   }
 }

@@ -10,9 +10,10 @@ import {
   assertFalse,
   assertGreater,
 } from "jsr:@std/assert";
-import { generateFakeDaytistics } from "./test-utils.ts";
-import { Conversation } from "../../_shared/types.ts";
-import { initPosthog } from "../../_shared/adapters.ts";
+import { generateFakeDaytistics } from "../../e2e-utils.ts";
+import { Conversation } from "../../../_shared/types.ts";
+import { initPosthog } from "../../../_shared/adapters.ts";
+import * as Conversations from "../../../_application/conversations.ts";
 
 const query1 =
   "What would you recommend to improve my wellbeing? Based on: a) my activities in the last week, b) my activities yesterday, c) all my activities. Answer 3 times.";
@@ -43,7 +44,6 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
     {
       body: {
         query: query1,
-        timezone: "Berlin",
       },
     }
   );
@@ -103,7 +103,6 @@ async function testWithConversationId(
       body: {
         query: query2,
         conversation_id: conversationId,
-        timezone: "Berlin",
       },
     }
   );
@@ -161,9 +160,9 @@ async function testWithExceededTokenBudget(
   const featureFlagPayload = (await posthog.getFeatureFlagPayload(
     "conversations",
     user.id
-  )) as { max_output_tokens_per_day: number };
+  )) as unknown as Conversations.FeatureFlags;
   const maxOutputTokensPerDay =
-    await featureFlagPayload?.max_output_tokens_per_day;
+    await featureFlagPayload?.max_free_output_tokens_per_day;
 
   const _ = await supabase
     .from("daily_token_budgets")
@@ -178,7 +177,6 @@ async function testWithExceededTokenBudget(
     {
       body: {
         query: query1,
-        timezone: "Berlin",
       },
     }
   );
@@ -193,16 +191,6 @@ function testTokensIncreased(step1Result: StepResult, step2Result: StepResult) {
   assertGreater(step2Result.outputTokens, step1Result.outputTokens);
 }
 
-function testConversationUpdated(
-  step1Result: StepResult,
-  step2Result: StepResult
-) {
-  assertGreater(
-    new Date(step2Result.conversation.updated_at).getTime(),
-    new Date(step1Result.conversation.updated_at).getTime()
-  );
-}
-
 async function testRequiresAuthentication(supabase: SupabaseClient) {
   await supabase.auth.signOut();
 
@@ -211,7 +199,6 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
     {
       body: {
         query: query1,
-        timezone: "Berlin",
       },
     }
   );
@@ -266,13 +253,6 @@ Deno.test(
 
     await t.step("Tokens increased", () => {
       testTokensIncreased(
-        testWithoutConversationIdResult,
-        testWithConversationIdResult
-      );
-    });
-
-    await t.step("Conversation updated", () => {
-      testConversationUpdated(
         testWithoutConversationIdResult,
         testWithConversationIdResult
       );

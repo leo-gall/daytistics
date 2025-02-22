@@ -1,141 +1,49 @@
 import OpenAI from "jsr:@openai/openai";
 
 import { z } from "npm:zod";
-import { v4 as uuidv4 } from "npm:uuid";
-import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import * as Sentry from "npm:@sentry/deno";
 import { OpenAI as PostHogOpenAI } from "npm:@posthog/ai";
+import { validateZodSchema } from "@shared/validation";
 
-import { initPosthog, initSentry } from "@daytistics/adapters";
+import { initPosthog, initSentry, initSupabase } from "@shared/adapters";
 
-import {
-  fetchDaytistics,
-  hasConversationAnalyticsEnabled,
-} from "@daytistics/database";
-import { decrypt, encrypt } from "@daytistics/encryption";
-import {
-  Conversation,
-  ConversationMessage,
-  Daytistic,
-} from "@daytistics/types";
+import * as Conversations from "@application/conversations";
+import * as DailyTokenBudgets from "@application/tokens_budgets";
+
+const BodySchema = z.object({
+  query: z.string(),
+  conversation_id: z.string().nullable().optional(),
+});
 
 Deno.serve(async (req) => {
   initSentry();
-
-  const tools: OpenAI.ChatCompletionTool[] = [
-    {
-      type: "function",
-      function: {
-        name: "fetchDaytistics",
-        description:
-          "Fetches daytistics from the database based on the given date or date range.",
-        parameters: {
-          type: "object",
-          properties: {
-            date: {
-              type: "string",
-              format: "date",
-              description:
-                "The specific date to fetch daytistics for (YYYY-MM-DD).",
-            },
-            range: {
-              type: "object",
-              properties: {
-                start: {
-                  type: "string",
-                  format: "date-time",
-                  description: "The start of the date range (ISO 8601 format).",
-                },
-                end: {
-                  type: "string",
-                  format: "date-time",
-                  description: "The end of the date range (ISO 8601 format).",
-                },
-              },
-              required: ["start", "end"],
-              description:
-                "The date range to fetch daytistics for. Cannot be used with 'date'.",
-            },
-          },
-          description: "The options to fetch daytistics with.",
-        },
-      },
-    },
-  ];
-
-  interface ConversationFeatureFlags {
-    max_free_output_tokens_per_day: number;
-    model: string;
-    prompt: string;
-    title_model: string;
-    title_prompt: string;
-  }
-
-  const inputSchema = z.object({
-    query: z.string(),
-    conversation_id: z.string().nullable().optional(),
-    timezone: z.string(),
-  });
-
-  let posthog;
+  const posthog = initPosthog();
 
   try {
-    const authHeader = req.headers.get("Authorization")!;
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      {
-        global: { headers: { Authorization: authHeader } },
-      }
-    );
+    // Initialize Supabase client and get the user
+    const {
+      supabase,
+      user,
+      error: supabaseInitError,
+    } = await initSupabase(req, { withAuth: true });
+    if (supabaseInitError) return supabaseInitError;
 
-    const token = authHeader.replace("Bearer ", "");
-    let user: User | null = null;
-    try {
-      user = (await supabase.auth.getUser(token)).data.user;
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid or missing token" }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    // Validate the request body
+    const validatedBody = validateZodSchema(BodySchema, await req.json());
+    if (!validatedBody || !validatedBody.data) {
+      return validatedBody.error;
     }
 
-    let query: string;
-    let conversationId: string | null | undefined;
-    let timezone: string;
-
-    try {
-      const {
-        query: q,
-        conversation_id,
-        timezone: tz,
-      } = inputSchema.parse(await req.json());
-      query = q;
-      conversationId = conversation_id;
-      timezone = tz;
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid input schema" }), {
-        status: 422,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    posthog = initPosthog();
-    let openai: OpenAI | PostHogOpenAI;
-
-    if (await hasConversationAnalyticsEnabled(user!, supabase)) {
-      openai = new PostHogOpenAI({
-        apiKey: Deno.env.get("OPENAI_API_KEY") as string,
-        posthog: posthog,
-      });
-    } else {
-      openai = new OpenAI({
-        apiKey: Deno.env.get("OPENAI_API_KEY") as string,
-      });
-    }
+    // Only if the users allows conversation analytics we use the PostHogOpenAI client to track the conversation
+    const openai: OpenAI | PostHogOpenAI =
+      (await Conversations.hasConversationAnalyticsEnabled(user!, supabase))
+        ? new PostHogOpenAI({
+            apiKey: Deno.env.get("OPENAI_API_KEY") as string,
+            posthog: posthog,
+          })
+        : new OpenAI({
+            apiKey: Deno.env.get("OPENAI_API_KEY") as string,
+          });
 
     if (!(await posthog.isFeatureEnabled("conversations", user!.id))) {
       return new Response(
@@ -151,267 +59,76 @@ Deno.serve(async (req) => {
       "conversations",
       user!.id,
       true
-    ))! as unknown as ConversationFeatureFlags;
+    ))! as unknown as Conversations.FeatureFlags;
 
-    const today = new Date().toISOString().split("T")[0];
-    const dailyTokensResponse = await supabase
-      .from("daily_token_budgets")
-      .select()
-      .eq("date", today)
-      .single();
-
-    if (
-      !dailyTokensResponse.error &&
-      dailyTokensResponse.data.output_tokens >=
+    // Check if the user has exceeded the number of tokens for today
+    const { error: exceededError } =
+      await DailyTokenBudgets.hasExceededTokensToday(
+        supabase,
+        user!,
         conversationFeatureFlags.max_free_output_tokens_per_day
-    ) {
-      return new Response(
-        JSON.stringify({ error: "Daily token budget exceeded" }),
+      );
+    if (exceededError) return exceededError;
+
+    const llmResponse = await Conversations.sendConversationMessage(
+      supabase,
+      openai,
+      user!,
+      {
+        query: validatedBody.data.query,
+        conversationId: validatedBody.data.conversation_id,
+        model: conversationFeatureFlags.model,
+        systemPrompt: conversationFeatureFlags.prompt,
+      }
+    );
+
+    let conversationId = validatedBody.data.conversation_id;
+    let titleLlmResponse;
+    if (!conversationId) {
+      titleLlmResponse = await Conversations.generateConversationTitleFromQuery(
+        openai,
+        user!,
         {
-          status: 403,
-          headers: { "Content-Type": "application/json" },
+          query: validatedBody.data.query,
+          model: conversationFeatureFlags.title_model,
+          prompt: conversationFeatureFlags.title_prompt,
         }
+      );
+
+      conversationId = await Conversations.createConversation(
+        supabase,
+        user!,
+        titleLlmResponse.title || "Untitled"
       );
     }
 
-    const messages: OpenAI.ChatCompletionMessageParam[] = [
-      {
-        role: "system",
-        content: `${
-          conversationFeatureFlags.prompt
-        } - The current time in your timezone is ${new Date().toISOString()} and you are using UTC`,
-      },
-    ];
-
-    if (conversationId) {
-      const conversation_messages = await supabase
-        .from("conversation_messages")
-        .select()
-        .eq("conversation_id", conversationId);
-
-      if (conversation_messages.data && !conversation_messages.error) {
-        for (const message of conversation_messages.data!) {
-          messages.push({
-            role: "user",
-            content: message.query,
-          });
-
-          messages.push({
-            role: "assistant",
-            content: message.reply,
-          });
-        }
-      }
-    }
-
-    messages.push({
-      role: "user",
-      content: query,
+    await Conversations.addMessageToConversation(supabase, user!, {
+      query: validatedBody.data.query,
+      reply: llmResponse.reply!,
+      conversationId: conversationId,
+      toolCalls: llmResponse.toolCalls || [],
     });
 
-    let outputTokens = 0;
-    let inputTokens = 0;
-
-    let completion: OpenAI.Chat.ChatCompletion | undefined;
-
-    if (openai instanceof PostHogOpenAI) {
-      completion = (await openai.chat.completions.create({
-        messages: messages,
-        tools: tools,
-        model: conversationFeatureFlags.model,
-        stream: false,
-        posthogDistinctId: user!.id,
-        posthogTraceId: user!.id,
-      })) as OpenAI.Chat.ChatCompletion;
-    } else if (openai instanceof OpenAI) {
-      completion = await openai.chat.completions.create({
-        messages: messages,
-        tools: tools,
-        model: conversationFeatureFlags.model,
-        stream: false,
-      });
-    } else {
-      throw new Error("Unsupported OpenAI client");
-    }
-
-    outputTokens += completion!.usage?.completion_tokens || 0;
-    inputTokens += completion!.usage?.prompt_tokens || 0;
-
-    const toolCalls = completion!.choices[0].message.tool_calls;
-
-    let reply: string | null;
-    if (toolCalls) {
-      messages.push(completion!.choices[0].message);
-      for (const toolCall of toolCalls) {
-        if (toolCall.function.name === "fetchDaytistics") {
-          const args = JSON.parse(toolCall.function.arguments);
-          let daytistics: Daytistic[] = [];
-
-          if (args.date) {
-            daytistics = await fetchDaytistics(supabase, { date: args.date });
-          } else if (args.range) {
-            daytistics = await fetchDaytistics(supabase, {
-              range: {
-                start: args.range.start,
-                end: args.range.end,
-              },
-            });
-          } else {
-            daytistics = await fetchDaytistics(supabase);
-          }
-
-          messages.push({
-            role: "tool",
-            tool_call_id: toolCall.id,
-            content: JSON.stringify(daytistics),
-          });
-        }
-      }
-
-      let feededCompletion;
-      if (openai instanceof PostHogOpenAI) {
-        feededCompletion = await openai.chat.completions.create({
-          messages: messages,
-          tools: tools,
-          model: conversationFeatureFlags.model,
-          stream: false,
-          posthogDistinctId: user!.id,
-          posthogTraceId: user!.id,
-        });
-      } else if (openai instanceof OpenAI) {
-        feededCompletion = await openai.chat.completions.create({
-          messages: messages,
-          tools: tools,
-          model: conversationFeatureFlags.model,
-          stream: false,
-        });
-      } else {
-        throw new Error("Unsupported OpenAI client");
-      }
-
-      outputTokens += feededCompletion.usage?.completion_tokens || 0;
-      inputTokens += feededCompletion.usage?.prompt_tokens || 0;
-
-      reply = feededCompletion.choices[0].message.content;
-    } else {
-      reply = completion!.choices[0].message.content;
-    }
-
-    const conversation = await supabase
-      .from("conversations")
-      .select()
-      .eq("id", conversationId)
-      .single();
-
-    let title: string = conversation.data?.title || "";
-
-    let conversationId_: string = conversationId || "";
-    if (!conversation.data) {
-      const messages_ = messages.filter((message) => message.role !== "system");
-
-      let titleCompletion;
-      if (openai instanceof PostHogOpenAI) {
-        titleCompletion = await openai.chat.completions.create({
-          messages: [
-            {
-              role: "system",
-              content:
-                "Generate a short (1-3 words) title for this conversation.",
-            },
-            ...messages_,
-          ],
-          model: conversationFeatureFlags.title_model,
-          stream: false,
-          posthogDistinctId: user!.id,
-          posthogTraceId: user!.id,
-        });
-      } else if (openai instanceof OpenAI) {
-        titleCompletion = await openai.chat.completions.create({
-          messages: [
-            {
-              role: "system",
-              content: conversationFeatureFlags.title_prompt,
-            },
-            ...messages_,
-          ],
-          model: conversationFeatureFlags.title_model,
-          stream: false,
-        });
-      } else {
-        throw new Error("Unsupported OpenAI client");
-      }
-
-      outputTokens += titleCompletion.usage?.completion_tokens || 0;
-      inputTokens += titleCompletion.usage?.prompt_tokens || 0;
-
-      conversationId_ = uuidv4();
-      title = titleCompletion.choices[0].message.content!;
-      await supabase.from("conversations").insert([
-        {
-          user_id: user!.id,
-          id: conversationId_,
-          title: title,
-          updated_at: new Date().toISOString(),
-        } as Conversation,
-      ]);
-    } else {
-      await supabase
-        .from("conversations")
-        .update({
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", conversationId_);
-    }
-
-    const encryptedQuery = await encrypt(query, user!);
-    const encryptedReply = await encrypt(reply!, user!);
-
-    await supabase.from("conversation_messages").insert([
-      {
-        id: uuidv4(),
-        // Store the encrypted message as a JSON string (so that IV and ciphertext are kept together)
-        query: encryptedQuery,
-        reply: encryptedReply,
-        conversation_id: conversationId_,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        called_functions:
-          toolCalls?.map(
-            (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
-              JSON.stringify(toolCall)
-          ) || [],
-      } as ConversationMessage,
-    ]);
-
-    if (dailyTokensResponse.error) {
-      await supabase.from("daily_token_budgets").insert([
-        {
-          user_id: user!.id,
-          date: today,
-          input_tokens: inputTokens,
-          output_tokens: outputTokens,
-        },
-      ]);
-    } else {
-      await supabase
-        .from("daily_token_budgets")
-        .update({
-          input_tokens: dailyTokensResponse.data.input_tokens + inputTokens,
-          output_tokens: dailyTokensResponse.data.output_tokens + outputTokens,
-        })
-        .eq("id", dailyTokensResponse.data.id);
-    }
-
-    await posthog.shutdown();
+    await DailyTokenBudgets.updateTokensBudget(supabase, user!, {
+      inputTokens: validatedBody.data.query.length,
+      outputTokens: llmResponse.reply!.length,
+    });
 
     return new Response(
       JSON.stringify({
-        query: await decrypt(encryptedQuery, user!),
-        reply: await decrypt(encryptedReply, user!),
-        conversation_id: conversationId_,
-        title: title,
+        query: validatedBody.data.query,
+        reply: llmResponse.reply,
+        conversation_id: conversationId,
+        title:
+          titleLlmResponse?.title ??
+          (
+            await Conversations.fetchConversations(user!, supabase, {
+              encrypted: true,
+              id: conversationId,
+            })
+          ).at(0)?.title,
         called_functions:
-          toolCalls?.map(
+          llmResponse.toolCalls?.map(
             (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
               JSON.stringify(toolCall)
           ) || [],
@@ -423,10 +140,11 @@ Deno.serve(async (req) => {
   } catch (error) {
     Sentry.captureException(error);
     await Sentry.flush();
-    await posthog?.shutdown();
     return new Response(JSON.stringify({ error: "An unknown error occured" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
+  } finally {
+    await posthog.shutdown();
   }
 });

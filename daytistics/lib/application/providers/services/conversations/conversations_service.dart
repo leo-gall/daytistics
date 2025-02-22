@@ -30,7 +30,6 @@ class ConversationsService extends _$ConversationsService {
       'send-conversation-message',
       body: {
         'query': query,
-        'timezone': DateTime.now().timeZoneName,
         'conversation_id': currentConversation?.id,
       },
     );
