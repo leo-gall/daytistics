@@ -22,7 +22,7 @@ class ConversationsService extends _$ConversationsService {
     final SupabaseClient supabase = ref.read(supabaseClientProvider);
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
-    final currentConversation = ref.read(currentConversationProvider);
+    final currentConversation = ref.read(currentConversationProvider)
 
     final response = await Supabase.instance.client.functions.invoke(
       'send-conversation-message',
