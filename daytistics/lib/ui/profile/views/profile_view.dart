@@ -65,7 +65,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           String version = 'unknown';
 
           // postframe callback
-          WidgetsBinding.instance!.addPostFrameCallback((_) async {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
             version = (await PackageInfo.fromPlatform()).version;
           });
 
@@ -82,27 +82,28 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 const LegalProfileSection(),
                 const CriticalActionsProfileSection(),
                 CustomSettingsSection(
-                    child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    StyledText(
-                      version,
-                      style: const TextStyle(
-                        color: ColorSettings.textDark,
-                        fontSize: 12,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      StyledText(
+                        version,
+                        style: const TextStyle(
+                          color: ColorSettings.textDark,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                    StyledText(
-                      (email != null && email.isNotEmpty)
-                          ? email
-                          : 'Anonymous User',
-                      style: const TextStyle(
-                        color: ColorSettings.textDark,
-                        fontSize: 12,
+                      StyledText(
+                        (email != null && email.isNotEmpty)
+                            ? email
+                            : 'Anonymous User',
+                        style: const TextStyle(
+                          color: ColorSettings.textDark,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                  ],
-                ))
+                    ],
+                  ),
+                ),
               ],
             ),
           );
