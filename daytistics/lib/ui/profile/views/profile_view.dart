@@ -10,6 +10,7 @@ import 'package:daytistics/ui/profile/widgets/news_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/settings_profile_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
@@ -53,20 +54,60 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           ),
         ],
       ),
-      body: RequireAuth(
-        child: SettingsList(
-          lightTheme: SettingsThemeData(
-            settingsListBackground: ColorSettings.background,
-            settingsSectionBackground: Colors.grey[200],
-          ),
-          sections: const [
-            SettingsProfileSection(),
-            NewsProfileSection(),
-            HelpProfileSection(),
-            LegalProfileSection(),
-            CriticalActionsProfileSection(),
-          ],
-        ),
+      body: Consumer(
+        builder: (context, ref, child) {
+          final String? email = ref
+              .watch(supabaseClientDependencyProvider)
+              .auth
+              .currentUser
+              ?.email;
+
+          String version = 'unknown';
+
+          // postframe callback
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            version = (await PackageInfo.fromPlatform()).version;
+          });
+
+          return RequireAuth(
+            child: SettingsList(
+              lightTheme: SettingsThemeData(
+                settingsListBackground: ColorSettings.background,
+                settingsSectionBackground: Colors.grey[200],
+              ),
+              sections: [
+                const SettingsProfileSection(),
+                const NewsProfileSection(),
+                const HelpProfileSection(),
+                const LegalProfileSection(),
+                const CriticalActionsProfileSection(),
+                CustomSettingsSection(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      StyledText(
+                        version,
+                        style: const TextStyle(
+                          color: ColorSettings.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      StyledText(
+                        (email != null && email.isNotEmpty)
+                            ? email
+                            : 'Anonymous User',
+                        style: const TextStyle(
+                          color: ColorSettings.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
