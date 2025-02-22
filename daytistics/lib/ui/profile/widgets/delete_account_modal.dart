@@ -1,4 +1,4 @@
-import 'package:daytistics/application/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';

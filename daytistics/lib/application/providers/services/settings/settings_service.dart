@@ -1,6 +1,6 @@
 import 'package:daytistics/application/models/user_settings.dart';
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/providers/user/user.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,11 +31,11 @@ class SettingsService extends _$SettingsService {
     if (state.userSettings == null) await init();
 
     await ref
-        .read(supabaseClientProvider)
+        .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.settingsTableName)
         .update({
       'notifications': !state.userSettings!.notifications,
-    }).eq('user_id', ref.read(userProvider)!.id);
+    }).eq('user_id', ref.read(userDependencyProvider)!.id);
 
     state = state.copyWith(
       userSettings: state.userSettings!.copyWith(
@@ -48,11 +48,11 @@ class SettingsService extends _$SettingsService {
     if (state.userSettings == null) await init();
 
     await ref
-        .read(supabaseClientProvider)
+        .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.settingsTableName)
         .update({
       'conversation_analytics': !state.userSettings!.conversationAnalytics,
-    }).eq('user_id', ref.read(userProvider)!.id);
+    }).eq('user_id', ref.read(userDependencyProvider)!.id);
 
     state = state.copyWith(
       userSettings: state.userSettings!.copyWith(
@@ -63,19 +63,21 @@ class SettingsService extends _$SettingsService {
 
   Future<void> init() async {
     final settings = await ref
-        .read(supabaseClientProvider)
+        .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.settingsTableName)
         .select()
-        .eq('user_id', ref.read(userProvider)!.id)
+        .eq('user_id', ref.read(userDependencyProvider)!.id)
         .maybeSingle();
 
     if (settings == null) {
       final userSettings = UserSettings();
       await ref
-          .read(supabaseClientProvider)
+          .read(supabaseClientDependencyProvider)
           .from(SupabaseSettings.settingsTableName)
           .insert(
-            userSettings.toSupabase(userId: ref.read(userProvider)!.id),
+            userSettings.toSupabase(
+              userId: ref.read(userDependencyProvider)!.id,
+            ),
           );
       state = state.copyWith(
         userSettings: userSettings,

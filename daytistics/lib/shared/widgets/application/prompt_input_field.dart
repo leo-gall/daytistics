@@ -1,4 +1,4 @@
-import 'package:daytistics/application/services/chat/conversations_service.dart';
+import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

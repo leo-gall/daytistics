@@ -2,8 +2,8 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
-import 'package:daytistics/application/providers/current_conversation/current_conversation.dart';
-import 'package:daytistics/application/providers/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -19,7 +19,7 @@ class ConversationsService extends _$ConversationsService {
   }
 
   Future<String> sendMessage(String query) async {
-    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
     final currentConversation = ref.read(currentConversationProvider)
@@ -66,7 +66,7 @@ class ConversationsService extends _$ConversationsService {
     required int offset,
     int? amount,
   }) async {
-    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
     final response = await supabase.functions.invoke(
       'fetch-conversations',
@@ -88,7 +88,7 @@ class ConversationsService extends _$ConversationsService {
   }
 
   Future<void> deleteConversation(Conversation conversation) async {
-    final SupabaseClient supabase = ref.read(supabaseClientProvider);
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
     await supabase.from('conversations').delete().eq('id', conversation.id);
     final Conversation? currentConversation =

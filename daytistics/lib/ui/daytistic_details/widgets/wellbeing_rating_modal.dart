@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/application/services/wellbeings/wellbeings_service.dart';
+import 'package:daytistics/application/providers/services/wellbeings/wellbeings_service.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/widgets/application/star_rating.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
