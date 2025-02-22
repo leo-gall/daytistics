@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,6 +18,10 @@ class AuthService extends _$AuthService {
 
   Future<void> signInAnonymously() async {
     await ref.read(supabaseClientDependencyProvider).auth.signInAnonymously();
+
+    await ref.read(posthogDependencyProvider).capture(
+          eventName: 'anonymous_sign_in',
+        );
   }
 
   Future<void> signOut() async {
@@ -28,6 +33,15 @@ class AuthService extends _$AuthService {
         true;
     if (isAnonymous) await deleteAccount();
     await ref.read(supabaseClientDependencyProvider).auth.signOut();
+
+    await ref.read(posthogDependencyProvider).capture(eventName: 'sign_out');
+  }
+
+  Future<void> signInWithApple() async {
+    await ref.read(posthogDependencyProvider).capture(
+          eventName: 'apple_sign_in',
+        );
+    throw UnimplementedError();
   }
 
   Future<void> signInWithGoogle() async {
@@ -58,6 +72,10 @@ class AuthService extends _$AuthService {
             idToken: idToken,
             accessToken: accessToken,
           );
+
+      await ref.read(posthogDependencyProvider).capture(
+            eventName: 'google_sign_in',
+          );
     } catch (e) {
       rethrow;
     }
@@ -67,5 +85,9 @@ class AuthService extends _$AuthService {
     await ref
         .read(supabaseClientDependencyProvider)
         .rpc<dynamic>('delete_account');
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'account_deleted');
   }
 }

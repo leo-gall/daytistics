@@ -6,13 +6,8 @@ part of 'supabase.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-<<<<<<<< HEAD:daytistics/lib/application/providers/di/supabase/supabase.g.dart
 String _$supabaseClientDependencyHash() =>
     r'd0b8bc8877b153e4a42f09ff3ab8c2d03eab6166';
-========
-String _$conversationsServiceHash() =>
-    r'1ce68fd2809df29cf252de65807b86c65d91b7a4';
->>>>>>>> 5b1637973fed03b97c859d4746f72a1e363866c7:daytistics/lib/application/providers/services/conversations/conversations_service.g.dart
 
 /// See also [supabaseClientDependency].
 @ProviderFor(supabaseClientDependency)

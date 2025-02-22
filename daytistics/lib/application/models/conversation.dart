@@ -60,7 +60,8 @@ class Conversation {
           ? (data['messages'] as List)
               .map(
                 (message) => ConversationMessage.fromSupabase(
-                    message as Map<String, dynamic>),
+                  message as Map<String, dynamic>,
+                ),
               )
               .toList()
           : null,

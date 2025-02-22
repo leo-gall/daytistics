@@ -2,6 +2,7 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -22,7 +23,8 @@ class ConversationsService extends _$ConversationsService {
     final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
-    final currentConversation = ref.read(currentConversationProvider)
+    final currentConversation = ref.read(currentConversationProvider);
+    final posthog = ref.read(posthogDependencyProvider);
 
     final response = await Supabase.instance.client.functions.invoke(
       'send-conversation-message',
@@ -59,6 +61,11 @@ class ConversationsService extends _$ConversationsService {
       ),
     );
 
+    if (currentConversation?.id == null) {
+      await posthog.capture(eventName: 'conversation_started');
+    }
+    await posthog.capture(eventName: 'conversation_message_sent');
+
     return response.data['reply'] as String;
   }
 
@@ -84,6 +91,10 @@ class ConversationsService extends _$ConversationsService {
           .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
     }
 
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'conversations_fetched');
+
     return conversations;
   }
 
@@ -99,5 +110,9 @@ class ConversationsService extends _$ConversationsService {
         ref.read(currentConversationProvider.notifier).clear();
       }
     }
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'conversation_deleted');
   }
 }

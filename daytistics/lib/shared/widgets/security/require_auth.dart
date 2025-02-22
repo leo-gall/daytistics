@@ -1,16 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-import 'package:daytistics/application/providers/supabase/supabase.dart';
-import 'package:daytistics/application/services/auth/auth_service.dart';
-import 'package:daytistics/application/services/settings/settings_service.dart';
-=======
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
->>>>>>> 5b16379 (refactor providers structureg)
-=======
-import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
->>>>>>> 5b1637973fed03b97c859d4746f72a1e363866c7
+import 'package:daytistics/application/providers/services/auth/auth_service.dart'
+    show AuthService;
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,20 +35,13 @@ class RequireAuth extends ConsumerStatefulWidget {
 
 class _RequireAuthState extends ConsumerState<RequireAuth> {
   @override
+  @override
   void initState() {
-<<<<<<< HEAD
-<<<<<<< HEAD
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (ref.watch(supabaseClientProvider).auth.currentUser == null) {
-        await Navigator.pushAndRemoveUntil(
-=======
-=======
->>>>>>> 5b1637973fed03b97c859d4746f72a1e363866c7
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.watch(supabaseClientDependencyProvider).auth.currentUser ==
           null) {
-        Navigator.pushAndRemoveUntil(
->>>>>>> 5b16379 (refactor providers structureg)
+        await Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute<SignInView>(
             builder: (context) => const SignInView(),
@@ -68,8 +52,6 @@ class _RequireAuthState extends ConsumerState<RequireAuth> {
         await ref.read(settingsServiceProvider.notifier).init();
       }
     });
-
-    super.initState();
   }
 
   @override

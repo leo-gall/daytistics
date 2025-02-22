@@ -57,8 +57,6 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
             amount: _pageSize,
           );
 
-      print('fetching conversations: ${conversations.length}');
-
       setState(() {
         _currentPage++;
         _isLoading = false;

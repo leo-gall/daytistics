@@ -1,6 +1,7 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
@@ -54,6 +55,13 @@ class DaytisticsService extends _$DaytisticsService {
 
     ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
+    await ref.read(posthogDependencyProvider).capture(
+      eventName: 'daytistic_fetched',
+      properties: {
+        'date': date.toIso8601String(),
+      },
+    );
+
     return daytistic;
   }
 
@@ -80,6 +88,13 @@ class DaytisticsService extends _$DaytisticsService {
       await supabase
           .from(SupabaseSettings.wellbeingsTableName)
           .upsert(daytistic.wellbeing!.toSupabase());
+
+      await ref.read(posthogDependencyProvider).capture(
+        eventName: 'daytistic_added',
+        properties: {
+          'date': date.toIso8601String(),
+        },
+      );
     }
 
     ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;

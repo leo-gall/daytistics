@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -31,6 +32,9 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com/imprint');
+                await ref.read(posthogDependencyProvider).capture(
+                      eventName: 'imprint_opened',
+                    );
               },
             ),
             SettingsTile.navigation(
@@ -49,6 +53,9 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com/privacy');
+                await ref.read(posthogDependencyProvider).capture(
+                      eventName: 'privacy_policy_opened',
+                    );
               },
             ),
             SettingsTile.navigation(
@@ -67,6 +74,9 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com/terms');
+                await ref.read(posthogDependencyProvider).capture(
+                      eventName: 'terms_of_service_opened',
+                    );
               },
             ),
             SettingsTile.navigation(

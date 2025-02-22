@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
@@ -32,6 +33,9 @@ class HelpProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('http://feedback.daytistics.com');
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'feedback_survey_opened');
               },
             ),
             SettingsTile.navigation(
@@ -50,6 +54,9 @@ class HelpProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('http://bugs.daytistics.com');
+                await ref
+                    .read(posthogDependencyProvider)
+                    .capture(eventName: 'bug_report_opened');
               },
             ),
             SettingsTile.navigation(
