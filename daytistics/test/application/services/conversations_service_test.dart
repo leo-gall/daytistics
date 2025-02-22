@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/conversation.dart';
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
@@ -8,6 +9,7 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../container.dart';
+import '../../fakes.dart';
 
 void main() {
   late ConversationsService conversationsService;
@@ -29,6 +31,7 @@ void main() {
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
+        posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
       ],
     );
     conversationsService =

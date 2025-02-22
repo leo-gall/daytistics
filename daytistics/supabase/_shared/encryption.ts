@@ -5,9 +5,7 @@ const SECRET_KEY = Deno.env.get("SECRET_KEY")!;
 
 // Convert key to a usable format
 const encoder = new TextEncoder();
-const keyData = new Uint8Array(
-  Array.from(atob(SECRET_KEY), (c) => c.charCodeAt(0))
-);
+
 const cryptoKey = async (keyData: Uint8Array) =>
   await crypto.subtle.importKey("raw", keyData, { name: "AES-GCM" }, false, [
     "encrypt",

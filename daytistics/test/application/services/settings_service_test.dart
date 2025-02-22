@@ -1,3 +1,4 @@
+import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
@@ -8,6 +9,7 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../container.dart';
+import '../../fakes.dart';
 
 void main() {
   late SettingsService settingsService;
@@ -38,6 +40,7 @@ void main() {
             userMetadata: {},
           ),
         ),
+        posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
       ],
     );
     settingsService = container.read(settingsServiceProvider.notifier);
