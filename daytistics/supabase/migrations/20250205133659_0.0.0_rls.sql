@@ -349,3 +349,41 @@ update
 create policy user_settings_delete_policy on public .user_settings for
 delete
     using (user_id = auth.uid());
+
+alter table
+    public .bug_reports enable row level security;
+
+create policy bug_reports_select_policy on public .bug_reports for
+select
+    using (user_id = auth.uid());
+
+create policy bug_reports_insert_policy on public .bug_reports for
+insert
+    with check (user_id = auth.uid());
+
+create policy bug_reports_update_policy on public .bug_reports for
+update
+    using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy bug_reports_delete_policy on public .bug_reports for
+delete
+    using (user_id = auth.uid());
+
+alter table
+    public .feature_requests enable row level security;
+
+create policy feature_requests_select_policy on public .feature_requests for
+select
+    using (user_id = auth.uid());
+
+create policy feature_requests_insert_policy on public .feature_requests for
+insert
+    with check (user_id = auth.uid());
+
+create policy feature_requests_update_policy on public .feature_requests for
+update
+    using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy feature_requests_delete_policy on public .feature_requests for
+delete
+    using (user_id = auth.uid());

@@ -48,34 +48,13 @@ class LegalProfileSection extends AbstractSettingsSection {
                 color: ColorSettings.textLight,
               ),
               title: const StyledText(
-                'Privacy policy',
+                'Privacy Policy',
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com/privacy');
                 await ref.read(posthogDependencyProvider).capture(
                       eventName: 'privacy_policy_opened',
-                    );
-              },
-            ),
-            SettingsTile.navigation(
-              leading: const Icon(
-                Icons.gavel,
-                color: ColorSettings.primary,
-                size: 25,
-              ),
-              trailing: const Icon(
-                Icons.open_in_new,
-                color: ColorSettings.textLight,
-              ),
-              title: const StyledText(
-                'Terms of service',
-                style: TextStyle(color: ColorSettings.textLight),
-              ),
-              onPressed: (context) async {
-                await openUrl('https://daytistics.com/terms');
-                await ref.read(posthogDependencyProvider).capture(
-                      eventName: 'terms_of_service_opened',
                     );
               },
             ),

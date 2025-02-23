@@ -17,6 +17,8 @@ class SupabaseSettings {
   static const String conversationsTableName = 'conversations';
   static const String conversationMessagesTableName = 'conversation_messages';
   static const String settingsTableName = 'user_settings';
+  static const String featureRequestsTableName = 'feature_requests';
+  static const String bugReportsTableName = 'bug_reports';
 }
 
 class ColorSettings {
