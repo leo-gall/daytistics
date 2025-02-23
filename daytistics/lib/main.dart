@@ -62,7 +62,7 @@ class DaytisticsApp extends StatelessWidget {
         '/chat': (BuildContext context) => const ChatView(),
         '/profile': (BuildContext context) => const ProfileView(),
         '/profile/licenses': (BuildContext context) => const LicensesView(),
-        '/profile/about': (BuildContext context) => AboutView(),
+        '/profile/about': (BuildContext context) => const AboutView(),
       },
     );
   }

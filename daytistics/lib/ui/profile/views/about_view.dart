@@ -1,19 +1,8 @@
-import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
-import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-import 'package:daytistics/ui/profile/widgets/critical_actions_profile_section.dart';
-import 'package:daytistics/ui/profile/widgets/legal_profile_section.dart';
-import 'package:daytistics/ui/profile/widgets/settings_profile_section.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 class AboutView extends StatelessWidget {
-  AboutView({super.key});
+  const AboutView({super.key});
 
   @override
   Widget build(BuildContext context) {
