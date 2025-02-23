@@ -182,6 +182,30 @@ create table if not exists public .user_settings (
         cascade
 );
 
+create table if not exists public .bug_reports (
+    id uuid default gen_random_uuid() primary key,
+    user_id uuid,
+    title text not null,
+    description text not null,
+    created_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    constraint bug_reports_user_id_fkey foreign key(user_id) references auth.users(id) on
+    delete
+        cascade
+);
+
+create table if not exists public .feature_requests (
+    id uuid default gen_random_uuid() primary key,
+    user_id uuid,
+    title text not null,
+    description text not null,
+    created_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc' :: text, now()) not null,
+    constraint feature_requests_user_id_fkey foreign key(user_id) references auth.users(id) on
+    delete
+        cascade
+);
+
 create extension if not exists moddatetime schema extensions;
 
 create trigger handle_updated_at before
@@ -215,3 +239,11 @@ update
 create trigger handle_updated_at before
 update
     on public .user_settings for each row execute procedure moddatetime (updated_at);
+
+create trigger handle_updated_at before
+update
+    on public .bug_reports for each row execute procedure moddatetime (updated_at);
+
+create trigger handle_updated_at before
+update
+    on public .feature_requests for each row execute procedure moddatetime (updated_at);
