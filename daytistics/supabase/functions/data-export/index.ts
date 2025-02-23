@@ -1,34 +1,15 @@
-import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import * as Sentry from "npm:@sentry/deno";
-import { initSentry, initResend } from "@daytistics/adapters";
-
-initSentry();
+import { initSentry, initResend, initSupabase } from "@shared/adapters";
 
 Deno.serve(async (req) => {
-  try {
-    const authHeader = req.headers.get("Authorization")!;
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      {
-        global: { headers: { Authorization: authHeader } },
-      }
-    );
+  initSentry();
 
-    const token = authHeader.replace("Bearer ", "");
-    let user: User | null = null;
-    try {
-      user = (await supabase.auth.getUser(token)).data.user;
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid or missing token" }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+  try {
+    const { user, error: supabaseInitError } = await initSupabase(req, {
+      withAuth: true,
+    });
+    if (supabaseInitError) return supabaseInitError;
 
     const resend = initResend();
 

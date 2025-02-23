@@ -27,7 +27,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
       appBar: AppBar(
         titleSpacing: 0,
         title: StyledText(
-          'Chat',
+          ref.read(currentConversationProvider)?.title ?? 'Chat',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         leading: IconButton(

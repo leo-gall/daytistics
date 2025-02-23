@@ -1,54 +1,41 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import * as Sentry from "npm:@sentry/deno";
-import { createClient, User } from "jsr:@supabase/supabase-js@2";
-import { fetchConversations } from "@daytistics/database";
-import { validateZodSchema } from "@daytistics/utils";
-import { initSentry } from "@daytistics/adapters";
+import * as Conversations from "@application/conversations";
+import { validateZodSchema } from "@shared/validation";
+import { initSentry, initSupabase } from "@shared/adapters";
 import { z } from "npm:zod";
 
-initSentry();
-
-const fetchConversationsSchema = z.object({
+const QuerySchema = z.object({
   amount: z.coerce.number().int().nonnegative().optional().default(10),
   offset: z.coerce.number().int().nonnegative().optional().default(0),
 });
 
 Deno.serve(async (req) => {
-  const { data: query, error } = validateZodSchema(
-    fetchConversationsSchema,
-    new URL(req.url).searchParams
-  );
-  if (error) return error;
-
   try {
-    const authHeader = req.headers.get("Authorization")!;
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    initSentry();
+
+    const {
+      supabase,
+      user,
+      error: supabaseInitError,
+    } = await initSupabase(req, { withAuth: true });
+    if (supabaseInitError) return supabaseInitError;
+
+    const validatedQuery = validateZodSchema(
+      QuerySchema,
+      new URL(req.url).searchParams
+    );
+    if (validatedQuery.error) return validatedQuery.error;
+
+    const conversations = await Conversations.fetchConversations(
+      user!,
+      supabase,
       {
-        global: { headers: { Authorization: authHeader } },
+        encrypted: false,
+        offset: validatedQuery.data.offset,
+        amount: validatedQuery.data.amount,
       }
     );
-
-    const token = authHeader.replace("Bearer ", "");
-    let user: User | null = null;
-    try {
-      user = (await supabase.auth.getUser(token)).data.user;
-    } catch {
-      return new Response(
-        JSON.stringify({ error: "Invalid or missing token" }),
-        {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    const conversations = await fetchConversations(user!, supabase, {
-      encrypted: false,
-      offset: query.offset,
-      amount: query.amount,
-    });
 
     return new Response(JSON.stringify(conversations), {
       status: 200,

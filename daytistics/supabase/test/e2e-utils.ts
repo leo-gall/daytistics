@@ -6,7 +6,7 @@ import {
   DatabaseActivity,
   DatabaseDaytistic,
   DatabaseWellbeing,
-} from "../../_shared/types.ts";
+} from "../_shared/types.ts";
 
 export async function doAsTempUser(
   supabase: SupabaseClient,
