@@ -1,8 +1,4 @@
-import {
-  createClient,
-  SupabaseClient,
-  User,
-} from "jsr:@supabase/supabase-js@2";
+import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import * as Sentry from "npm:@sentry/deno";
 import { PostHog } from "npm:posthog-node";
 import { Resend } from "npm:resend";

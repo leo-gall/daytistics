@@ -1,8 +1,4 @@
-import {
-  SupabaseClient,
-  User,
-  UserAppMetadata,
-} from "jsr:@supabase/supabase-js@2";
+import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { v4 as uuidv4 } from "npm:uuid";
 import OpenAI from "jsr:@openai/openai";
 import { OpenAI as PostHogOpenAI } from "npm:@posthog/ai";

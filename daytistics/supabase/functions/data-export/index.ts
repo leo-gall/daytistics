@@ -1,4 +1,3 @@
-import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import * as Sentry from "npm:@sentry/deno";
 import { initSentry, initResend, initSupabase } from "@shared/adapters";
