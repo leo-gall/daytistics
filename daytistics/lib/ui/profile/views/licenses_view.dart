@@ -23,7 +23,6 @@ class LicensesView extends StatelessWidget {
       ),
       body: FutureBuilder<List<LicenseEntry>>(
         future: LicenseRegistry.licenses.toList(),
-        // initial data ...,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -32,52 +31,54 @@ class LicensesView extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No licenses available.'));
           }
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView(
-              children: snapshot.data!.map((license) {
-                return ExpansionTile(
-                  tilePadding: EdgeInsets.zero,
-                  title: StyledText(
-                    license.packages.join(', ').toUpperCase(),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: ColorSettings.textDark,
-                          fontWeight: FontWeight.bold,
-                        ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: StyledText(
+                    'Thanks to the following open-source projects, which made this app possible:',
+                    style: TextStyle(fontStyle: FontStyle.italic),
                   ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: StyledText(
-                        license.paragraphs.map((e) => e.text).join('\n'),
-                      ),
-                    ),
-                  ],
-                );
-                // return ListTile(
-                //   title: StyledText(
-                //     license.packages.join(', ').toUpperCase(),
-                //     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                //         color: ColorSettings.textDark,
-                //         fontWeight: FontWeight.bold),
-                //   ),
-                //   subtitle: Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: ExpansionTile(
-                //       tilePadding: EdgeInsets.zero,
-                //       title: const Text('Show details'),
-                //       children: [
-                //         Padding(
-                //           padding: const EdgeInsets.all(8.0),
-                //           child: StyledText(
-                //             license.paragraphs.map((e) => e.text).join('\n'),
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // );
-              }).toList(),
+                ),
+                Expanded(
+                  child: ListView(
+                    children: snapshot.data!.map((license) {
+                      return Card(
+                        elevation: 2,
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: ExpansionTile(
+                          tilePadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          title: StyledText(
+                            license.packages.join(', ').toUpperCase(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: ColorSettings.textDark,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: StyledText(
+                                license.paragraphs
+                                    .map((e) => e.text)
+                                    .join('\n'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           );
         },
