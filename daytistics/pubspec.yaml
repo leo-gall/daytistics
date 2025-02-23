@@ -41,3 +41,4 @@ flutter:
   assets:
     - .env
     - assets/svg/
+    - assets/jpeg/

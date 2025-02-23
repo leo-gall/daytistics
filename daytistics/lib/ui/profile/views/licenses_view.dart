@@ -52,7 +52,9 @@ class LicensesView extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ExpansionTile(
                           tilePadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           title: StyledText(
                             license.packages.join(', ').toUpperCase(),
                             style: Theme.of(context)

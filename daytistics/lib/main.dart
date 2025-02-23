@@ -3,6 +3,7 @@ import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/chat/views/chat_view.dart';
 import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
+import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,7 @@ class DaytisticsApp extends StatelessWidget {
         '/chat': (BuildContext context) => const ChatView(),
         '/profile': (BuildContext context) => const ProfileView(),
         '/profile/licenses': (BuildContext context) => const LicensesView(),
+        '/profile/about': (BuildContext context) => AboutView(),
       },
     );
   }
