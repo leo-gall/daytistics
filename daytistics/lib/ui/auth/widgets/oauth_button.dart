@@ -1,9 +1,8 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/routing.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -52,7 +51,12 @@ class OAuthButton extends ConsumerWidget {
           if (context.mounted &&
               ref.watch(supabaseClientDependencyProvider).auth.currentUser !=
                   null) {
-            pushAndClearHistory(context, const DashboardView());
+            if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
+              await Navigator.pushReplacementNamed(
+                context,
+                '/onboarding',
+              );
+            }
           }
         },
         child: Row(

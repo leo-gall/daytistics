@@ -14,8 +14,8 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../container.dart';
-import '../../fakes.dart';
+import '../../../container.dart';
+import '../../../fakes.dart';
 
 void main() {
   late DaytisticsService daytisticsService;
