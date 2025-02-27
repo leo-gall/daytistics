@@ -20,20 +20,20 @@ class GuestSignInModal extends ConsumerWidget {
         children: <Widget>[
           const SizedBox(height: 10),
           StyledText(
-            'Login as guest',
+            'Try Daytistics as Guest',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: StyledText(
-              'You can login as a guest to explore the app without creating an account. Please note that your data will not be saved.',
+              'Continue as a guest to explore the app without an account. Note that your data will not be saved, and you cannot transfer data from a guest account to a registered account.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton(
+          TextButton(
             onPressed: () async {
               await ref.read(authServiceProvider.notifier).signInAnonymously();
 

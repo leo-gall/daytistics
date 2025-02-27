@@ -8,6 +8,7 @@ import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -76,12 +77,15 @@ class AuthService extends _$AuthService {
               eventName: 'apple_sign_in',
             );
       } else {
-        await ref.read(supabaseClientDependencyProvider).auth.signInWithOAuth(
-              OAuthProvider.apple,
-              authScreenLaunchMode: kIsWeb
-                  ? LaunchMode.platformDefault
-                  : LaunchMode.externalApplication,
-            );
+        // gets the app name from the flutter manifest not .env
+        // final String appName = (await PackageInfo.fromPlatform()).appName;
+        // await ref.read(supabaseClientDependencyProvider).auth.signInWithOAuth(
+        //       OAuthProvider.apple,
+        //       authScreenLaunchMode:
+        //           kIsWeb ? LaunchMode.platformDefault : LaunchMode.inAppWebView,
+        //       redirectTo: 'com.daytistics.daytistics://auth/',
+        //     );
+        // print('Sign in with Apple initiated.');
       }
     } catch (e) {
       rethrow;
@@ -133,5 +137,12 @@ class AuthService extends _$AuthService {
     await ref
         .read(posthogDependencyProvider)
         .capture(eventName: 'account_deleted');
+  }
+
+  Future<void> linkAppleAccount() async {
+    await ref
+        .read(supabaseClientDependencyProvider)
+        .auth
+        .linkIdentity(OAuthProvider.google);
   }
 }

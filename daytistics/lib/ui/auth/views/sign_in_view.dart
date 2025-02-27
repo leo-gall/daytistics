@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/browser.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -45,10 +47,8 @@ class _SignInViewState extends State<SignInView> {
               ),
             ),
             const SizedBox(height: 50),
-            const OAuthButton(OAuthProvider.google),
-            const SizedBox(height: 5),
-            const OAuthButton(OAuthProvider.apple),
-            const SizedBox(height: 10),
+            if (Platform.isAndroid) const OAuthButton(OAuthProvider.google),
+            if (Platform.isIOS) const OAuthButton(OAuthProvider.apple),
             TextButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -58,11 +58,11 @@ class _SignInViewState extends State<SignInView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(
-                    Icons.person,
+                    Icons.science_outlined,
                     color: Colors.white,
                   ),
                   SizedBox(width: 5),
-                  Text('Login as guest'),
+                  Text('Try Daytistics'),
                 ],
               ),
             ),
@@ -87,7 +87,6 @@ class _SignInViewState extends State<SignInView> {
   Widget _buildLegalLinks() {
     final Map<String, String> legalLinks = <String, String>{
       'Privacy Policy': LegalSettings.privacyPolicyUrl,
-      'Terms of Service': LegalSettings.termsOfServiceUrl,
       'Imprint': LegalSettings.imprintUrl,
     };
 

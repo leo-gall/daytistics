@@ -56,6 +56,11 @@ class OAuthButton extends ConsumerWidget {
                 context,
                 '/onboarding',
               );
+            } else {
+              await Navigator.pushReplacementNamed(
+                context,
+                '/',
+              );
             }
           }
         },
