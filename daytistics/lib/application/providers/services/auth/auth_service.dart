@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
+// ignore: depend_on_referenced_packages
+import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'auth_service.g.dart';
@@ -38,11 +45,47 @@ class AuthService extends _$AuthService {
   }
 
   Future<void> signInWithApple() async {
-    await ref.read(posthogDependencyProvider).capture(
-          eventName: 'apple_sign_in',
-        );
-    throw UnimplementedError();
+    try {
+      if (Platform.isIOS) {
+        final rawNonce =
+            ref.read(supabaseClientDependencyProvider).auth.generateRawNonce();
+        final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
+        final credential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: hashedNonce,
+        );
+
+        final idToken = credential.identityToken;
+        if (idToken == null) {
+          throw const AuthException(
+            'Could not find ID Token from generated credential.',
+          );
+        }
+
+        await ref.read(supabaseClientDependencyProvider).auth.signInWithIdToken(
+              provider: OAuthProvider.apple,
+              idToken: idToken,
+              nonce: rawNonce,
+            );
+
+        await ref.read(posthogDependencyProvider).capture(
+              eventName: 'apple_sign_in',
+            );
+      } else {
+        await ref.read(supabaseClientDependencyProvider).auth.signInWithOAuth(
+              OAuthProvider.apple,
+              authScreenLaunchMode: kIsWeb
+                  ? LaunchMode.platformDefault
+                  : LaunchMode.externalApplication,
+            );
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> signInWithGoogle() async {
@@ -77,7 +120,6 @@ class AuthService extends _$AuthService {
       await ref.read(posthogDependencyProvider).capture(
             eventName: 'google_sign_in',
           );
-
     } catch (e) {
       rethrow;
     }

@@ -22,6 +22,7 @@ dependencies:
   riverpod_annotation: '^2.6.1'
   sentry_flutter: ^8.13.2
   settings_ui: ^2.0.2
+  sign_in_with_apple: ^6.1.4
   supabase_flutter: '^2.8.3'
   table_calendar: '^3.2.0'
   url_launcher: '^6.3.1'

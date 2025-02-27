@@ -217,6 +217,12 @@ client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_WEB_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_WEB_SECRET)"
 skip_nonce_check = true
 
+[auth.external.apple]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
+skip_nonce_check = true
+
 # Use Firebase Auth as a third-party provider alongside Supabase Auth.
 [auth.third_party.firebase]
 enabled = false
