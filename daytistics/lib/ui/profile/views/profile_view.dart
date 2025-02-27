@@ -7,7 +7,6 @@ import 'package:daytistics/ui/profile/widgets/critical_actions_profile_section.d
 import 'package:daytistics/ui/profile/widgets/help_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/info_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/legal_profile_section.dart';
-import 'package:daytistics/ui/profile/widgets/oauth_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/settings_profile_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

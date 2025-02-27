@@ -46,67 +46,54 @@ void main() {
     mockHttpClient.close();
   });
 
-  group('sendMessage', () {
-    // group('fetchConversations', () {
-    //   test('fetches conversations with messages in correct order', () async {
-    //     // Insert test data
-    //     final convos = List.generate(
-    //       3,
-    //       (i) => Conversation(
-    //         id: 'convo-$i',
-    //         title: 'Convo $i',
-    //         updatedAt: DateTime.now().add(Duration(days: i)),
-    //       ),
-    //     );
+  group('deleteConversation', () {
+    test('deletes conversation and clears current if matches', () async {
+      // Setup
+      final conversation = Conversation(id: 'to-delete', title: 'Delete Me');
+      await mockSupabase.from('conversations').insert(
+            conversation.toSupabase(
+              userId: 'user-id',
+            ),
+          );
+      container
+          .read(currentConversationProvider.notifier)
+          .setConversation(conversation);
 
-    //     for (final convo in convos) {
-    //       await mockSupabase.from('conversations').insert(
-    //             convo.toSupabase(
-    //               userId: 'user-id',
-    //             ),
-    //           );
-    //       await mockSupabase.from('conversation_messages').insert({
-    //         'id': 'msg-${convo.id}',
-    //         'conversation_id': convo.id,
-    //         'query': 'Query',
-    //         'reply': 'Reply',
-    //         'created_at': DateTime.now().toIso8601String(),
-    //         'updated_at': DateTime.now().toIso8601String(),
-    //         'called_functions': ['func'],
-    //       });
-    //     }
+      // Act
+      await conversationsService.deleteConversation(conversation);
 
-    //     // Act
-    //     final results = await conversationsService.fetchConversations(start: 0);
+      // Assert
+      final dbResult = await mockSupabase.from('conversations').select();
+      expect(dbResult, isEmpty);
+      expect(container.read(currentConversationProvider), isNull);
+    });
+  });
 
-    //     // Assert
-    //     expect(results.length, 3);
-    //     expect(results[0].id, 'convo-2'); // Should be latest first
-    //     expect(results[0].messages, isNotEmpty);
-    //   });
-    // });
+  group('hasAnyConversations', () {
+    test('returns true if there are conversations', () async {
+      // Setup
+      await mockSupabase.from('conversations').insert([
+        {
+          'id': 'conversation-1',
+          'title': 'Conversation 1',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+      ]);
 
-    group('deleteConversation', () {
-      test('deletes conversation and clears current if matches', () async {
-        // Setup
-        final conversation = Conversation(id: 'to-delete', title: 'Delete Me');
-        await mockSupabase.from('conversations').insert(
-              conversation.toSupabase(
-                userId: 'user-id',
-              ),
-            );
-        container
-            .read(currentConversationProvider.notifier)
-            .setConversation(conversation);
+      // Act
+      final result = await conversationsService.hasAnyConversations();
 
-        // Act
-        await conversationsService.deleteConversation(conversation);
+      // Assert
+      expect(result, isTrue);
+    });
 
-        // Assert
-        final dbResult = await mockSupabase.from('conversations').select();
-        expect(dbResult, isEmpty);
-        expect(container.read(currentConversationProvider), isNull);
-      });
+    test('returns false if there are no conversations', () async {
+      // Act
+      final result = await conversationsService.hasAnyConversations();
+
+      // Assert
+      expect(result, isFalse);
     });
   });
 }

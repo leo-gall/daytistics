@@ -1,5 +1,6 @@
 import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
+import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,10 @@ class SettingsProfileSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final UserSettings? userSettings =
-            ref.watch(settingsServiceProvider).userSettings;
+        final UserSettings? userSettings = ref.watch(settingsProvider);
         if (userSettings == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(settingsServiceProvider.notifier).init();
+            ref.read(settingsServiceProvider).initializeSettings();
           });
           return const Center(child: CircularProgressIndicator());
         }
@@ -27,7 +27,7 @@ class SettingsProfileSection extends AbstractSettingsSection {
             SettingsTile.switchTile(
               onToggle: (value) async {
                 await ref
-                    .read(settingsServiceProvider.notifier)
+                    .read(settingsServiceProvider)
                     .toggleConversationAnalytics();
               },
               initialValue: userSettings.conversationAnalytics,
@@ -40,22 +40,20 @@ class SettingsProfileSection extends AbstractSettingsSection {
                 'By enabling this setting, you agree to share your conversation data with us to improve our services.',
               ),
             ),
-            SettingsTile.switchTile(
-              onToggle: (value) async {
-                await ref
-                    .read(settingsServiceProvider.notifier)
-                    .toggleNotifications();
-              },
-              initialValue: userSettings.notifications,
-              leading: const Icon(
-                Icons.notifications,
-                color: ColorSettings.primary,
-              ),
-              title: const StyledText('Enable notifications'),
-              description: const StyledText(
-                'Receive notifications to remind you of tracking your daily activities.',
-              ),
-            ),
+            // SettingsTile.switchTile(
+            //   onToggle: (value) async {
+            //     await ref.read(settingsServiceProvider).toggleNotifications();
+            //   },
+            //   initialValue: userSettings.notifications,
+            //   leading: const Icon(
+            //     Icons.notifications,
+            //     color: ColorSettings.primary,
+            //   ),
+            //   title: const StyledText('Enable notifications'),
+            //   description: const StyledText(
+            //     'Receive notifications to remind you of tracking your daily activities.',
+            //   ),
+            // ),
           ],
         );
       },

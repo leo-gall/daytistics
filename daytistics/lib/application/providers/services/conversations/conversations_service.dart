@@ -5,6 +5,7 @@ import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
+import 'package:daytistics/config/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -113,5 +114,25 @@ class ConversationsService extends _$ConversationsService {
     await ref
         .read(posthogDependencyProvider)
         .capture(eventName: 'conversation_deleted');
+  }
+
+  Future<bool> hasAnyConversations() async {
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
+
+    try {
+      final result = await supabase
+          .from(SupabaseSettings.conversationsTableName)
+          .select()
+          .limit(1)
+          .maybeSingle();
+      return result != null;
+    } on PostgrestException catch (e) {
+      if (e.code == '42P01') {
+        return false;
+      }
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

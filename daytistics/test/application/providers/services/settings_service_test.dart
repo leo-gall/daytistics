@@ -2,6 +2,7 @@ import 'package:daytistics/application/providers/di/posthog/posthog_dependency.d
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
+import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,7 +44,7 @@ void main() {
         posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
       ],
     );
-    settingsService = container.read(settingsServiceProvider.notifier);
+    settingsService = container.read(settingsServiceProvider);
   });
 
   tearDown(() async {
@@ -114,9 +115,9 @@ void main() {
 
     await settingsService.toggleConversationAnalytics();
 
-    final state = container.read(settingsServiceProvider);
+    final state = container.read(settingsProvider);
 
-    expect(state.userSettings!.conversationAnalytics, false);
-    expect(state.userSettings!.notifications, false);
+    expect(state!.conversationAnalytics, false);
+    expect(state.notifications, false);
   });
 }

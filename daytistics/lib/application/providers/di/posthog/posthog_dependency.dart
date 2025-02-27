@@ -9,7 +9,7 @@ part 'posthog_dependency.g.dart';
 @riverpod
 Posthog posthogDependency(Ref ref) {
   final posthog = Posthog();
-  final User? user = ref.read(userDependencyProvider);
+  final User? user = ref.watch(userDependencyProvider);
   if (user != null) {
     posthog.identify(userId: user.id);
   }
