@@ -3,7 +3,6 @@
 
 # Daytistics
 
-![Linting Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=linting)
 ![Testing Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=testing)
 
 
