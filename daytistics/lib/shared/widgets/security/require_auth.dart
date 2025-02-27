@@ -1,7 +1,6 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/auth/auth_service.dart'
     show AuthService;
-import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,8 +47,6 @@ class _RequireAuthState extends ConsumerState<RequireAuth> {
           ),
           (route) => false,
         );
-      } else {
-        await ref.read(settingsServiceProvider.notifier).init();
       }
     });
   }

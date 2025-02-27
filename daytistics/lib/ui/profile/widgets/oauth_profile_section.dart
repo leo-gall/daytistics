@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/auth/auth_service.dart';
-import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
@@ -20,16 +18,6 @@ class OauthProfileSection extends AbstractSettingsSection {
       builder: (context, ref, child) {
         final user = ref.read(userDependencyProvider);
 
-        print(user?.appMetadata['providers']);
-
-        final UserSettings? userSettings =
-            ref.watch(settingsServiceProvider).userSettings;
-        if (userSettings == null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(settingsServiceProvider.notifier).init();
-          });
-          return const Center(child: CircularProgressIndicator());
-        }
         return SettingsSection(
           title: const StyledText('Authentications'),
           tiles: [

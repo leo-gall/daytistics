@@ -1,5 +1,7 @@
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -93,7 +95,8 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
                   child: IconButton(
                     onPressed: _loading || _controller.text.isEmpty
                         ? null
-                        : () async => _handleSendMessage(),
+                        // : () async => _handleSendMessage(),
+                        : () async => _handleSubmit(),
                     icon: _loading
                         ? const CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
@@ -114,6 +117,16 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     );
   }
 
+  Future<void> _handleSubmit() async {
+    if (!await ref
+        .read(conversationsServiceProvider.notifier)
+        .hasAnyConversations()) {
+      await _askAllowConversationAnalytics();
+    }
+
+    await _handleSendMessage();
+  }
+
   Future<void> _handleSendMessage() async {
     setState(() {
       _loading = true;
@@ -130,5 +143,41 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     if (widget.onChat != null) {
       widget.onChat?.call(_controller.text, reply);
     }
+  }
+
+  Future<void> _askAllowConversationAnalytics() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Allow Analytics'),
+        content: const Text('Do you want to allow conversation analytics? '
+            'By enabling this setting, you agree to share your conversation data with us to improve our services.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () async {
+              await ref
+                  .read(settingsServiceProvider)
+                  .updateConversationAnalytics(value: false);
+              if (context.mounted) Navigator.pop(context);
+            },
+            style: ButtonStyle(
+              backgroundColor:
+                  WidgetStateProperty.all<Color>(Colors.transparent),
+            ),
+            child:
+                const StyledText('Deny', style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ref
+                  .read(settingsServiceProvider)
+                  .updateConversationAnalytics(value: true);
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const StyledText('Accept'),
+          ),
+        ],
+      ),
+    );
   }
 }

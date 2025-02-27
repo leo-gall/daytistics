@@ -6,13 +6,12 @@ part of 'settings_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$settingsServiceHash() => r'e69e4b08879e787991629e28aa9510f2480258c7';
+String _$settingsServiceHash() => r'd17c1307888935dc6ed0fab13b62cd1cf169540c';
 
-/// See also [SettingsService].
-@ProviderFor(SettingsService)
-final settingsServiceProvider =
-    AutoDisposeNotifierProvider<SettingsService, SettingsServiceState>.internal(
-  SettingsService.new,
+/// See also [settingsService].
+@ProviderFor(settingsService)
+final settingsServiceProvider = Provider<SettingsService>.internal(
+  settingsService,
   name: r'settingsServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
@@ -21,6 +20,8 @@ final settingsServiceProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$SettingsService = AutoDisposeNotifier<SettingsServiceState>;
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SettingsServiceRef = ProviderRef<SettingsService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

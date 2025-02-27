@@ -5,10 +5,9 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:flutter/foundation.dart';
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,6 +25,8 @@ class AuthService extends _$AuthService {
 
   Future<void> signInAnonymously() async {
     await ref.read(supabaseClientDependencyProvider).auth.signInAnonymously();
+
+    await ref.read(settingsServiceProvider).initializeSettings();
 
     await ref.read(posthogDependencyProvider).capture(
           eventName: 'anonymous_sign_in',
@@ -72,6 +73,8 @@ class AuthService extends _$AuthService {
               idToken: idToken,
               nonce: rawNonce,
             );
+
+        await ref.read(settingsServiceProvider).initializeSettings();
 
         await ref.read(posthogDependencyProvider).capture(
               eventName: 'apple_sign_in',
@@ -120,6 +123,8 @@ class AuthService extends _$AuthService {
             idToken: idToken,
             accessToken: accessToken,
           );
+
+      await ref.read(settingsServiceProvider).initializeSettings();
 
       await ref.read(posthogDependencyProvider).capture(
             eventName: 'google_sign_in',

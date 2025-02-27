@@ -6,7 +6,7 @@ part of 'posthog_dependency.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$posthogDependencyHash() => r'b0249d22b6ec9002f78707fda299d072ca738581';
+String _$posthogDependencyHash() => r'244d5e407b43a3d7c9b40777f2c7af9d8e159bf4';
 
 /// See also [posthogDependency].
 @ProviderFor(posthogDependency)
