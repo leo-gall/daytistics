@@ -14,19 +14,13 @@ There are several ways you can contribute to Daytistics:
   If you'd like to contribute code changes, fork the Daytistics repository on GitHub. Make your changes on your local fork and create a pull request to the main repository. Ensure your code adheres to our project structure and style guidelines. Write clear and concise commit messages that describe your changes.
 
 > [!WARNING]  
-> Before working on an issue, ensure it has the approved label. Without it, there's a risk that the issue may not be merged, even if you've implemented it. Also make sure that no one else is working on the issue.
+> Before working on an issue, make sure that the issue is in the `next` or `ready` category on our roadmap: https://github.com/users/leo-gall/projects/6/views/1?filterQuery=status%3AReady%2CNext
 
 ## Coding Guidelines
 
-Things need to be done before this Pull Request can be merged. Your CI also checks most of them automatically and will fail if something is not fulfilled. Please adhere to the following guidelines:
+Before any pull requests can be merged, a few things need to be done. Our CI pipeline will fail if something is wrong. You can also check this locally. For more detailed information about our quality assurance, see our [QA guidelines](https://github.com/leo-gall/daytistics/wiki/Quality-Guidelines).
 
-**Basic**
-
-- **Code Formatting**: Code must be well-formatted and follow the project's style guidelines. You can use `dart format` to ensure correct formatting.
-- **No Warnings**: Code should not produce any warnings. You can check for warnings using `dart analyze`.
-- **Passing Tests**: All existing tests must pass successfully. You can run the tests with `dart test`.
-
-**Best Practices**
+## Best Practices
 
 - **Writing Tests**: When adding new features or modifying existing code, consider adding unit tests to prevent regressions. Refer to the Dart documentation for guidance on writing tests: https://dart.dev/guides/testing
 - **Performance**: If your changes might impact performance, consider adding performance benchmarks.
