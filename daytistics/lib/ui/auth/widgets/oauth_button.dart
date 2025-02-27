@@ -43,7 +43,7 @@ class OAuthButton extends ConsumerWidget {
           if (provider == OAuthProvider.google) {
             await ref.read(authServiceProvider.notifier).signInWithGoogle();
           } else if (provider == OAuthProvider.apple) {
-            throw UnimplementedError('Apple sign in is not implemented yet');
+            await ref.read(authServiceProvider.notifier).signInWithApple();
           } else {
             throw UnimplementedError('Unsupported provider: $provider');
           }
@@ -55,6 +55,11 @@ class OAuthButton extends ConsumerWidget {
               await Navigator.pushReplacementNamed(
                 context,
                 '/onboarding',
+              );
+            } else {
+              await Navigator.pushReplacementNamed(
+                context,
+                '/',
               );
             }
           }
