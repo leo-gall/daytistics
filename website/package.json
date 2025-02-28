@@ -16,5 +16,8 @@
     "posthog-js": "^1.224.1",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "esbuild": ">=0.25.0"
   }
 }
