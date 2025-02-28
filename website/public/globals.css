@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    @font-face {
+        font-family: 'Figtree';
+        src: url('./ttf/Figtree-VariableFont_wght.ttf') format('truetype');
+        font-weight: 100 900;
+        font-style: normal;
+    }
+
+    
+
+    :root {
+        --color-primary: #0e9f6e;
+        --swiper-pagination-color: var(--color-primary) !important;
+    }
+
+    body {
+        font-family: 'Figtree', sans-serif;    
+    }
+
+   
+
+    
+}
+
+@layer components {
+    .glow {
+        filter: drop-shadow(0 0 40px var(--color-primary));
+    }
+
+}
+
+
+
+.iphone {
+    width: 375px;
+    height: 667px;
+    @media (max-width: 600px) {
+        width: 300px;
+        height: 533px;
+    }
+    background-color: #1c1c1e;
+    border-radius: 50px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #1c1c1e;
+}
+
+.notch {
+    width: 210px;
+    height: 30px;
+    position: absolute;
+    background-color: #1c1c1e;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+    z-index: 10;
+}
+
+
+.screen {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+}
+
+.swiper {
+    width: 100%;
+    height: 100%;
+}

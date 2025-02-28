@@ -15,12 +15,9 @@ Daytistics is a cross-platform mobile app designed to improve the well-being of 
 
 - **🤖 .github/**: Our automated CI/CD pipeline using GitHub Actions
 - **📂 daytistics/**: The core of our application. Built using [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/)
-- **📂 .vscode/**: Shared VS-Code configuration files
+- **🕸️ website/**: Our website, built with Nuxt. Includes landing page and admin interfaces
+- **🪁 .vscode/**: Shared VS-Code configuration files
 - **🎨 design/**: Everything about our design: conventions, logos, etc.
-
-> [!NOTE]  
-> Our website is currently separated from the rest of the code in the repository [daytistics.github.io](https://github.com/leo-gall/daytistics.github.io), as Github currently only offers deployments to Github Pages from the root or `docs` folder.
-
 
 ## Contributing
 
