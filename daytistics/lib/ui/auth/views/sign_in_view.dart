@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/mixed.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:daytistics/ui/auth/widgets/guest_signin_dialog.dart';
 
-import 'package:daytistics/ui/auth/widgets/guest_signin_modal.dart';
 import 'package:daytistics/ui/auth/widgets/oauth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignInView extends StatefulWidget {
@@ -77,12 +77,7 @@ class _SignInViewState extends State<SignInView> {
   }
 
   void _openLogInAsGuestModal() {
-    showMaterialModalBottomSheet<GuestSignInModal>(
-      context: context,
-      builder: (context) {
-        return const GuestSignInModal();
-      },
-    );
+    showBottomDialog(context, child: const GuestSigninDialog());
   }
 
   Widget _buildLegalLinks() {
