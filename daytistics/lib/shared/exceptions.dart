@@ -3,3 +3,15 @@ class NotFoundException implements Exception {
 
   NotFoundException(this.message);
 }
+
+class InvalidInputException implements Exception {
+  final String message;
+
+  InvalidInputException(this.message);
+}
+
+class ServerException implements Exception {
+  final String message;
+
+  ServerException(this.message);
+}

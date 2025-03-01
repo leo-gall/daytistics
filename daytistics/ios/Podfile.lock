@@ -7,6 +7,8 @@ PODS:
   - AppAuth/Core (1.7.6)
   - AppAuth/ExternalUserAgent (1.7.6):
     - AppAuth/Core
+  - connectivity_plus (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_env_native (0.0.1):
     - Flutter
@@ -53,6 +55,7 @@ PODS:
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_env_native (from `.symlinks/plugins/flutter_env_native/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
@@ -76,6 +79,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   app_links:
     :path: ".symlinks/plugins/app_links/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   Flutter:
     :path: Flutter
   flutter_env_native:
@@ -100,6 +105,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   app_links: 3da4c36b46cac3bf24eb897f1a6ce80bda109874
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
+  connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_env_native: 1ffd562384b97c82279738dcce4edeeb01857dee
   google_sign_in_ios: 0ab078e60da6dfe23cbc55c83502b52bba1aad63

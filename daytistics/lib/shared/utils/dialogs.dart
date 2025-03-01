@@ -1,0 +1,128 @@
+import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:flutter/material.dart';
+
+enum ToastType {
+  success,
+  error,
+}
+
+void showErrorDialog(BuildContext context, {required String message}) {
+  showDialog<AlertDialog>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Something went wrong!'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showConfirmationDialog(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required void Function() onConfirm,
+  void Function()? onCancel,
+  String confirmText = 'Confirm',
+  String cancelText = 'Cancel',
+}) {
+  showDialog<AlertDialog>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              if (onCancel != null) {
+                onCancel();
+              }
+              Navigator.of(context).pop();
+            },
+            style: ButtonStyle(
+              backgroundColor:
+                  WidgetStateProperty.all<Color>(Colors.transparent),
+            ),
+            child: StyledText(
+              cancelText,
+              style: const TextStyle(color: ColorSettings.error),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              onConfirm();
+              Navigator.of(context).pop();
+            },
+            child: StyledText(confirmText),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showToast(
+  BuildContext context, {
+  required String message,
+  ToastType type = ToastType.success,
+  int duration = 1,
+}) {
+  final Color backgroundColor =
+      type == ToastType.success ? ColorSettings.success : ColorSettings.error;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: backgroundColor,
+      duration: Duration(seconds: duration),
+      content: Text(message),
+    ),
+  );
+}
+
+void showBottomDialog(
+  BuildContext context, {
+  required Widget child,
+  bool minimizeSize = true,
+}) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+      ),
+    ),
+    builder: (context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+          child,
+          const SizedBox(height: 20),
+        ],
+      );
+    },
+  );
+}

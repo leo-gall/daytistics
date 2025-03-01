@@ -1,6 +1,8 @@
 import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -67,6 +69,7 @@ class _DeleteAccountModalState extends ConsumerState<DeleteAccountModal> {
             ),
             TextButton(
               onPressed: () async {
+                if (await maybeRedirectToConnectionErrorView(context)) return;
                 if (_canDeleteAccount) {
                   await ref.read(authServiceProvider.notifier).deleteAccount();
                   if (context.mounted) {

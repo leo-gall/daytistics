@@ -33,26 +33,17 @@ class RequireAuth extends ConsumerStatefulWidget {
 }
 
 class _RequireAuthState extends ConsumerState<RequireAuth> {
-  @override
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (ref.watch(supabaseClientDependencyProvider).auth.currentUser ==
-          null) {
-        await Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute<SignInView>(
-            builder: (context) => const SignInView(),
-          ),
-          (route) => false,
-        );
-      }
-    });
-  }
+  bool _isAuthenticated = false;
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (ref.read(supabaseClientDependencyProvider).auth.currentUser != null) {
+        setState(() {
+          _isAuthenticated = true;
+        });
+      }
+    });
+    return _isAuthenticated ? widget.child : const SignInView();
   }
 }

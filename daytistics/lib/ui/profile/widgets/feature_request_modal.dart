@@ -1,7 +1,8 @@
 import 'package:daytistics/application/providers/services/feedback/feedback_service.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/browser.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -137,6 +138,8 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
       });
       return;
     }
+
+    if (await maybeRedirectToConnectionErrorView(context)) return;
 
     await ref.read(feedbackServiceProvider.notifier).createFeatureRequest(
           _titleController.text,

@@ -2,7 +2,9 @@ import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -40,6 +42,7 @@ class OAuthButton extends ConsumerWidget {
       width: 250,
       child: ElevatedButton(
         onPressed: () async {
+          if (await maybeRedirectToConnectionErrorView(context)) return;
           if (provider == OAuthProvider.google) {
             await ref.read(authServiceProvider.notifier).signInWithGoogle();
           } else if (provider == OAuthProvider.apple) {

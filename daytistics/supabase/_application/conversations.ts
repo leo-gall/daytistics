@@ -263,7 +263,10 @@ export async function generateConversationTitleFromQuery(
   );
 
   return {
-    title: completion.choices[0].message.content,
+    title: (completion.choices[0].message.content as string).replaceAll(
+      '"',
+      ""
+    ),
     outputTokens: completion.usage?.completion_tokens || 0,
     inputTokens: completion.usage?.prompt_tokens || 0,
   };

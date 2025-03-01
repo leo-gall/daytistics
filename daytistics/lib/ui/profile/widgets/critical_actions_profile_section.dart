@@ -1,7 +1,9 @@
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/profile/widgets/delete_account_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,13 +57,10 @@ class CriticalActionsProfileSection extends AbstractSettingsSection {
                       ),
                     );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: StyledText(
-                          'Failed to submit your data export request.',
-                        ),
-                        backgroundColor: ColorSettings.error,
-                      ),
+                    showToast(
+                      context,
+                      message: 'Failed to submit your data export request.',
+                      type: ToastType.error,
                     );
                   }
                 }
