@@ -7,10 +7,12 @@ export default defineNuxtConfig({
   css: ["~/public/globals.css"],
   runtimeConfig: {
     public: {
-      isAppReleased: process.env.IS_APP_RELEASED === "true",
-      posthogApiKey: process.env.POSTHOG_API_KEY,
-      posthogApiHost: process.env.POSTHOG_API_HOST,
+      isAppReleased: process.env.NUXT_IS_APP_RELEASED == "true",
+      posthogApiKey: process.env.NUXT_POSTHOG_API_KEY,
+      posthogApiHost: process.env.NUXT_POSTHOG_API_HOST,
     },
+    emailOctopusListId: process.env.NUXT_EMAIL_OCTOPUS_LIST_ID,
+    emailOctopusApiKey: process.env.NUXT_EMAIL_OCTOPUS_API_KEY,
   },
 
   plugins: [{ src: "./plugins/posthog", mode: "client" }],

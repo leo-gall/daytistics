@@ -15,7 +15,8 @@
     "nuxt-swiper": "2.0.0",
     "posthog-js": "^1.224.1",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "esbuild": ">=0.25.0"
   },
   "devDependencies": {
     "esbuild": ">=0.25.0"
