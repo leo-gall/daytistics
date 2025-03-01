@@ -2,6 +2,7 @@ import 'package:daytistics/application/providers/services/conversations/conversa
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,6 +120,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
   }
 
   Future<void> _handleSubmit() async {
+    if (await maybeRedirectToConnectionErrorView(context)) return;
     if (!await ref
         .read(conversationsServiceProvider.notifier)
         .hasAnyConversations()) {

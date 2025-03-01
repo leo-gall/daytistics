@@ -1,6 +1,7 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/auth/auth_service.dart'
     show AuthService;
+import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,26 +34,17 @@ class RequireAuth extends ConsumerStatefulWidget {
 }
 
 class _RequireAuthState extends ConsumerState<RequireAuth> {
-  @override
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (ref.watch(supabaseClientDependencyProvider).auth.currentUser ==
-          null) {
-        await Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute<SignInView>(
-            builder: (context) => const SignInView(),
-          ),
-          (route) => false,
-        );
-      }
-    });
-  }
+  bool _isAuthenticated = false;
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (ref.read(supabaseClientDependencyProvider).auth.currentUser != null) {
+        setState(() {
+          _isAuthenticated = true;
+        });
+      }
+    });
+    return _isAuthenticated ? widget.child : const SignInView();
   }
 }

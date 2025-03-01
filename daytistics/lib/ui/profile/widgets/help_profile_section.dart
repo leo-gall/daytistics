@@ -1,6 +1,6 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:daytistics/ui/profile/widgets/bug_report_modal.dart';

@@ -2,6 +2,7 @@ import 'package:daytistics/application/providers/services/activities/activities_
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/time_picker_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,6 +71,8 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
   }
 
   Future<void> _handleAddActivity() async {
+    if (await maybeRedirectToConnectionErrorView(context)) return;
+
     try {
       await ref.read(activitiesServiceProvider.notifier).addActivity(
             name: _activityController.text,

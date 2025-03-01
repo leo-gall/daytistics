@@ -2,6 +2,7 @@ import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
   }
 
   Future<void> _fetchData() async {
+    if (await maybeRedirectToConnectionErrorView(context)) return;
     if (_isLoading || !_hasMore) return;
 
     setState(() => _isLoading = true);
@@ -132,6 +134,7 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
         child: const Icon(Icons.delete, color: ColorSettings.textDark),
       ),
       onDismissed: (direction) async {
+        if (await maybeRedirectToConnectionErrorView(context)) return;
         await ref
             .read(conversationsServiceProvider.notifier)
             .deleteConversation(conversation);

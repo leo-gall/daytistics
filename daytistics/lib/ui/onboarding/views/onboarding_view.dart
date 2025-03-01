@@ -1,5 +1,7 @@
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/presets/home_view_preset.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
@@ -48,66 +50,38 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.maxFinite,
-        height: double.maxFinite,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[ColorSettings.secondary, ColorSettings.primary],
-            transform: GradientRotation(-0.6),
+    return HomeViewPreset(
+      child: Column(
+        children: <Widget>[
+          const Expanded(child: SizedBox()),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _pages[_currentPage],
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 80),
-            SvgPicture.asset(
-              'assets/svg/daytistics_mono.svg',
-              width: 130,
-              height: 130,
-            ),
-            const Expanded(
-              child: StyledText(
-                'Daytistics',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _pages[_currentPage],
-            ),
-            const SizedBox(height: 20),
-            TextButton(
-              onPressed: () async {
-                if (_currentPage < _pages.length - 1) {
-                  setState(() {
-                    _currentPage++;
+          const SizedBox(height: 20),
+          TextButton(
+            onPressed: () async {
+              if (await maybeRedirectToConnectionErrorView(context)) return;
+              if (_currentPage < _pages.length - 1) {
+                setState(() {
+                  _currentPage++;
+                });
+              } else {
+                await ref.read(onboardingServiceProvider).completeOnboarding();
+                if (context.mounted) {
+                  await Navigator.of(context).pushNamedAndRemoveUntil('/',
+                      (route) {
+                    return false;
                   });
-                } else {
-                  await ref
-                      .read(onboardingServiceProvider)
-                      .completeOnboarding();
-                  if (context.mounted) {
-                    await Navigator.of(context).pushNamedAndRemoveUntil('/',
-                        (route) {
-                      return false;
-                    });
-                  }
                 }
-              },
-              child: StyledText(
-                _pages.length - 1 == _currentPage ? "Okay, let's go!" : 'Next',
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+              }
+            },
+            child: StyledText(
+              _pages.length - 1 == _currentPage ? "Okay, let's go!" : 'Next',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            const SizedBox(height: 50),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

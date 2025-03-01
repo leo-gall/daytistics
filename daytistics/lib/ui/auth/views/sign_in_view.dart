@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
-import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/auth/widgets/guest_signin_dialog.dart';
 
@@ -21,57 +22,32 @@ class SignInView extends StatefulWidget {
 class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.maxFinite,
-        height: double.maxFinite,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: <Color>[ColorSettings.secondary, ColorSettings.primary],
-            transform: GradientRotation(0.3),
+    return HomeViewPreset(
+      child: Column(
+        children: <Widget>[
+          const SizedBox(height: 50),
+          if (Platform.isAndroid) const OAuthButton(OAuthProvider.google),
+          if (Platform.isIOS) const OAuthButton(OAuthProvider.apple),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.transparent),
+            ),
+            onPressed: _openLogInAsGuestModal,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.science_outlined,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 5),
+                Text('Try Daytistics'),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 80),
-            SvgPicture.asset(
-              'assets/svg/daytistics_mono.svg',
-              width: 130,
-              height: 130,
-            ),
-            const StyledText(
-              'Daytistics',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 50),
-            if (Platform.isAndroid) const OAuthButton(OAuthProvider.google),
-            if (Platform.isIOS) const OAuthButton(OAuthProvider.apple),
-            TextButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-              ),
-              onPressed: _openLogInAsGuestModal,
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Icon(
-                    Icons.science_outlined,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 5),
-                  Text('Try Daytistics'),
-                ],
-              ),
-            ),
-            const Spacer(),
-            _buildLegalLinks(),
-            const SizedBox(height: 20),
-          ],
-        ),
+          const Spacer(),
+          _buildLegalLinks(),
+        ],
       ),
     );
   }

@@ -12,71 +12,71 @@ class DashboardView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: <Widget>[
-            const SizedBox(width: 4),
-            StyledText(
-              'Dashboard',
-              style: Theme.of(context).textTheme.titleMedium,
+    return RequireAuth(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: <Widget>[
+              const SizedBox(width: 4),
+              StyledText(
+                'Dashboard',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            //
+            IconButton(
+              icon: const Icon(Icons.all_inbox_outlined),
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/conversations-list');
+              },
             ),
+            IconButton(
+              icon: const Icon(Icons.person_2_outlined),
+              onPressed: () async {
+                // await ref.read(authServiceProvider.notifier).signOut();
+
+                // if (ref.watch(supabaseClientDependencyProvider).auth.currentUser == null) {
+                //   if (context.mounted) {
+                //     await Navigator.pushAndRemoveUntil(
+                //       context,
+                //       MaterialPageRoute<SignInView>(
+                //         builder: (context) => const SignInView(),
+                //       ),
+                //       (route) => false,
+                //     );
+                //   }
+                // }
+
+                await Navigator.pushNamed(context, '/profile');
+              },
+            ),
+            // IconButton(
+            //   icon: Icon(
+            //     activityTrackerState.isActivityInProgress
+            //         ? Icons.stop
+            //         : Icons.play_arrow,
+            //   ),
+            //   onPressed: () {
+            //     if (!activityTrackerState.isActivityInProgress) {
+            //       activityTrackerViewModel.startActivity(
+            //         ActivityEntry(
+            //           name: 'Football',
+            //           date: DateTime.now(),
+            //         ),
+            //       );
+            //     }
+
+            //     ActivityModal.showModal(
+            //       context,
+            //       activityEntry: activityTrackerState.currentActivity,
+            //     );
+            //   },
+            // ),
           ],
         ),
-        actions: <Widget>[
-          //
-          IconButton(
-            icon: const Icon(Icons.all_inbox_outlined),
-            onPressed: () async {
-              await Navigator.pushNamed(context, '/conversations-list');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_2_outlined),
-            onPressed: () async {
-              // await ref.read(authServiceProvider.notifier).signOut();
-
-              // if (ref.watch(supabaseClientDependencyProvider).auth.currentUser == null) {
-              //   if (context.mounted) {
-              //     await Navigator.pushAndRemoveUntil(
-              //       context,
-              //       MaterialPageRoute<SignInView>(
-              //         builder: (context) => const SignInView(),
-              //       ),
-              //       (route) => false,
-              //     );
-              //   }
-              // }
-
-              await Navigator.pushNamed(context, '/profile');
-            },
-          ),
-          // IconButton(
-          //   icon: Icon(
-          //     activityTrackerState.isActivityInProgress
-          //         ? Icons.stop
-          //         : Icons.play_arrow,
-          //   ),
-          //   onPressed: () {
-          //     if (!activityTrackerState.isActivityInProgress) {
-          //       activityTrackerViewModel.startActivity(
-          //         ActivityEntry(
-          //           name: 'Football',
-          //           date: DateTime.now(),
-          //         ),
-          //       );
-          //     }
-
-          //     ActivityModal.showModal(
-          //       context,
-          //       activityEntry: activityTrackerState.currentActivity,
-          //     );
-          //   },
-          // ),
-        ],
-      ),
-      body: RequireAuth(
-        child: Center(
+        body: Center(
           child: Column(
             children: <Widget>[
               const SizedBox(height: 20),

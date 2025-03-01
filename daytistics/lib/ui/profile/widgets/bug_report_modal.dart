@@ -1,5 +1,6 @@
 import 'package:daytistics/application/providers/services/feedback/feedback_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
@@ -123,6 +124,7 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
   }
 
   Future<void> handleSubmit() async {
+    if (await maybeRedirectToConnectionErrorView(context)) return;
     if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
       setState(() {
         error = 'Please fill out all fields.';

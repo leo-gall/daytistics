@@ -1,6 +1,7 @@
 import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class GuestSigninDialog extends ConsumerWidget {
         const SizedBox(height: 20),
         TextButton(
           onPressed: () async {
+            if (await maybeRedirectToConnectionErrorView(context)) return;
             await ref.read(authServiceProvider.notifier).signInAnonymously();
 
             if (context.mounted) {

@@ -1,6 +1,7 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/shared/extensions/string.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/utils/mixed.dart';
 import 'package:daytistics/shared/widgets/input/star_rating_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -137,6 +138,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
             top: 1,
             child: IconButton(
               onPressed: () async {
+                if (await maybeRedirectToConnectionErrorView(context)) return;
                 await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
                       dashboardViewModelState.selectedDate,
                     );

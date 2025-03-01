@@ -4,6 +4,7 @@ import 'package:daytistics/application/providers/services/wellbeings/wellbeings_
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/star_rating_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -52,6 +53,8 @@ class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
                 rating: wellbeingMap[wellbeingMap.keys.elementAt(index)],
                 onRatingChanged: (stars) async {
                   wellbeingMap[wellbeingMap.keys.elementAt(index)] = stars;
+
+                  if (await maybeRedirectToConnectionErrorView(context)) return;
 
                   await ref
                       .read(wellbeingsServiceProvider.notifier)
