@@ -1,0 +1,2 @@
+/Users/leogall/development/repositories/leo-gall/daytistics/daytistics/android/app/.cxx/RelWithDebInfo/5jp2m6d1/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/leogall/development/repositories/leo-gall/daytistics/daytistics/android/app/.cxx/RelWithDebInfo/5jp2m6d1/arm64-v8a/CMakeFiles/rebuild_cache.dir
