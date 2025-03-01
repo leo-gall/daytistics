@@ -9,21 +9,20 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class WellbeingRatingModal extends ConsumerStatefulWidget {
-  const WellbeingRatingModal({super.key});
+class WellbeingRatingDialog extends ConsumerStatefulWidget {
+  const WellbeingRatingDialog({super.key});
 
   @override
-  ConsumerState<WellbeingRatingModal> createState() =>
-      _WellbeingRatingModalState();
+  ConsumerState<WellbeingRatingDialog> createState() =>
+      _WellbeingRatingDialogState();
 
-  static void showModal(BuildContext context) {
-    showBottomDialog(context, child: const WellbeingRatingModal());
+  static void showDialog(BuildContext context) {
+    showBottomDialog(context, child: const WellbeingRatingDialog());
   }
 }
 
-class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
+class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
   @override
   Widget build(BuildContext context) {
     final Daytistic daytistic = ref.watch(currentDaytisticProvider)!;
@@ -39,7 +38,10 @@ class _WellbeingRatingModalState extends ConsumerState<WellbeingRatingModal> {
           child: Row(
             children: [
               StyledText(
-                wellbeingMap.keys.elementAt(index).capitalize(),
+                wellbeingMap.keys
+                    .elementAt(index)
+                    .capitalize()
+                    .replaceAll('_', ' '),
                 style: const TextStyle(
                   fontSize: 16,
                 ),

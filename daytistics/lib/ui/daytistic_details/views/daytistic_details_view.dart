@@ -9,7 +9,7 @@ import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/add_activity_dialog.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_dialog.dart';
 
-import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_modal.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
@@ -54,7 +54,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
             icon: const Icon(
               Icons.star_outline,
             ),
-            onPressed: () => WellbeingRatingModal.showModal(context),
+            onPressed: () => WellbeingRatingDialog.showDialog(context),
           ),
           IconButton(
             icon: const Icon(
