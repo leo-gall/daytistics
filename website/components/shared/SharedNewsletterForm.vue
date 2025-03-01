@@ -4,6 +4,7 @@
       type="email"
       placeholder="Your email address"
       v-model="emailAddress"
+      required
     />
     <StyledButton type="submit">
       {{ waitlist ? "Join waitlist" : "Subscribe" }}
