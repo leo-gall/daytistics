@@ -77,18 +77,15 @@ class DashboardView extends ConsumerWidget {
       ),
       body: RequireAuth(
         child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 20),
-                PromptInputField(
-                  onChat: (query, reply) =>
-                      Navigator.pushNamed(context, '/chat'),
-                ),
-                const DashboardCalendar(),
-                const DashboardDateCard(),
-              ],
-            ),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 20),
+              PromptInputField(
+                onChat: (query, reply) => Navigator.pushNamed(context, '/chat'),
+              ),
+              const Expanded(child: DashboardCalendar()),
+              const DashboardDateCard(),
+            ],
           ),
         ),
       ),
