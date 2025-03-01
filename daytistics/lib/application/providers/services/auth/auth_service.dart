@@ -98,8 +98,7 @@ class AuthService extends _$AuthService {
   Future<void> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_IOS_ID'],
-        serverClientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_WEB_ID'],
+        serverClientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID'],
       );
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 

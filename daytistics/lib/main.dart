@@ -28,7 +28,7 @@ Future<void> initSupabase() async {
 Future<void> initPosthog() async {
   final config = PostHogConfig(dotenv.env['POSTHOG_API_KEY']!);
   config.captureApplicationLifecycleEvents = true;
-  config.host = 'https://eu.i.posthog.com';
+  config.host = dotenv.env['POSTHOG_HOST'] ?? 'https://eu.i.posthog.com';
   await Posthog().setup(config);
 }
 
