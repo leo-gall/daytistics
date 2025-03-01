@@ -42,12 +42,12 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.local_library_outlined,
-            ),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(
+          //     Icons.local_library_outlined,
+          //   ),
+          //   onPressed: () {},
+          // ),
           IconButton(
             icon: const Icon(
               Icons.star_outline,
