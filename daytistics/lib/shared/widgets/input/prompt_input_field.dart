@@ -125,6 +125,8 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
         .read(conversationsServiceProvider.notifier)
         .hasAnyConversations()) {
       _askAllowConversationAnalytics(onDone: _handleSendMessage);
+    } else {
+      await _handleSendMessage();
     }
   }
 
