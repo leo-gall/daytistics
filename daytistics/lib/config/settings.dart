@@ -35,9 +35,6 @@ class ColorSettings {
 }
 
 class LegalSettings {
-  static const String privacyPolicyUrl =
-      'https://daytistics.com/privacy-policy';
-  static const String termsOfServiceUrl =
-      'https://daytistics.com/terms-of-service';
+  static const String privacyPolicyUrl = 'https://daytistics.com/privacy';
   static const String imprintUrl = 'https://daytistics.com/imprint';
 }

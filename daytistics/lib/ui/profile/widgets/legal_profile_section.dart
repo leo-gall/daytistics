@@ -32,7 +32,7 @@ class LegalProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await openUrl('https://daytistics.com/imprint');
+                await openUrl(LegalSettings.imprintUrl);
                 await ref.read(posthogDependencyProvider).capture(
                       eventName: 'imprint_opened',
                     );
@@ -53,7 +53,7 @@ class LegalProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await openUrl('https://daytistics.com/privacy');
+                await openUrl(LegalSettings.privacyPolicyUrl);
                 await ref.read(posthogDependencyProvider).capture(
                       eventName: 'privacy_policy_opened',
                     );
