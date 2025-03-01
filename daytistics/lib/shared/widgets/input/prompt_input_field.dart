@@ -1,6 +1,7 @@
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -134,9 +135,17 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     setState(() {
       _loading = true;
     });
-    final String reply = await ref
-        .read(conversationsServiceProvider.notifier)
-        .sendMessage(_controller.text);
+    late String reply;
+    try {
+      reply = await ref
+          .read(conversationsServiceProvider.notifier)
+          .sendMessage(_controller.text);
+    } on ServerException catch (e) {
+      if (mounted) {
+        showToast(context,
+            message: e.message, type: ToastType.error, duration: 3);
+      }
+    }
 
     setState(() {
       _controller.clear();

@@ -1,11 +1,14 @@
 // ignore_for_file: avoid_dynamic_calls
 
+import 'dart:convert';
+
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/exceptions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -27,13 +30,20 @@ class ConversationsService extends _$ConversationsService {
     final currentConversation = ref.read(currentConversationProvider);
     final posthog = ref.read(posthogDependencyProvider);
 
-    final response = await Supabase.instance.client.functions.invoke(
-      'send-conversation-message',
-      body: {
-        'query': query,
-        'conversation_id': currentConversation?.id,
-      },
-    );
+    late FunctionResponse response;
+    try {
+      response = await Supabase.instance.client.functions.invoke(
+        'send-conversation-message',
+        body: {
+          'query': query,
+          'conversation_id': currentConversation?.id,
+        },
+      );
+    } on FunctionException catch (e) {
+      // parse json
+      final error = json.decode(e.details as String)['error'] as String;
+      throw ServerException(error);
+    }
 
     if (currentConversation == null) {
       currentConversationNotifier.setConversation(

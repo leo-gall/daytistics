@@ -76,13 +76,14 @@ void showToast(
   BuildContext context, {
   required String message,
   ToastType type = ToastType.success,
+  int duration = 1,
 }) {
   final Color backgroundColor =
       type == ToastType.success ? ColorSettings.success : ColorSettings.error;
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       backgroundColor: backgroundColor,
-      duration: const Duration(seconds: 1),
+      duration: Duration(seconds: duration),
       content: Text(message),
     ),
   );

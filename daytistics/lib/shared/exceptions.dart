@@ -9,3 +9,9 @@ class InvalidInputException implements Exception {
 
   InvalidInputException(this.message);
 }
+
+class ServerException implements Exception {
+  final String message;
+
+  ServerException(this.message);
+}
