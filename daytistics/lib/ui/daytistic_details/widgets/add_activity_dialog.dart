@@ -1,5 +1,4 @@
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
-import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';

@@ -140,7 +140,8 @@ class ActivitiesService extends _$ActivitiesService {
 
       if (startTime == endTime) {
         throw InvalidInputException(
-            'Start time cannot be the same as end time');
+          'Start time cannot be the same as end time',
+        );
       }
     } else if (startTime != null || endTime != null) {
       throw InvalidInputException('Both start and end time must be provided');

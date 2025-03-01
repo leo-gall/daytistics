@@ -127,7 +127,9 @@ class _StartupViewState extends State<StartupView> {
                       _reason ?? 'An error occurred.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextButton(

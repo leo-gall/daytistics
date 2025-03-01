@@ -1,12 +1,10 @@
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
-import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 
 class OnboardingView extends ConsumerStatefulWidget {
   const OnboardingView({super.key});

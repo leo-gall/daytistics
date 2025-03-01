@@ -9,7 +9,6 @@ import 'package:daytistics/ui/auth/widgets/guest_signin_dialog.dart';
 
 import 'package:daytistics/ui/auth/widgets/oauth_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignInView extends StatefulWidget {

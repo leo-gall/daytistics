@@ -4,7 +4,6 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -142,8 +141,12 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
           .sendMessage(_controller.text);
     } on ServerException catch (e) {
       if (mounted) {
-        showToast(context,
-            message: e.message, type: ToastType.error, duration: 3);
+        showToast(
+          context,
+          message: e.message,
+          type: ToastType.error,
+          duration: 3,
+        );
       }
     }
 
