@@ -1,10 +1,7 @@
 import 'dart:io';
 
-import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
-import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/auth/widgets/guest_signin_dialog.dart';
 
 import 'package:daytistics/ui/auth/widgets/oauth_button.dart';
@@ -24,7 +21,7 @@ class _SignInViewState extends State<SignInView> {
     return HomeViewPreset(
       child: Column(
         children: <Widget>[
-          const SizedBox(height: 50),
+          const Expanded(child: SizedBox()),
           if (Platform.isAndroid) const OAuthButton(OAuthProvider.google),
           if (Platform.isIOS) const OAuthButton(OAuthProvider.apple),
           TextButton(
@@ -44,8 +41,6 @@ class _SignInViewState extends State<SignInView> {
               ],
             ),
           ),
-          const Spacer(),
-          _buildLegalLinks(),
         ],
       ),
     );
@@ -53,28 +48,5 @@ class _SignInViewState extends State<SignInView> {
 
   void _openLogInAsGuestModal() {
     showBottomDialog(context, child: const GuestSigninDialog());
-  }
-
-  Widget _buildLegalLinks() {
-    final Map<String, String> legalLinks = <String, String>{
-      'Privacy Policy': LegalSettings.privacyPolicyUrl,
-      'Imprint': LegalSettings.imprintUrl,
-    };
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (final String title in legalLinks.keys)
-          TextButton(
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(EdgeInsets.zero),
-              visualDensity: VisualDensity.compact,
-              backgroundColor: WidgetStateProperty.all(Colors.transparent),
-            ),
-            onPressed: () => openUrl(legalLinks[title]!),
-            child: StyledText(title),
-          ),
-      ],
-    );
   }
 }

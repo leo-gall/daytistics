@@ -124,10 +124,8 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     if (!await ref
         .read(conversationsServiceProvider.notifier)
         .hasAnyConversations()) {
-      _askAllowConversationAnalytics();
+      _askAllowConversationAnalytics(onDone: _handleSendMessage);
     }
-
-    await _handleSendMessage();
   }
 
   Future<void> _handleSendMessage() async {
@@ -160,7 +158,9 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     }
   }
 
-  void _askAllowConversationAnalytics() {
+  void _askAllowConversationAnalytics({
+    required void Function() onDone,
+  }) {
     showConfirmationDialog(
       context,
       title: 'Allow Analytics',
@@ -170,11 +170,13 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
         await ref
             .read(settingsServiceProvider)
             .updateConversationAnalytics(value: true);
+        onDone();
       },
       onCancel: () async {
         await ref
             .read(settingsServiceProvider)
             .updateConversationAnalytics(value: false);
+        onDone();
       },
       cancelText: 'Deny',
       confirmText: 'Accept',
