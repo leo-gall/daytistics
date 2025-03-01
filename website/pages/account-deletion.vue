@@ -61,6 +61,20 @@
             </li>
           </ol>
         </section>
+
+        <section class="space-y-4">
+          <h2
+            class="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-100"
+          >
+            Data Retention
+          </h2>
+          <p>
+            After deleting your account, we won't retain any personal data
+            associated with your account. However, we may retain anonymized data
+            for analytical purposes. If you wish to have your data erased,
+            please contact us at <SharedContactEmail />.
+          </p>
+        </section>
       </div>
     </div>
   </div>

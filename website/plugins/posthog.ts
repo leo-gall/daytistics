@@ -8,6 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       capture_pageview: false, // we add manual pageview capturing below
       loaded: (posthog) => {
         if (import.meta.env.MODE === "development") posthog.debug();
+        posthog.identify(`anonymous-${import.meta.env.MODE}-web-user`);
       },
     }
   );
