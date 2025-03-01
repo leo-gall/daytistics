@@ -20,7 +20,7 @@ jobs:
                 --header 'Authorization: Bearer ${{ secrets.SUPABASE_PERSONAL_ACCESS_TOKEN }}' \
                 --header 'Content-Type: application/json' \
                 --data-raw '{
-                    "name": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+                    "name": "$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")",
                     "organization_id": "${{ secrets.SUPABASE_ORGANIZATION_ID }}",
                     "db_pass": "${{ secrets.SUPABASE_DB_PASS }}",
                     "region": "eu-west-1"
