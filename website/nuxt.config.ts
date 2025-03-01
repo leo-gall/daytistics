@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     },
   },
 
-  // set favicon
+  plugins: [{ src: "./plugins/posthog", mode: "client" }],
+
   app: {
     head: {
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
