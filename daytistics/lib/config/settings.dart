@@ -24,8 +24,8 @@ class SupabaseSettings {
 class ColorSettings {
   static const Color primary = Color(0xFF0E9F6E);
   static const Color primaryAccent = Color(0xFF384B41);
-  static const Color secondary = Color.fromARGB(255, 7, 166, 215);
-  static const Color secondaryAccent = Color.fromARGB(255, 96, 178, 234);
+  static const Color secondary = Color.fromRGBO(92, 107, 192, 1);
+  static const Color secondaryAccent = Color(0xFF0064A6);
   static const Color background = Color(0xFFE5E5E5);
   static const Color textDark = Color.fromRGBO(60, 59, 59, 1);
   static const Color textLight = Color.fromRGBO(125, 125, 125, 1);

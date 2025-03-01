@@ -1,4 +1,3 @@
-import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -28,7 +27,7 @@ class DashboardView extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.all_inbox_outlined),
             onPressed: () async {
-              ChatListModal.showModal(context);
+              await Navigator.pushNamed(context, '/conversations-list');
             },
           ),
           IconButton(

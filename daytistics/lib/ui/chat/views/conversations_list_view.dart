@@ -5,27 +5,17 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class ChatListModal extends ConsumerStatefulWidget {
-  const ChatListModal({super.key});
+class ConversationsListView extends ConsumerStatefulWidget {
+  const ConversationsListView({super.key});
 
   @override
-  ConsumerState<ChatListModal> createState() => _ChatListModalState();
-
-  static void showModal(BuildContext context) {
-    showMaterialModalBottomSheet<ChatListModal>(
-      context: context,
-      builder: (context) {
-        return const ChatListModal();
-      },
-    );
-  }
+  ConsumerState<ConversationsListView> createState() =>
+      _ConversationsListViewState();
 }
 
-class _ChatListModalState extends ConsumerState<ChatListModal> {
+class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
   final int _pageSize = 10;
   int _currentPage = 0;
   bool _hasMore = true;
@@ -83,28 +73,27 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 500,
-      color: ColorSettings.background,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-          Expanded(
-            child: _conversations.isEmpty && !_isLoading
-                ? const Center(child: Text('No conversations found'))
-                : _buildConversationList(),
-          ),
-          if (_isLoading) const LinearProgressIndicator(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: StyledText(
+          'Conversations',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: _conversations.isEmpty && !_isLoading
+                  ? const Center(child: Text('No conversations found'))
+                  : _buildConversationList(),
+            ),
+            if (_isLoading) const LinearProgressIndicator(),
+          ],
+        ),
       ),
     );
   }
@@ -115,7 +104,12 @@ class _ChatListModalState extends ConsumerState<ChatListModal> {
       itemCount: _conversations.length + (_hasMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index >= _conversations.length) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         final conversation = _conversations[index];

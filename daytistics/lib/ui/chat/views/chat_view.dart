@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
-import 'package:daytistics/shared/widgets/application/chat_list_modal.dart';
 import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/chat/widgets/llm_chat_message.dart';
@@ -31,7 +32,9 @@ class _ChatViewState extends ConsumerState<ChatView> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Platform.isIOS
+              ? const Icon(Icons.arrow_back_ios)
+              : const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
             ref
@@ -42,7 +45,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.all_inbox_outlined),
-            onPressed: () => ChatListModal.showModal(context),
+            onPressed: () async =>
+                Navigator.pushNamed(context, '/conversations-list'),
           ),
         ],
       ),

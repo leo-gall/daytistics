@@ -23,3 +23,6 @@ test-supabase:
 all:
 	make analyze-all
 	make test-all
+
+run-functions:
+	supabase functions serve --env-file=./supabase/.env
