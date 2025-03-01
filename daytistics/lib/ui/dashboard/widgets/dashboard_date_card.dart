@@ -1,9 +1,10 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/shared/extensions/string.dart';
-import 'package:daytistics/shared/utils/time.dart';
-import 'package:daytistics/shared/widgets/application/star_rating.dart';
+import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/widgets/input/star_rating_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/ui/daytistic_details/views/daytistic_details_view.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +95,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                                                 ),
                                               ),
                                               const SizedBox(width: 5),
-                                              StarRating(
+                                              StarRatingInputField(
                                                 maxRating: 5,
                                                 rating: daytistic.wellbeing!
                                                     .toRatingMap()[key],

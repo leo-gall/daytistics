@@ -1,6 +1,7 @@
-import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
+import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
 import 'package:flutter/material.dart';

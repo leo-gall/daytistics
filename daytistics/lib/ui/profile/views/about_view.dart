@@ -1,4 +1,5 @@
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 
 class AboutView extends StatelessWidget {

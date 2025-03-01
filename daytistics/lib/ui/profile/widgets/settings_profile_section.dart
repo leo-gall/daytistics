@@ -3,6 +3,7 @@ import 'package:daytistics/application/providers/services/settings/settings_serv
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';

@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
-import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
+import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/chat/widgets/llm_chat_message.dart';
 import 'package:daytistics/ui/chat/widgets/user_chat_message.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           ),
           // adds a shadow to the input field
           PromptInputField(
-            onChat: (query, reply) async {
+            onChat: (_, __) async {
               // scroll to the bottom of the list
               await _scrollController.animateTo(
                 _scrollController.position.maxScrollExtent,

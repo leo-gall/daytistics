@@ -4,6 +4,7 @@ import 'package:daytistics/application/providers/di/posthog/posthog_dependency.d
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/exceptions.dart';
 
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -27,15 +28,15 @@ class ActivitiesService extends _$ActivitiesService {
     required TimeOfDay endTime,
   }) async {
     if (name.isEmpty) {
-      throw Exception('Name cannot be empty');
+      throw InvalidInputException('Name cannot be empty');
     }
 
     if (startTime.isAfter(endTime)) {
-      throw Exception('Start time cannot be after end time');
+      throw InvalidInputException('Start time cannot be after end time');
     }
 
     if (startTime == endTime) {
-      throw Exception('Start time cannot be the same as end time');
+      throw InvalidInputException('Start time cannot be the same as end time');
     }
 
     final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
@@ -67,7 +68,6 @@ class ActivitiesService extends _$ActivitiesService {
         .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.activitiesTableName)
         .upsert(activity.toSupabase());
-
 
     final Daytistic updatedDaytistic = daytistic.copyWith(
       activities: [...daytistic.activities, activity],
@@ -115,7 +115,6 @@ class ActivitiesService extends _$ActivitiesService {
         'end_time': activity.endTime.toIso8601String(),
       },
     );
-
   }
 
   Future<void> updateActivity({
@@ -124,27 +123,27 @@ class ActivitiesService extends _$ActivitiesService {
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-
     final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     if (name == null && startTime == null && endTime == null) {
-      throw Exception('No changes to update');
+      throw InvalidInputException('No changes to update');
     }
 
     if (name != null && name.isEmpty) {
-      throw Exception('Name cannot be empty');
+      throw InvalidInputException('Name cannot be empty');
     }
 
     if (startTime != null && endTime != null) {
       if (startTime.isAfter(endTime)) {
-        throw Exception('Start time cannot be after end time');
+        throw InvalidInputException('Start time cannot be after end time');
       }
 
       if (startTime == endTime) {
-        throw Exception('Start time cannot be the same as end time');
+        throw InvalidInputException(
+            'Start time cannot be the same as end time');
       }
     } else if (startTime != null || endTime != null) {
-      throw Exception('Both start and end time must be provided');
+      throw InvalidInputException('Both start and end time must be provided');
     }
 
     final activity = Activity(
@@ -180,7 +179,6 @@ class ActivitiesService extends _$ActivitiesService {
         .from(SupabaseSettings.activitiesTableName)
         .upsert(activity.toSupabase());
 
-
     final updatedActivities = daytistic.activities
         .map((element) => element.id == activity.id ? activity : element)
         .toList();
@@ -189,7 +187,6 @@ class ActivitiesService extends _$ActivitiesService {
         daytistic.copyWith(activities: updatedActivities);
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
-
 
     await ref.read(posthogDependencyProvider).capture(
       eventName: 'activity_updated',

@@ -1,13 +1,13 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter/material.dart';
 
-class StarRating extends StatelessWidget {
+class StarRatingInputField extends StatelessWidget {
   final int maxRating;
   final int? rating;
   final bool showFullRating;
   final void Function(int)? onRatingChanged;
 
-  const StarRating({
+  const StarRatingInputField({
     super.key,
     required this.maxRating,
     required this.rating,

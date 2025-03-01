@@ -1,6 +1,7 @@
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,7 +122,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     if (!await ref
         .read(conversationsServiceProvider.notifier)
         .hasAnyConversations()) {
-      await _askAllowConversationAnalytics();
+      _askAllowConversationAnalytics();
     }
 
     await _handleSendMessage();
@@ -145,39 +146,24 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     }
   }
 
-  Future<void> _askAllowConversationAnalytics() async {
-    await showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Allow Analytics'),
-        content: const Text('Do you want to allow conversation analytics? '
-            'By enabling this setting, you agree to share your conversation data with us to improve our services.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () async {
-              await ref
-                  .read(settingsServiceProvider)
-                  .updateConversationAnalytics(value: false);
-              if (context.mounted) Navigator.pop(context);
-            },
-            style: ButtonStyle(
-              backgroundColor:
-                  WidgetStateProperty.all<Color>(Colors.transparent),
-            ),
-            child:
-                const StyledText('Deny', style: TextStyle(color: Colors.red)),
-          ),
-          TextButton(
-            onPressed: () async {
-              await ref
-                  .read(settingsServiceProvider)
-                  .updateConversationAnalytics(value: true);
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: const StyledText('Accept'),
-          ),
-        ],
-      ),
+  void _askAllowConversationAnalytics() {
+    showConfirmationDialog(
+      context,
+      title: 'Allow Analytics',
+      message: 'Do you want to allow conversation analytics? '
+          'By enabling this setting, you agree to share your conversation data with us to improve our services.',
+      onConfirm: () async {
+        await ref
+            .read(settingsServiceProvider)
+            .updateConversationAnalytics(value: true);
+      },
+      onCancel: () async {
+        await ref
+            .read(settingsServiceProvider)
+            .updateConversationAnalytics(value: false);
+      },
+      cancelText: 'Deny',
+      confirmText: 'Accept',
     );
   }
 }

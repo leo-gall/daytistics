@@ -1,45 +1,23 @@
 import 'package:flutter/material.dart';
 
-class StyledInputTimePickerFormField extends StatefulWidget {
+class TimePickerInputField extends StatefulWidget {
   final void Function(TimeOfDay) onChanged;
   final String title;
   final TimeOfDay? initialTime;
-  final TimeOfDay? minTime;
-  final TimeOfDay? maxTime;
   final TextEditingController controller = TextEditingController();
 
-  StyledInputTimePickerFormField({
+  TimePickerInputField({
     super.key,
     required this.onChanged,
     required this.title,
-    this.minTime,
-    this.maxTime,
     this.initialTime,
   });
 
   @override
-  State<StyledInputTimePickerFormField> createState() =>
-      _StyledInputTimePickerFormFieldState();
+  State<TimePickerInputField> createState() => _TimePickerInputFieldState();
 }
 
-class _StyledInputTimePickerFormFieldState
-    extends State<StyledInputTimePickerFormField> {
-  @override
-  void initState() {
-    if (widget.initialTime != null) {
-      if (widget.minTime != null &&
-          widget.initialTime!.isBefore(widget.minTime!)) {
-        widget.controller.text = widget.minTime!.format(context);
-        widget.onChanged(widget.minTime!);
-      } else if (widget.maxTime != null &&
-          widget.initialTime!.isAfter(widget.maxTime!)) {
-        widget.controller.text = widget.maxTime!.format(context);
-        widget.onChanged(widget.maxTime!);
-      }
-    }
-    super.initState();
-  }
-
+class _TimePickerInputFieldState extends State<TimePickerInputField> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -50,7 +28,7 @@ class _StyledInputTimePickerFormFieldState
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       controller: widget.controller,
       decoration: InputDecoration(
         labelText: widget.title,

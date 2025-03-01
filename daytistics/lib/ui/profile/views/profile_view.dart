@@ -3,6 +3,7 @@ import 'package:daytistics/application/providers/services/auth/auth_service.dart
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/profile/widgets/critical_actions_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/help_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/info_profile_section.dart';

@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/browser.dart';
+import 'package:daytistics/shared/utils/mixed.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/auth/widgets/guest_signin_modal.dart';
 import 'package:daytistics/ui/auth/widgets/oauth_button.dart';
 import 'package:flutter/material.dart';
