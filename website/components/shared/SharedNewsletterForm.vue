@@ -39,7 +39,6 @@ function useEmailSubscription() {
 
   const subscribe = async () => {
     console.log("Subscribing with email address:", emailAddress.value);
-    debugger;
     await $fetch("/api/subscribe", {
       method: "POST",
       body: { email_address: emailAddress.value },
