@@ -32,6 +32,10 @@ jobs:
         working-directory: 'daytistics/ios'
         run: rm -rf vendor
 
+      - name: Install Bundler Gems
+        working-directory: 'daytistics/ios'
+        run: bundle install
+
       - name: Run Flutter tasks and get pub packages
         uses: subosito/flutter-action@v2.16.0
         with:
@@ -63,6 +67,7 @@ jobs:
         with:
           lane: 'release_app_store'
           subdirectory: daytistics/ios
+          command: bundle exec fastlane
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
