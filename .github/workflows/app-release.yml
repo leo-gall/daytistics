@@ -31,9 +31,7 @@ jobs:
           bundler-cache: true
           working-directory: 'daytistics/ios'
 
-      - name: Install CocoaPods
-        run: gem install cocoapods && pod --version
-        working-directory: daytistics/ios
+    
         
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
