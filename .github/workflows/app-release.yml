@@ -12,10 +12,6 @@ env:
   FLUTTER_CHANNEL: "stable"
   RUBY_VERSION: "3.2.2"
 
-defaults:
-  run:
-    working-directory: ./daytistics
-
 jobs:
   build_ios:
     name: Build iOS
@@ -33,22 +29,21 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'ios'
+          working-directory: 'daytistics/ios'
 
       - name: Run Flutter tasks
-      
         uses: subosito/flutter-action@v2.16.0
         with:
           # Remember to specify flutter version in pubspec.yaml under environment
           # https://github.com/subosito/flutter-action?tab=readme-ov-file#use-version-from-pubspecyaml
-          flutter-version-file: 'pubspec.yaml'
+          flutter-version-file: 'daytistics/pubspec.yaml'
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
           lane: 'release_app_store'
-          subdirectory: ios
+          subdirectory: daytistics/ios
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
@@ -71,24 +66,27 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'android'
+          working-directory: 'daytistics/android'
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
         with:
-          flutter-version-file: 'pubspec.yaml'
+          flutter-version-file: 'daytistics/pubspec.yaml'
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
       - name: Create google_service_account.json
+        working-directory: daytistics
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64 }}" | base64 --decode > google_service_account.json
 
       - name: Create key.jks
+        working-directory: daytistics
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE_FILE_BASE64 }}" | base64 --decode > android/key.jks
 
       - name: Create key.properties
+        working-directory: daytistics
         run: |
           cat <<EOF > android/key.properties
           storePassword=${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
@@ -102,7 +100,7 @@ jobs:
       - uses: maierj/fastlane-action@v3.1.0
         with:
           lane: 'release_play_store'
-          subdirectory: android
+          subdirectory: daytistics/android
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
