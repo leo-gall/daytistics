@@ -3,6 +3,7 @@ on:
     release:
         types: [published]
     workflow_dispatch:
+      
 
 jobs:
     deploy:
@@ -20,6 +21,11 @@ jobs:
             - name: Link project
               working-directory: ./daytistics
               run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASS }}
+
+            - name: Replace all env variables temporarily
+              working-directory: ./daytistics
+              run: |
+                sed -i 's/env([^)]*)//g' supabase/config.toml
 
             - name: Push config
               working-directory: ./daytistics
