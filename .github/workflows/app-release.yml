@@ -32,6 +32,17 @@ jobs:
         working-directory: 'daytistics/ios'
         run: rm -rf vendor
 
+      - name: Run Flutter tasks and get pub packages
+        uses: subosito/flutter-action@v2.16.0
+        with:
+          flutter-version-file: 'daytistics/pubspec.yaml'
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Get Flutter Packages
+        working-directory: ./daytistics
+        run: flutter pub get
+
       - name: Reinstall CocoaPods
         working-directory: 'daytistics/ios'
         run: sudo gem install cocoapods
@@ -39,13 +50,6 @@ jobs:
       - name: Pod Install
         working-directory: 'daytistics/ios'
         run: pod install
-
-      - name: Run Flutter tasks
-        uses: subosito/flutter-action@v2.16.0
-        with:
-          flutter-version-file: 'daytistics/pubspec.yaml'
-          channel: ${{ env.FLUTTER_CHANNEL }}
-          cache: true
 
       - name: Clean Flutter build
         working-directory: ./daytistics
