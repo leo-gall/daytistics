@@ -67,7 +67,6 @@ jobs:
         with:
           lane: 'release_app_store'
           subdirectory: daytistics/ios
-          command: bundle exec fastlane
           options: '{ "version_number": "${{ github.ref_name }}" }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
