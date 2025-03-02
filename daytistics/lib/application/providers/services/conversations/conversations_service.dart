@@ -40,9 +40,12 @@ class ConversationsService extends _$ConversationsService {
         },
       );
     } on FunctionException catch (e) {
-      // parse json
-      final error = json.decode(e.details as String)['error'] as String;
+      final String error = e.details['error'] as String;
+
       throw ServerException(error);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e) {
+      throw ServerException('An unknown error occurred');
     }
 
     if (currentConversation == null) {
