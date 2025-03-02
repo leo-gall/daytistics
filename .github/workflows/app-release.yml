@@ -51,6 +51,10 @@ jobs:
         working-directory: ./daytistics
         run: touch .env
 
+      - name: Get flutter dependencies
+        working-directory: ./daytistics
+        run: flutter pub get
+
       - name: Pre-build Setup - CocoaPods
         working-directory: ./daytistics/ios
         run: |
