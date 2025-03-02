@@ -3,6 +3,7 @@ version: 0.0.0+2
 publish_to: none
 environment:
   sdk: '^3.6.0'
+  flutter: 3.29.0
 description: Daytistics is a cross-platform mobile app that enhances well-being by analyzing daily activities with AI.
 dependencies:
   connectivity_plus: ^6.1.3
