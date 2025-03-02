@@ -15,10 +15,7 @@ env:
 jobs:
   build_ios:
     name: Build iOS
-    # You can upgrade to more powerful machines if you need to
-    # See https://docs.github.com/en/actions/using-github-hosted-runners/about-larger-runners/about-larger-runners#about-macos-larger-runners
     runs-on: macos-latest
-    # Depending on how long your build takes, you might want to increase the timeou
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -31,7 +28,18 @@ jobs:
           bundler-cache: true
           working-directory: 'daytistics/ios'
 
-        
+      - name: Clean up vendor
+        working-directory: 'daytistics/ios'
+        run: rm -rf vendor
+
+      - name: Reinstall CocoaPods
+        working-directory: 'daytistics/ios'
+        run: sudo gem install cocoapods
+
+      - name: Pod Install
+        working-directory: 'daytistics/ios'
+        run: pod install
+
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
         with:
@@ -39,16 +47,13 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
+      - name: Clean Flutter build
+        working-directory: ./daytistics
+        run: flutter clean
 
-        
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
-
-      - name: Reinstall cocoapods after getting pubspec.yaml
-        working-directory: ./daytistics/
-        run: flutter pub get && cd ios && gem install cocoapods
-
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
