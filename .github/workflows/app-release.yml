@@ -40,6 +40,10 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
+      - name: Create .env file
+        working-directory: ./daytistics
+        run: touch .env
+
       - uses: maierj/fastlane-action@v3.1.0
         with:
           lane: 'release_app_store'
@@ -52,6 +56,7 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APP_BUNDLE_ID: ${{ secrets.APP_BUNDLE_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build_android:
     name: Build Android
@@ -96,6 +101,10 @@ jobs:
           EOF
         env:
           ANDROID_KEY_STORE_PASSWORD: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
+
+      - name: Create .env file
+        working-directory: ./daytistics
+        run: touch .env
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
