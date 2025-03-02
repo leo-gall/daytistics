@@ -38,12 +38,6 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      - name: Check pod version
-        working-directory: daytistics/ios
-        run: |
-            pod --version
-            pod setup
-            pod install
       
       - name: Flutter doctor
         run: flutter doctor -v
