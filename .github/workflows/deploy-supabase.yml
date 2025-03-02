@@ -28,11 +28,11 @@ jobs:
 
             - name: Push config
               working-directory: ./daytistics
-              run: supabase config push
+              run: echo "y" | supabase config push
 
             - name: Push migrations
               working-directory: ./daytistics
-              run: supabase db push
+              run: supabase db push --password ${{ secrets.SUPABASE_DB_PASS }}
 
             - name: Deploy functions
               working-directory: ./daytistics
