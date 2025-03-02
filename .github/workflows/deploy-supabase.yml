@@ -1,0 +1,42 @@
+name: Deploy Supabase project
+# on:
+#     release:
+#         types: [published]
+
+# deploy testwise on every pr to dev
+on:
+    pull_request:
+        branches:
+            - dev
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: supabase/setup-cli@v1
+              with:
+                version: latest
+
+            - name: Authenticate CLI
+              working-directory: ./daytistics
+              run: supabase login --no-browser --token ${{ secrets.SUPABASE_PERSONAL_ACCESS_TOKEN }}
+
+            - name: Link project
+              working-directory: ./daytistics
+              run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASS }}
+
+            - name: Push config
+              working-directory: ./daytistics
+              run: supabase config push
+
+            - name: Push migrations
+              working-directory: ./daytistics
+              run: supabase db push
+
+            - name: Deploy functions
+              working-directory: ./daytistics
+              run: supabase functions deploy
+
+            
+
