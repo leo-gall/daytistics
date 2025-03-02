@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:flutter/widgets.dart';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 Future<bool> checkNetworkConnection() async {
@@ -12,13 +14,14 @@ Future<bool> checkNetworkConnection() async {
 
 Future<bool> checkSupabaseConnection() async {
   try {
-    final request = await HttpClient().getUrl(
+    final res = await http.Client().get(
       Uri.parse('${SupabaseSettings.url}/auth/v1/health'),
+      headers: {
+        'apikey': SupabaseSettings.anonKey,
+      },
     );
 
-    final response = await request.close();
-
-    return response.statusCode == 200;
+    return res.statusCode == 200;
   } on SocketException catch (_) {
     return false;
   }

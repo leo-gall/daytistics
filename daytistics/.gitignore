@@ -78,7 +78,8 @@ unlinked_spec.ds
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
-**/android/app/.cxx/Debug/
+*.cxx
+app/.cxx/*
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -109,6 +110,7 @@ unlinked_spec.ds
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner.app.dSYM.zip
 
 # macOS
 **/Flutter/ephemeral/
@@ -152,4 +154,9 @@ app.*.symbols
 .gclient_previous_custom_vars
 .gclient_previous_sync_commits
 
-**/*.out
+**/*.out.env
+google_service_account.json
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
