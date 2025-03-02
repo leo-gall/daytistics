@@ -22,10 +22,13 @@ jobs:
               working-directory: ./daytistics
               run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASS }}
 
-            - name: Replace all env variables temporarily
+            - name: Update config to use secrets
               working-directory: ./daytistics
               run: |
-                sed -i 's/env([^)]*)//g' supabase/config.toml
+                sed -i 's/env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)/${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}/g' supabase/config.toml
+                sed -i 's/env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)/${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET }}/g' supabase/config.toml
+                sed -i 's/env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)/${{ secrets.SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID }}/g' supabase/config.toml
+                sed -i 's/env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)/${{ secrets.SUPABASE_AUTH_EXTERNAL_APPLE_SECRET }}/g' supabase/config.toml
 
             - name: Push config
               working-directory: ./daytistics
