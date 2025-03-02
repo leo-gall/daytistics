@@ -2,6 +2,7 @@ name: Deploy Supabase project
 on:
     release:
         types: [published]
+    workflow_dispatch:
 
 jobs:
     deploy:
