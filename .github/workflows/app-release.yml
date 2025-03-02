@@ -10,7 +10,7 @@ on:
 
 env:
   FLUTTER_CHANNEL: "stable"
-  RUBY_VERSION: "2.6.10"
+  RUBY_VERSION: "3.2.2"
 
 jobs:
   build_ios:
@@ -31,7 +31,6 @@ jobs:
           bundler-cache: true
           working-directory: 'daytistics/ios'
 
-    
         
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
@@ -40,13 +39,15 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      
-      - name: Flutter doctor
-        run: flutter doctor -v
+
         
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
+
+      - name: Reinstall cocoapods after getting pubspec.yaml
+        working-directory: ./daytistics/
+        run: flutter pub get && cd ios && gem install cocoapods
 
 
       - uses: maierj/fastlane-action@v3.1.0
