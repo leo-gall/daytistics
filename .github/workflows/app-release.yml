@@ -38,11 +38,12 @@ jobs:
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
 
-      - name: Setup CocoaPods
+      - name: Check pod version
+        working-directory: daytistics/ios
         run: |
-          sudo gem uninstall cocoapods -a || true
-          sudo gem install cocoapods -N
-          pod setup
+            pod --version
+            pod setup
+            pod install
       
       - name: Flutter doctor
         run: flutter doctor -v
@@ -50,16 +51,6 @@ jobs:
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
-
-      - name: Get flutter dependencies
-        working-directory: ./daytistics
-        run: flutter pub get
-
-      - name: Pre-build Setup - CocoaPods
-        working-directory: ./daytistics/ios
-        run: |
-          pod repo update
-          pod install || (rm -rf Pods Podfile.lock && pod install)
 
 
       - uses: maierj/fastlane-action@v3.1.0
