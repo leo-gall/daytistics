@@ -29,7 +29,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'ios'
+          working-directory: 'daytistics/ios'
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
@@ -66,7 +66,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'android'
+          working-directory: 'daytistics/android'
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
