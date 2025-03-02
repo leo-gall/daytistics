@@ -12,6 +12,10 @@ env:
   FLUTTER_CHANNEL: "stable"
   RUBY_VERSION: "3.2.2"
 
+defaults:
+  run:
+    working-directory: ./daytistics
+
 jobs:
   build_ios:
     name: Build iOS
@@ -29,9 +33,10 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'daytistics/ios'
+          working-directory: 'ios'
 
       - name: Run Flutter tasks
+      
         uses: subosito/flutter-action@v2.16.0
         with:
           # Remember to specify flutter version in pubspec.yaml under environment
@@ -66,7 +71,7 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-          working-directory: 'daytistics/android'
+          working-directory: 'android'
 
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
