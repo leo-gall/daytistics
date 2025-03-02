@@ -30,12 +30,6 @@ jobs:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
           working-directory: 'daytistics/ios'
-
-      - name: Setup CocoaPods
-        run: |
-          sudo gem uninstall cocoapods -a || true
-          sudo gem install cocoapods -N
-          pod setup
         
       - name: Run Flutter tasks
         uses: subosito/flutter-action@v2.16.0
@@ -43,6 +37,12 @@ jobs:
           flutter-version-file: 'daytistics/pubspec.yaml'
           channel: ${{ env.FLUTTER_CHANNEL }}
           cache: true
+
+      - name: Setup CocoaPods
+        run: |
+          sudo gem uninstall cocoapods -a || true
+          sudo gem install cocoapods -N
+          pod setup
       
       - name: Flutter doctor
         run: flutter doctor -v
