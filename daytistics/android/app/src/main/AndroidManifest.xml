@@ -26,7 +26,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <data android:scheme="com.daytistics.daytistics" android:host="auth" />
-                <action android:name="android.intent.action.VIEW" />
+                <!-- <action android:name="android.intent.action.VIEW" /> -->
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
