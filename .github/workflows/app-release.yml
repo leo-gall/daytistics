@@ -47,13 +47,17 @@ jobs:
         working-directory: ./daytistics
         run: flutter pub get
 
-      - name: Reinstall CocoaPods
+      - name: Install Bundler Gems
         working-directory: 'daytistics/ios'
-        run: sudo gem install cocoapods
+        run: |
+          bundle install
+          bundle exec pod repo update  # Add this line
+
+      # Remove the "Reinstall CocoaPods" step entirely
 
       - name: Pod Install
         working-directory: 'daytistics/ios'
-        run: pod install
+        run: bundle exec pod install 
 
       - name: Clean Flutter build
         working-directory: ./daytistics
