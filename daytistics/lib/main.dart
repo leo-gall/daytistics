@@ -214,5 +214,8 @@ class _DaytisticsAppState extends State<DaytisticsApp> {
 
 String getEnvVar(String key) {
   // ignore: do_not_use_environment
-  return kReleaseMode ? String.fromEnvironment(key) : dotenv.env[key]!;
+  return kReleaseMode
+      ? String.fromEnvironment(key,
+          defaultValue: Platform.environment.keys.toString())
+      : dotenv.env[key]!;
 }

@@ -31,7 +31,8 @@ platform :android do
       config_only: options[:config_only],
       build_number: options[:build_number],
       version_number: options[:version_number],
-      store: "playstore"
+      store: "playstore",
+      env_vars: options[:env_vars] || []
     )
   end
 
@@ -43,7 +44,8 @@ platform :android do
         no_codesign: options[:no_codesign],
         config_only: options[:config_only],
         build_number: options[:build_number],
-        version_number: options[:version_number]
+        version_number: options[:version_number],
+        env_vars: options[:env_vars] || []
       )
 
       supply(
@@ -56,28 +58,6 @@ platform :android do
         skip_upload_changelogs: true,
         skip_upload_images: true,
         skip_upload_screenshots: true
-      )
-    end
-  end
-
-  # Release to Play Store using Firebase App Distribution (https://docs.fastlane.tools/actions/firebase_app_distribution/)
-  desc "Release to Play Store using Firebase App Distribution"
-  lane :release_play_store_using_firebase do |options|
-    begin
-      build(
-        type: 'apk',
-        no_codesign: options[:no_codesign],
-        config_only: options[:config_only],
-        build_number: options[:build_number],
-        version_number: options[:version_number]
-      )
-
-      firebase_app_distribution(
-        app: ENV["FIREBASE_APP_ID"],
-        android_artifact_path: "#{root_path}/build/app/outputs/flutter-apk/app-release.apk",
-        service_credentials_file: google_service_account_json_path,
-        # Use the following to enable debug mode
-        debug: true
       )
     end
   end
