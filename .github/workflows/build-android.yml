@@ -1,4 +1,4 @@
-name: Build Android release with custom version
+name: Build for Android and push to Play Store with custom version
 
 on:
   workflow_dispatch:
@@ -65,7 +65,7 @@ jobs:
         with:
           lane: 'release_play_store'
           subdirectory: daytistics/android
-          options: '{ "version_number": "${{ inputs.version }}" }'
+          options: '{ "version_number": "${{ inputs.version }}", "env_vars": ["TEST"] }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-          TEST: 'leo was here'
+          TEST: 'THIS_IS_A_TEST'
