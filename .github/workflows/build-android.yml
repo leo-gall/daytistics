@@ -65,7 +65,8 @@ jobs:
         with:
           lane: 'release_play_store'
           subdirectory: daytistics/android
-          options: '{"version_number": "0.0.1", "env_vars": ["TEST"]}'
+          options: '{"version_number": "0.0.1", "env_vars": ["TEST", "TEST2"]}'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
           TEST: 'THIS_IS_A_TEST'
+          TEST2: 'THIS_IS_ANOTHER_TEST'

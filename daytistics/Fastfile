@@ -42,6 +42,7 @@ lane :build_flutter_app do |options|
   command += " --no-codesign" if no_codesign
   command += " --config-only" if config_only
   env_vars = options[:env_vars] || []
+  env_vars = [env_vars] if env_vars.is_a?(String)
 
   env_vars.each do |key|
     UI.message("Adding env var #{key} to binary")
