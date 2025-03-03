@@ -34,14 +34,15 @@ Future<void> initPosthog() async {
 
 Future<void> main() async {
   await dotenv.load();
-  await initSupabase();
+  // await initSupabase();
   runApp(
     MaterialApp(
       title: 'Daytistics',
       locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
-      home: const Text('This is a placeholder'),
+      home: Text(
+          'Supabase Credentials are: ${dotenv.env['SUPABASE_URL']}/${dotenv.env['SUPABASE_ANDROID_URL']} and ${dotenv.env['SUPABASE_ANON_KEY']}'),
     ),
   );
 
