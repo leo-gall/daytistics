@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
@@ -11,6 +13,7 @@ import 'package:daytistics/ui/onboarding/views/onboarding_view.dart';
 import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,32 +37,32 @@ Future<void> initPosthog() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await dotenv.load();
-  } catch (e) {
-    return runApp(
-      MaterialApp(
-        title: 'Daytistics',
-        locale: const Locale('en', 'US'),
-        debugShowCheckedModeBanner: false,
-        theme: daytisticsTheme,
-        home: Text('Error loading .env file: $e'),
-      ),
-    );
+
+  if (!kReleaseMode) {
+    await dotenv.load(mergeWith: Platform.environment);
   }
-  // await initSupabase();
+
   runApp(
     MaterialApp(
       title: 'Daytistics',
       locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
-      home: Text(
-          'Supabase Credentials are: ${dotenv.env['SUPABASE_URL']}/${dotenv.env['SUPABASE_ANDROID_URL']} and ${dotenv.env['SUPABASE_ANON_KEY']}'),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Supabase Credentials'),
+        ),
+        body: Center(
+          child: Text(
+            'Supabase Credentials are: ${getEnvVar('SUPABASE_URL')}/${getEnvVar('SUPABASE_ANDROID_URL')} \n\n\n\n and ${getEnvVar('SUPABASE_ANON_KEY')}',
+            style: const TextStyle(fontSize: 15),
+          ),
+        ),
+      ),
     ),
   );
 
-  // await dotenv.load();
+  // await dotenv.load(mergeWith: Platform.environment);
   // await SentryFlutter.init(
   //   (options) {
   //     options.dsn = dotenv.env['SENTRY_DSN'];
@@ -207,4 +210,8 @@ class _DaytisticsAppState extends State<DaytisticsApp> {
       },
     );
   }
+}
+
+dynamic getEnvVar(String key) {
+  return kReleaseMode ? Platform.environment[key] : dotenv.env[key];
 }
