@@ -66,7 +66,7 @@ jobs:
           lane: 'release_play_store'
           subdirectory: daytistics/android
           options: '{
-            "version_number": "${{ inputs.version }} "
+            "version_number": "${{ github.event.inputs.version }}", 
             "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_DSN"]
             }'
         env:
