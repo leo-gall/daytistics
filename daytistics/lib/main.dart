@@ -33,6 +33,8 @@ Future<void> initPosthog() async {
 }
 
 Future<void> main() async {
+  await dotenv.load();
+  await initSupabase();
   runApp(
     MaterialApp(
       title: 'Daytistics',
