@@ -23,4 +23,5 @@ test-supabase:
 run-functions:
 	supabase functions serve --env-file=./supabase/.env
 
-https://play.google.com/apps/internaltest/4699890422551366748
+release-ios:
+	sudo chmod -R 777 . && flutter pub get && cd ios && bundle install && bundle exec pod repo update && bundle exec pod install && cd .. && flutter clean && cd ios && fastlane release_app_store
