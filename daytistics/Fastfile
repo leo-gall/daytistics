@@ -52,7 +52,7 @@ lane :build_flutter_app do |options|
 
   env_vars.each do |key|
     UI.message("Adding env var #{key} to binary")
-    command += " --dart-define #{key}=#{ENV[key]}"
+    command += " --dart-define=#{key}=#{ENV[key]}"
   end
 
 	UI.message("Building #{type} - version: #{version_number} - build: #{build_number} - commit: #{commit[:abbreviated_commit_hash]}")

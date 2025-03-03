@@ -50,7 +50,8 @@ Future<void> main() async {
       theme: daytisticsTheme,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Supabase Credentials' + getEnvVar('TEST')),
+          title: const Text(
+              'Supabase Credentials${const String.fromEnvironment('TEST')}'),
         ),
         body: Center(
           child: Text(
@@ -215,7 +216,6 @@ class _DaytisticsAppState extends State<DaytisticsApp> {
 String getEnvVar(String key) {
   // ignore: do_not_use_environment
   return kReleaseMode
-      ? String.fromEnvironment(key,
-          defaultValue: Platform.environment.keys.toString())
+      ? String.fromEnvironment(key, defaultValue: 'null')
       : dotenv.env[key]!;
 }
