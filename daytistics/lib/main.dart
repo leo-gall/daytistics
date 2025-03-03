@@ -45,6 +45,9 @@ Future<void> main() async {
     appRunner: () async {
       await initSupabase();
       await initPosthog();
+      await Sentry.captureMessage(
+          'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=${const String.fromEnvironment('SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID')}');
+
       runApp(
         const ProviderScope(child: DaytisticsApp()),
       );
