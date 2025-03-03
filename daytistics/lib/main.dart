@@ -33,20 +33,30 @@ Future<void> initPosthog() async {
 }
 
 Future<void> main() async {
-  await dotenv.load();
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = dotenv.env['SENTRY_DSN'];
-    },
-    appRunner: () async {
-      WidgetsFlutterBinding.ensureInitialized();
-      await initSupabase();
-      await initPosthog();
-      runApp(
-        const ProviderScope(child: DaytisticsApp()),
-      );
-    },
+  runApp(
+    MaterialApp(
+      title: 'Daytistics',
+      locale: const Locale('en', 'US'),
+      debugShowCheckedModeBanner: false,
+      theme: daytisticsTheme,
+      home: const Text('This is a placeholder'),
+    ),
   );
+
+  // await dotenv.load();
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn = dotenv.env['SENTRY_DSN'];
+  //   },
+  //   appRunner: () async {
+  //     WidgetsFlutterBinding.ensureInitialized();
+  //     await initSupabase();
+  //     await initPosthog();
+  //     runApp(
+  //       const ProviderScope(child: DaytisticsApp()),
+  //     );
+  //   },
+  // );
 }
 
 class StartupView extends StatefulWidget {
