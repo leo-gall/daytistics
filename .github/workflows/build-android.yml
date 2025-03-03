@@ -1,4 +1,4 @@
-name: Publish Android release with custom version
+name: Build for Android and push to Play Store with custom version
 
 on:
   workflow_dispatch:
@@ -68,3 +68,4 @@ jobs:
           options: '{ "version_number": "${{ inputs.version }}" }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+          TEST: 'leo was here'
