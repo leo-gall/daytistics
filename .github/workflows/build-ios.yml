@@ -1,4 +1,4 @@
-name: iOS Build and Deploy to Play Store with Custom Version
+name: iOS Build and Deploy to App Store with Custom Version
 
 on:
   workflow_dispatch:
