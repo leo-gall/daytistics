@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 
 class SupabaseSettings {
   static final String url = (kDebugMode && Platform.isAndroid)
-      ? const String.fromEnvironment('SUPABASE_ANDROID_URL')!
-      : const String.fromEnvironment('SUPABASE_URL')!;
-  static final String anonKey =
-      const String.fromEnvironment('SUPABASE_ANON_KEY')!;
+      ? const String.fromEnvironment('SUPABASE_ANDROID_URL')
+      : const String.fromEnvironment('SUPABASE_URL');
+  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
   // Tables
   static const String daytisticsTableName = 'daytistics';
@@ -23,8 +22,10 @@ class SupabaseSettings {
 
 class PosthogSettings {
   static String apiKey = const String.fromEnvironment('POSTHOG_API_KEY');
-  static String host = const String.fromEnvironment('POSTHOG_HOST',
-      defaultValue: 'https://eu.i.posthog.com');
+  static String host = const String.fromEnvironment(
+    'POSTHOG_HOST',
+    defaultValue: 'https://eu.i.posthog.com',
+  );
 }
 
 class SentrySettings {

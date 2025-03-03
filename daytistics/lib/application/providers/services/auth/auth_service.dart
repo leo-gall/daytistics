@@ -98,7 +98,8 @@ class AuthService extends _$AuthService {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId: const String.fromEnvironment(
-            'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID'),
+          'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID',
+        ),
       );
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 

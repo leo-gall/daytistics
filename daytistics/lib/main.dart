@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/utils/mixed.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/chat/views/chat_view.dart';
@@ -14,7 +11,6 @@ import 'package:daytistics/ui/onboarding/views/onboarding_view.dart';
 import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -45,8 +41,6 @@ Future<void> main() async {
     appRunner: () async {
       await initSupabase();
       await initPosthog();
-      await Sentry.captureMessage(
-          'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=${const String.fromEnvironment('SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID')}');
 
       runApp(
         const ProviderScope(child: DaytisticsApp()),

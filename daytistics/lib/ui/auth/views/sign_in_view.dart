@@ -37,8 +37,7 @@ class _SignInViewState extends State<SignInView> {
                   color: Colors.white,
                 ),
                 SizedBox(width: 5),
-                Text(String.fromEnvironment(
-                    'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID')),
+                Text('Try Daytistics'),
               ],
             ),
           ),
