@@ -21,58 +21,35 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Future<void> initSupabase() async {
-//   await Supabase.initialize(
-//     url: SupabaseSettings.url,
-//     anonKey: SupabaseSettings.anonKey,
-//   );
-// }
+Future<void> initSupabase() async {
+  await Supabase.initialize(
+    url: SupabaseSettings.url,
+    anonKey: SupabaseSettings.anonKey,
+  );
+}
 
-// Future<void> initPosthog() async {
-//   final config = PostHogConfig(dotenv.env['POSTHOG_API_KEY']!);
-//   config.captureApplicationLifecycleEvents = true;
-//   config.host = dotenv.env['POSTHOG_HOST'] ?? 'https://eu.i.posthog.com';
-//   await Posthog().setup(config);
-// }
+Future<void> initPosthog() async {
+  final config = PostHogConfig(PosthogSettings.apiKey);
+  config.captureApplicationLifecycleEvents = true;
+  config.host = PosthogSettings.host;
+  await Posthog().setup(config);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    MaterialApp(
-      title: 'Daytistics',
-      locale: const Locale('en', 'US'),
-      debugShowCheckedModeBanner: false,
-      theme: daytisticsTheme,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-              'Supabase Credentials${const String.fromEnvironment('TEST')}'),
-        ),
-        body: const Center(
-          child: Text(
-            'Value of the environment variable TEST: ${const String.fromEnvironment('TEST')}',
-            style: TextStyle(fontSize: 15),
-          ),
-        ),
-      ),
-    ),
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = SentrySettings.dsn;
+    },
+    appRunner: () async {
+      await initSupabase();
+      await initPosthog();
+      runApp(
+        const ProviderScope(child: DaytisticsApp()),
+      );
+    },
   );
-
-  // await dotenv.load(mergeWith: Platform.environment);
-  // await SentryFlutter.init(
-  //   (options) {
-  //     options.dsn = dotenv.env['SENTRY_DSN'];
-  //   },
-  //   appRunner: () async {
-  //     WidgetsFlutterBinding.ensureInitialized();
-  //     await initSupabase();
-  //     await initPosthog();
-  //     runApp(
-  //       const ProviderScope(child: DaytisticsApp()),
-  //     );
-  //   },
-  // );
 }
 
 class StartupView extends StatefulWidget {

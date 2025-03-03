@@ -21,6 +21,16 @@ class SupabaseSettings {
   static const String bugReportsTableName = 'bug_reports';
 }
 
+class PosthogSettings {
+  static String apiKey = const String.fromEnvironment('POSTHOG_API_KEY');
+  static String host = const String.fromEnvironment('POSTHOG_HOST',
+      defaultValue: 'https://eu.i.posthog.com');
+}
+
+class SentrySettings {
+  static String dsn = const String.fromEnvironment('SENTRY_DSN');
+}
+
 class ColorSettings {
   static const Color primary = Color(0xFF0E9F6E);
   static const Color primaryAccent = Color(0xFF384B41);
