@@ -33,7 +33,20 @@ Future<void> initPosthog() async {
 }
 
 Future<void> main() async {
-  await dotenv.load();
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load();
+  } catch (e) {
+    return runApp(
+      MaterialApp(
+        title: 'Daytistics',
+        locale: const Locale('en', 'US'),
+        debugShowCheckedModeBanner: false,
+        theme: daytisticsTheme,
+        home: Text('Error loading .env file: $e'),
+      ),
+    );
+  }
   // await initSupabase();
   runApp(
     MaterialApp(
