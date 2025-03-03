@@ -1,9 +1,8 @@
-name: Publish iOS and Android release
+name: iOS & Android Build and Deploy to Play Store for Release
 
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 env:
   FLUTTER_CHANNEL: "stable"
@@ -68,7 +67,10 @@ jobs:
         with:
           lane: 'release_app_store'
           subdirectory: daytistics/ios
-          options: '{ "version_number": "${{ github.ref_name }}" }'
+          options: '{
+            "version_number": ""${{ github.ref_name }} 
+            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_DSN"]
+            }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -77,6 +79,14 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           APP_BUNDLE_ID: ${{ secrets.APP_BUNDLE_ID }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+   
+
 
   build_android:
     name: Build Android
@@ -130,8 +140,15 @@ jobs:
         with:
           lane: 'release_play_store'
           subdirectory: daytistics/android
-          options: '{ "version_number": "${{ github.ref_name }}" }'
+          options: '{
+            "version_number": ""${{ github.ref_name }} 
+            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_DSN"]
+            }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
  
