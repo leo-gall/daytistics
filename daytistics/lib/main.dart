@@ -213,5 +213,5 @@ class _DaytisticsAppState extends State<DaytisticsApp> {
 }
 
 dynamic getEnvVar(String key) {
-  return kReleaseMode ? Platform.environment[key] : dotenv.env[key];
+  return kReleaseMode ? dotenv.env[key] : dotenv.env[key];
 }
