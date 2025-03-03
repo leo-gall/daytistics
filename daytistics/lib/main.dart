@@ -37,16 +37,17 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  await initSupabase();
-  await initPosthog();
-
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
     },
-    appRunner: () => runApp(
-      const ProviderScope(child: DaytisticsApp()),
-    ),
+    appRunner: () async {
+      await initSupabase();
+      await initPosthog();
+      runApp(
+        const ProviderScope(child: DaytisticsApp()),
+      );
+    },
   );
 }
 
