@@ -41,8 +41,14 @@ lane :build_flutter_app do |options|
   command += " --build-name=#{version_number}" if version_number.to_s != ""
   command += " --no-codesign" if no_codesign
   command += " --config-only" if config_only
+  
+  # Fix for env_vars handling
   env_vars = options[:env_vars] || []
-  env_vars = [env_vars] if env_vars.is_a?(String)
+  
+  # Convert to array if it's a string (handling both single values and comma-separated lists)
+  if env_vars.is_a?(String)
+    env_vars = env_vars.split(',').map(&:strip)
+  end
 
   env_vars.each do |key|
     UI.message("Adding env var #{key} to binary")
