@@ -88,7 +88,6 @@ linter:
     # - diagnostic_describe_all_properties
     - directives_ordering
     # - discarded_futures
-    - do_not_use_environment
     - empty_catches
     - empty_constructor_bodies
     - empty_statements

@@ -4,6 +4,7 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/internet.dart';
+import 'package:daytistics/shared/utils/mixed.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/chat/views/chat_view.dart';
@@ -15,32 +16,27 @@ import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-Future<void> initSupabase() async {
-  await Supabase.initialize(
-    url: SupabaseSettings.url,
-    anonKey: SupabaseSettings.anonKey,
-  );
-}
+// Future<void> initSupabase() async {
+//   await Supabase.initialize(
+//     url: SupabaseSettings.url,
+//     anonKey: SupabaseSettings.anonKey,
+//   );
+// }
 
-Future<void> initPosthog() async {
-  final config = PostHogConfig(dotenv.env['POSTHOG_API_KEY']!);
-  config.captureApplicationLifecycleEvents = true;
-  config.host = dotenv.env['POSTHOG_HOST'] ?? 'https://eu.i.posthog.com';
-  await Posthog().setup(config);
-}
+// Future<void> initPosthog() async {
+//   final config = PostHogConfig(dotenv.env['POSTHOG_API_KEY']!);
+//   config.captureApplicationLifecycleEvents = true;
+//   config.host = dotenv.env['POSTHOG_HOST'] ?? 'https://eu.i.posthog.com';
+//   await Posthog().setup(config);
+// }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (!kReleaseMode) {
-    await dotenv.load(mergeWith: Platform.environment);
-  }
 
   runApp(
     MaterialApp(
@@ -53,10 +49,10 @@ Future<void> main() async {
           title: const Text(
               'Supabase Credentials${const String.fromEnvironment('TEST')}'),
         ),
-        body: Center(
+        body: const Center(
           child: Text(
-            'Supabase Credentials are: ${getEnvVar('SUPABASE_URL')}/${getEnvVar('SUPABASE_ANDROID_URL')} \n\n\n\n and ${getEnvVar('SUPABASE_ANON_KEY')}',
-            style: const TextStyle(fontSize: 15),
+            'Value of the environment variable TEST: ${const String.fromEnvironment('TEST')}',
+            style: TextStyle(fontSize: 15),
           ),
         ),
       ),
@@ -211,11 +207,4 @@ class _DaytisticsAppState extends State<DaytisticsApp> {
       },
     );
   }
-}
-
-String getEnvVar(String key) {
-  // ignore: do_not_use_environment
-  return kReleaseMode
-      ? String.fromEnvironment(key, defaultValue: 'null')
-      : dotenv.env[key]!;
 }
