@@ -34,14 +34,12 @@ Future<void> initPosthog() async {
 
 Future<void> main() async {
   await dotenv.load();
-
-  WidgetsFlutterBinding.ensureInitialized();
-
   await SentryFlutter.init(
     (options) {
       options.dsn = dotenv.env['SENTRY_DSN'];
     },
     appRunner: () async {
+      WidgetsFlutterBinding.ensureInitialized();
       await initSupabase();
       await initPosthog();
       runApp(
