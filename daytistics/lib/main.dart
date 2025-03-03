@@ -12,7 +12,6 @@ import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -26,24 +25,23 @@ Future<void> initSupabase() async {
 }
 
 Future<void> initPosthog() async {
-  final config = PostHogConfig(dotenv.env['POSTHOG_API_KEY']!);
+  final config = PostHogConfig(PosthogSettings.apiKey);
   config.captureApplicationLifecycleEvents = true;
-  config.host = dotenv.env['POSTHOG_HOST'] ?? 'https://eu.i.posthog.com';
+  config.host = PosthogSettings.host;
   await Posthog().setup(config);
 }
 
 Future<void> main() async {
-  await dotenv.load();
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await SentryFlutter.init(
     (options) {
-      options.dsn = dotenv.env['SENTRY_DSN'];
+      options.dsn = SentrySettings.dsn;
     },
     appRunner: () async {
       await initSupabase();
       await initPosthog();
+
       runApp(
         const ProviderScope(child: DaytisticsApp()),
       );

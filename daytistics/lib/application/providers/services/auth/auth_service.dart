@@ -6,7 +6,6 @@ import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -98,7 +97,9 @@ class AuthService extends _$AuthService {
   Future<void> signInWithGoogle() async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: dotenv.env['SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID'],
+        clientId: const String.fromEnvironment(
+          'SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID',
+        ),
       );
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 

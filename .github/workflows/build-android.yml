@@ -1,4 +1,4 @@
-name: Build for Android and push to Play Store with custom version
+name: Android Build and Deploy to Play Store with Custom Version
 
 on:
   workflow_dispatch:
@@ -65,7 +65,14 @@ jobs:
         with:
           lane: 'release_play_store'
           subdirectory: daytistics/android
-          options: '{ "version_number": "${{ inputs.version }}", "env_vars": ["TEST"] }'
+          options: '{
+            "version_number": "${{ inputs.version }} "
+            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_DSN"]
+            }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-          TEST: 'THIS_IS_A_TEST'
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

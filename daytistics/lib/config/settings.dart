@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SupabaseSettings {
   static final String url = (kDebugMode && Platform.isAndroid)
-      ? dotenv.env['SUPABASE_ANDROID_URL']!
-      : dotenv.env['SUPABASE_URL']!;
-  static final String anonKey = dotenv.env['SUPABASE_ANON_KEY']!;
+      ? const String.fromEnvironment('SUPABASE_ANDROID_URL')
+      : const String.fromEnvironment('SUPABASE_URL');
+  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
   // Tables
   static const String daytisticsTableName = 'daytistics';
@@ -19,6 +18,18 @@ class SupabaseSettings {
   static const String settingsTableName = 'user_settings';
   static const String featureRequestsTableName = 'feature_requests';
   static const String bugReportsTableName = 'bug_reports';
+}
+
+class PosthogSettings {
+  static String apiKey = const String.fromEnvironment('POSTHOG_API_KEY');
+  static String host = const String.fromEnvironment(
+    'POSTHOG_HOST',
+    defaultValue: 'https://eu.i.posthog.com',
+  );
+}
+
+class SentrySettings {
+  static String dsn = const String.fromEnvironment('SENTRY_DSN');
 }
 
 class ColorSettings {
