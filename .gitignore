@@ -1,3 +1,5 @@
 .env*
 !.env.template
 TODO
+
+scripts/out
