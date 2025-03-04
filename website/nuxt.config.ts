@@ -41,7 +41,7 @@ export default defineNuxtConfig({
           {
             path: "/server/tasks/roadmap-watcher",
             // means every 30s
-            schedule: "*/30 * * * *",
+            schedule: "* * * * *",
           },
         ],
       },
