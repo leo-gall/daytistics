@@ -34,13 +34,17 @@ export default defineNuxtConfig({
       ],
     },
   },
-
   nitro: {
-    experimental: {
-      tasks: true,
-    },
-    scheduledTasks: {
-      "* * * * *": ["roadmap-watcher"],
+    vercel: {
+      config: {
+        crons: [
+          {
+            path: "/server/tasks/roadmap-watcher",
+            // means every 30s
+            schedule: "*/30 * * * * *",
+          },
+        ],
+      },
     },
   },
 });
