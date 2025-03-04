@@ -34,4 +34,13 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+    scheduledTasks: {
+      "* * * * *": ["roadmap-watcher"],
+    },
+  },
 });
