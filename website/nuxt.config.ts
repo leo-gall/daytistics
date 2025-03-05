@@ -48,7 +48,7 @@ export default defineNuxtConfig({
       },
     },
     scheduledTasks: {
-      "5 16 * * *": ["roadmap-watcher"],
+      "9 16 * * *": ["roadmap-watcher"],
     },
   },
 });

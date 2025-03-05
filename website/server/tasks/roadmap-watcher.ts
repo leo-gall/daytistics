@@ -39,7 +39,7 @@ export default defineTask({
 
 async function fetchDataOfLastDay<T>(table: string): Promise<T[]> {
   let data: T[] = [];
-  await $fetch(`http://127.0.0.1:54321/graphql/v1`, {
+  await $fetch(`http://${process.env.SUPABASE_ADDRESS}/graphql/v1`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
