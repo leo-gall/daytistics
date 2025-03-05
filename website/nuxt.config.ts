@@ -34,17 +34,4 @@ export default defineNuxtConfig({
       ],
     },
   },
-  nitro: {
-    vercel: {
-      config: {
-        crons: [
-          {
-            path: "/api/sync-gh",
-            // means each day at 16:09
-            schedule: "20 16 * * *",
-          },
-        ],
-      },
-    },
-  },
 });

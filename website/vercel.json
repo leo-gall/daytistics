@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/sync-gh",
-      "schedule": "48 15 * * *"
-    }
-  ]
-}
