@@ -1,14 +1,22 @@
-export default defineTask({
-  meta: {
-    name: "roadmap-watcher",
-    description: "Watch the roadmap for changes",
-  },
-  async run(event) {
-    const latestBugReports = await fetchDataOfLastDay<BugReport>("bug_reports");
-    const latestFeatureRequests = await fetchDataOfLastDay<FeatureRequest>(
+export default defineEventHandler(async (event) => {
+  if (
+    event.headers.get("Authorization") !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    return setResponseStatus(event, 401, "Unauthorized");
+  }
+
+  let latestBugReports: BugReport[] = [];
+  let latestFeatureRequests: FeatureRequest[] = [];
+  try {
+    latestBugReports = await fetchDataOfLastDay<BugReport>("bug_reports");
+    latestFeatureRequests = await fetchDataOfLastDay<FeatureRequest>(
       "feature_requests"
     );
+  } catch (error) {
+    setResponseStatus(event, 500, "Failed to fetch data from Supabase.");
+  }
 
+  try {
     const bugReportsNodeId = await getProjectNodeId("leo-gall", 7);
     const featureRequestsNodeId = await getProjectNodeId("leo-gall", 6);
 
@@ -20,7 +28,6 @@ export default defineTask({
       });
     });
 
-    console.log(latestFeatureRequests);
     latestFeatureRequests.forEach(async (featureRequest) => {
       await addItemToProject({
         id: featureRequestsNodeId,
@@ -28,13 +35,15 @@ export default defineTask({
         body: featureRequest.description,
       });
     });
+  } catch (error) {
+    setResponseStatus(event, 500, "Failed to interact with GitHub API.");
+  }
 
-    return {
-      result: {
-        success: true,
-      },
-    };
-  },
+  setResponseStatus(
+    event,
+    200,
+    "Successfully synced bug reports and feature requests with GitHub projects."
+  );
 });
 
 async function fetchDataOfLastDay<T>(table: string): Promise<T[]> {
