@@ -3,18 +3,31 @@
 
 # Daytistics
 
-![Testing Status](https://img.shields.io/github/actions/workflow/status/daytistics/daytistics/dev.yml?branch=dev&label=testing)
+![Testing Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/checks.yml?branch=main&label=testing)
+![Android Build Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/build-android.yml?branch=main&label=build-android)
+![iOS Build Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/build-ios.yml?branch=main&label=build-ios)
+
+
 
 
 Daytistics is a cross-platform mobile app designed to improve the well-being of its users by analyzing their daily activities using modern AI technologies. It is built with Dart, Flutter and Supabase. It currently has the following features:
 
-- ⛳ Activity & Well-being Tracking
-- 🤖 AI-powered chat to gain insights on your life
+- [x] ⛳ Activity & Well-being Tracking
+- [x] 🤖 AI-powered Chatbot
+- [ ] 📔 Three-Minute Journal
+- [ ] 📊 Interactive visualizations
+- [ ] 🛞 Automatically generated reports
+
+## Our Vision
+
+
+Our product vision is to empower individuals to gain insights into their daily lives and enhance their overall well-being through an open-source platform. Daytistics aims to provide a user-friendly platform that encourages consistent tracking of activities and well-being, enabling users to identify patterns and make informed decisions, all while ensuring the highest standards of data protection and privacy. By leveraging AI technology, we strive to offer personalized support and guidance, fostering motivation and productivity.
 
 ## Repository Overview
 
+
 - **🤖 .github/**: Our automated CI/CD pipeline using GitHub Actions
-- **📂 daytistics/**: The core of our application. Built using [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/)
+- **🎯 daytistics/**: The core of our application. Built using [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/)
 - **🕸️ website/**: Our website, built with Nuxt. Includes landing page and admin interfaces
 - **🪁 .vscode/**: Shared VS-Code configuration files
 - **🎨 design/**: Everything about our design: conventions, logos, etc.
@@ -27,4 +40,4 @@ For more detailed information on how to contribute, please refer to the [CONTRIB
 
 ## License
 
-Daytistics © 2025-present by [Leo Gall](https://lgll.dev) is licensed under the [Daytistics Software License](LICENSE.md)
+Daytistics © 2025-present by [Leo Gall](https://lgll.dev) is licensed under the [EUPL v1.2 License](LICENSE.md).
