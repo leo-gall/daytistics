@@ -14,7 +14,7 @@ export function initSentry(): void {
 
 export function initPosthog(): PostHog {
   return new PostHog(Deno.env.get("POSTHOG_API_KEY")!, {
-    host: "https://eu.i.posthog.com",
+    host: Deno.env.get("POSTHOG_HOST") || "https://eu.i.posthog.com",
   });
 }
 
