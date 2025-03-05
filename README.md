@@ -32,4 +32,4 @@ For more detailed information on how to contribute, please refer to the [CONTRIB
 
 ## License
 
-Daytistics © 2025-present by [Leo Gall](https://lgll.dev) is licensed under the [Daytistics Software License](LICENSE.md)
+Daytistics © 2025-present by [Leo Gall](https://lgll.dev) is licensed under the [EUPL v1.2 License](LICENSE.md).
