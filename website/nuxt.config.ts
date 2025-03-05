@@ -35,16 +35,20 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    experimental: { tasks: true },
     vercel: {
       config: {
         crons: [
           {
             path: "/server/tasks/roadmap-watcher",
-            // means every 30s
-            schedule: "* * * * *",
+            // means each 16:05 in berlin
+            schedule: "5 16 * * *",
           },
         ],
       },
+    },
+    scheduledTasks: {
+      "5 16 * * *": ["roadmap-watcher"],
     },
   },
 });
