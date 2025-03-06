@@ -22,11 +22,7 @@ Deno.serve(async (req) => {
   initSentry();
 
   try {
-    const {
-      user,
-      error: supabaseInitError,
-      supabase,
-    } = await initSupabase(req, {
+    const { user, error: supabaseInitError } = await initSupabase(req, {
       withAuth: true,
     });
     if (supabaseInitError) return supabaseInitError;

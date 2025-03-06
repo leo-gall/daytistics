@@ -1,7 +1,4 @@
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/di/user/user.dart';
-import 'package:daytistics/config/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'feedback_service.g.dart';
