@@ -48,17 +48,18 @@ export default defineEventHandler(async (event) => {
 
 async function fetchDataOfLastDay<T>(table: string): Promise<T[]> {
   let data: T[] = [];
-  await $fetch(`http://${process.env.SUPABASE_ADDRESS}/graphql/v1`, {
+  const timestamp = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+  await $fetch(`${process.env.SUPABASE_ADDRESS}/graphql/v1`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       apiKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-      Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+      Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY || ""}`,
     },
     body: {
       query: `
-      query($timestamp: timestamptz!) {
-        ${table}Collection(filter: { created_at: { gte: $timestamp } }) {
+      query {
+        ${table}Collection(filter: {created_at: {gte: "${timestamp}"}}) { 
           edges {
             node {
               title,
@@ -68,9 +69,6 @@ async function fetchDataOfLastDay<T>(table: string): Promise<T[]> {
         }
       }
     `,
-      variables: {
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Timestamp für die letzten 24h
-      },
     },
     onResponse: ({ response, error }) => {
       data = response._data?.data[`${table}Collection`]?.edges.map(
@@ -92,8 +90,13 @@ async function addItemToProject(options: {
     "Content-Type": "application/json",
   };
 
+  const draftBody =
+    options.body +
+    "\n\n---\n\nThis item was automatically fetched from the Supabase database on " +
+    new Date().toISOString();
+
   const body = {
-    query: `mutation {addProjectV2DraftIssue(input: {projectId: "${options.id}" title: "${options.title}" body: "${options.body}"}) {projectItem {id}}}`,
+    query: `mutation {addProjectV2DraftIssue(input: {projectId: "${options.id}" title: "[SB] ${options.title}" body: "${draftBody}"}) {projectItem {id}}}`,
   };
 
   await $fetch(`https://api.github.com/graphql`, {
