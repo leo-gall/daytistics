@@ -1,7 +1,4 @@
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/di/user/user.dart';
-import 'package:daytistics/config/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'feedback_service.g.dart';
@@ -16,18 +13,10 @@ class FeedbackService extends _$FeedbackService {
   }
 
   Future<void> createFeatureRequest(String title, String description) async {
-    await ref
-        .read(supabaseClientDependencyProvider)
-        .from(SupabaseSettings.featureRequestsTableName)
-        .insert({
-      'title': title,
-      'description': description,
-      'user_id': ref.read(userDependencyProvider)!.id,
-    });
-
-    await ref.read(posthogDependencyProvider).capture(
-      eventName: 'feature_request_created',
-      properties: {
+    await ref.read(supabaseClientDependencyProvider).functions.invoke(
+      'add-to-roadmap',
+      body: {
+        'roadmap': 'features',
         'title': title,
         'description': description,
       },
@@ -35,18 +24,10 @@ class FeedbackService extends _$FeedbackService {
   }
 
   Future<void> createBugReport(String title, String description) async {
-    await ref
-        .read(supabaseClientDependencyProvider)
-        .from(SupabaseSettings.bugReportsTableName)
-        .insert({
-      'title': title,
-      'description': description,
-      'user_id': ref.read(userDependencyProvider)!.id,
-    });
-
-    await ref.read(posthogDependencyProvider).capture(
-      eventName: 'bug_report_created',
-      properties: {
+    await ref.read(supabaseClientDependencyProvider).functions.invoke(
+      'add-to-roadmap',
+      body: {
+        'roadmap': 'bugs',
         'title': title,
         'description': description,
       },
