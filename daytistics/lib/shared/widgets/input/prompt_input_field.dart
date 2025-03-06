@@ -77,6 +77,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
                     ),
                   ),
                 ),
+                onTapOutside: (event) => FocusScope.of(context).unfocus(),
               ),
             ),
             Positioned(
