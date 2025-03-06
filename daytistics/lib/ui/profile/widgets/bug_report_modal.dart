@@ -119,6 +119,13 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
                   ),
                 ),
               ),
+              TextButton(
+                onPressed: () async =>
+                    openUrl('https://github.com/users/leo-gall/projects/7'),
+                child: const StyledText(
+                  'Roadmap',
+                ),
+              ),
             ],
     );
   }
