@@ -330,7 +330,7 @@ export async function fetchConversations(
       const { data: messagesData, error: messagesError } = await supabase
         .from("conversation_messages")
         .select("*")
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: true })
         .eq("conversation_id", conversation.id);
 
       if (!messagesError && messagesData) {
