@@ -1,13 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-
 import 'package:daytistics/ui/profile/widgets/delete_account_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CriticalActionsProfileSection extends AbstractSettingsSection {
   const CriticalActionsProfileSection({super.key});
@@ -24,47 +28,10 @@ class CriticalActionsProfileSection extends AbstractSettingsSection {
                 color: ColorSettings.error,
               ),
               title: const StyledText(
-                'Request data export',
+                'Export data',
                 style: TextStyle(color: ColorSettings.error),
               ),
-              onPressed: (context) async {
-                final response = await ref
-                    .read(supabaseClientDependencyProvider)
-                    .functions
-                    .invoke('data-export');
-
-                await ref
-                    .read(posthogDependencyProvider)
-                    .capture(eventName: 'data_export_requested');
-                if (context.mounted) {
-                  if (response.status == 200) {
-                    await showDialog<void>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const StyledText('Data Export'),
-                        content: const StyledText(
-                          'Your data export request has been submitted. You will receive an email with the data attached once it is ready. This process may take up to 2 business days.',
-                          style: TextStyle(),
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                            },
-                            child: const StyledText('Okay'),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    showToast(
-                      context,
-                      message: 'Failed to submit your data export request.',
-                      type: ToastType.error,
-                    );
-                  }
-                }
-              },
+              onPressed: (context) => _handleDataExport(ref, context),
             ),
             SettingsTile.navigation(
               trailing: const Icon(
@@ -83,5 +50,52 @@ class CriticalActionsProfileSection extends AbstractSettingsSection {
         );
       },
     );
+  }
+
+  Future<void> _handleDataExport(WidgetRef ref, BuildContext context) async {
+    final response = await ref
+        .read(supabaseClientDependencyProvider)
+        .functions
+        .invoke('data-export');
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'data_exported');
+
+    if (context.mounted) {
+      if (response.status == 200) {
+        final String jsonString =
+            const JsonEncoder.withIndent('  ').convert(response.data);
+
+        final Directory directory = await getApplicationDocumentsDirectory();
+        final String filePath =
+            '${directory.path}/data-export-${DateTime.now().millisecondsSinceEpoch}.json';
+
+        final File file = File(filePath);
+        await file.writeAsString(jsonString);
+
+        // Share the file (or use another method to download)
+        await Share.shareXFiles(
+          [XFile(filePath)],
+          subject: 'Data export',
+          text: 'Download your data export below as a JSON file.',
+        );
+      } else {
+        await ref.read(posthogDependencyProvider).capture(
+          eventName: 'data_export_failed',
+          properties: {
+            'data': response.data.toString(),
+            'status': response.status.toString(),
+          },
+        );
+        if (context.mounted) {
+          showToast(
+            context,
+            message: 'Failed to export data. Please try again later.',
+            type: ToastType.error,
+          );
+        }
+      }
+    }
   }
 }
