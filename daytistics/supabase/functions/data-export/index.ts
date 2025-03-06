@@ -1,47 +1,30 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import * as Sentry from "npm:@sentry/deno";
-import { initSentry, initResend, initSupabase } from "@shared/adapters";
+import { initSentry, initSupabase } from "@shared/adapters";
+import * as Conversations from "@application/conversations";
+import * as Daytistics from "@application/daytistics";
+import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2.48.1";
 
 Deno.serve(async (req) => {
   initSentry();
 
   try {
-    const { user, error: supabaseInitError } = await initSupabase(req, {
+    const {
+      user,
+      error: supabaseInitError,
+      supabase,
+    } = await initSupabase(req, {
       withAuth: true,
     });
     if (supabaseInitError) return supabaseInitError;
 
-    const resend = initResend();
+    const tableData = await fetchTableData(supabase, { user: user! });
 
-    const { error } = await resend.emails.send({
-      from: "Daytistics System <system@daytistics.com>",
-      to: Deno.env.get("DATA_EXPORT_EMAIL")!,
-      subject: "Data Export Request",
-      html: `
-        <p>Hello,</p>
-        <p>User ${user!.email || "<i>anonymous</i>"} (${
-        user?.id
-      }) has requested an export of their data. Please deliver the data to them as soon as possible.</p>
-        <p>Thank you!</p>
-      `,
-    });
-    if (error) {
-      Sentry.captureException(error);
-      await Sentry.flush();
-      return new Response(null, {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-        statusText: "Failed to send email",
-      });
-    }
-
-    return new Response(null, {
+    return new Response(JSON.stringify({ tables: tableData, user: user }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
       },
-      statusText: "Email sent",
     });
   } catch (error) {
     Sentry.captureException(error as Error);
@@ -53,3 +36,31 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+async function fetchTableData(
+  supabase: SupabaseClient,
+  options: {
+    user: User;
+  }
+) {
+  const conversations = await Conversations.fetchConversations(
+    options.user,
+    supabase,
+    { encrypted: false }
+  );
+
+  const daytistics = await Daytistics.fetchDaytistics(supabase);
+
+  const userSettings = await supabase.from("user_settings").select("*");
+
+  const dailyTokenBudgets = await supabase
+    .from("daily_token_budgets")
+    .select("*");
+
+  return {
+    conversations,
+    daytistics,
+    userSettings: userSettings.data,
+    dailyTokenBudgets: dailyTokenBudgets.data,
+  };
+}
