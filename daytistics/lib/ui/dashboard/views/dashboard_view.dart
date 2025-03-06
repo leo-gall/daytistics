@@ -1,7 +1,6 @@
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ class DashboardView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return RequireAuth(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Row(
             children: <Widget>[
