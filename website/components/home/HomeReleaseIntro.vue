@@ -30,3 +30,9 @@
     <SharedNewsletterForm />
   </div>
 </template>
+
+<style scoped>
+.glow {
+  filter: drop-shadow(0 0 40px var(--color-primary));
+}
+</style>

@@ -142,3 +142,8 @@ export class Conversation {
     };
   }
 }
+
+export interface AdminToken {
+  partial: string;
+  permissions: string[];
+}
