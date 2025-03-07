@@ -1,4 +1,6 @@
+import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
@@ -19,8 +21,26 @@ class AddActivityDialog extends ConsumerStatefulWidget {
 
 class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
   final TextEditingController _activityController = TextEditingController();
-  TimeOfDay _startTime = TimeOfDay.now();
+  late TimeOfDay _startTime;
   TimeOfDay _endTime = TimeOfDay.now();
+
+  @override
+  void initState() {
+    final Daytistic? currentDaytistic = ref.read(currentDaytisticProvider);
+
+    if (currentDaytistic == null) {
+      _startTime = TimeOfDay.now();
+      return;
+    } else {
+      setState(() {
+        _startTime = currentDaytistic.activities.isNotEmpty
+            ? TimeOfDay.fromDateTime(currentDaytistic.activities.last.endTime)
+            : const TimeOfDay(hour: 0, minute: 0);
+      });
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
