@@ -6,8 +6,10 @@ import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
+import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -139,6 +141,47 @@ class UserService {
     await ref
         .read(posthogDependencyProvider)
         .capture(eventName: 'account_deleted');
+  }
+
+  /// Exports user data to a JSON file.
+  ///
+  /// This function calls a Supabase function to export the data, captures an event in PostHog,
+  /// and saves the data to a JSON file in the application documents directory.
+  ///
+  /// Returns:
+  ///   A Future&lt;String&gt; that resolves to the file path of the exported JSON file.
+  ///
+  /// Throws:
+  ///   ServerException: If the Supabase function call fails (status code is not 200).
+  Future<String> exportData() async {
+    final response = await ref
+        .read(supabaseClientDependencyProvider)
+        .functions
+        .invoke('data-export');
+
+    await ref
+        .read(posthogDependencyProvider)
+        .capture(eventName: 'data_exported');
+
+    if (response.status == 200) {
+      final String jsonString = jsonEncode(response.data);
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final File file = File(
+        '${directory.path}/daytistics_data_export_${DateTime.now().millisecondsSinceEpoch}.json',
+      );
+      await file.writeAsString(jsonString);
+
+      return file.path;
+    } else {
+      await ref.read(posthogDependencyProvider).capture(
+        eventName: 'data_export_failed',
+        properties: {
+          'data': response.data.toString(),
+          'status': response.status.toString(),
+        },
+      );
+      throw ServerException('Failed to export data.');
+    }
   }
 }
 
