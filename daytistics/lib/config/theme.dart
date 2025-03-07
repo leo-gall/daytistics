@@ -18,6 +18,12 @@ ThemeData daytisticsTheme = ThemeData(
     centerTitle: false,
   ),
 
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: ColorSettings.background,
+    selectedItemColor: ColorSettings.primary,
+    enableFeedback: false,
+  ),
+
   // text theme
   textTheme: const TextTheme(
     titleMedium: TextStyle(

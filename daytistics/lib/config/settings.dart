@@ -43,6 +43,7 @@ class ColorSettings {
   static const Color success = Color.fromRGBO(9, 149, 110, 1);
   static const Color warning = Color.fromRGBO(212, 172, 13, 1);
   static const Color error = Color.fromRGBO(212, 13, 13, 1);
+  static const Color info = Color.fromRGBO(13, 107, 212, 1);
 }
 
 class LegalSettings {

@@ -1,15 +1,15 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/mixed.dart';
-import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/add_activity_dialog.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_dialog.dart';
-
 import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_dialog.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
@@ -44,27 +44,49 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
           },
         ),
         actions: <Widget>[
-          // IconButton(
-          //   icon: const Icon(
-          //     Icons.local_library_outlined,
-          //   ),
-          //   onPressed: () {},
-          // ),
           IconButton(
-            icon: const Icon(
-              Icons.star_outline,
-            ),
-            onPressed: () => WellbeingRatingDialog.showDialog(context),
+            icon: const Icon(Icons.all_inbox_outlined),
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/conversations-list');
+            },
           ),
           IconButton(
-            icon: const Icon(
-              Icons.add,
-            ),
-            onPressed: () {
-              AddActivityDialog.showDialog(context);
+            icon: const Icon(Icons.person_2_outlined),
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/profile');
             },
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star_border),
+            label: 'Wellbeing',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Add Activity',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Diary',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            WellbeingRatingDialog.showDialog(context);
+          } else if (index == 1) {
+            AddActivityDialog.showDialog(context);
+          } else if (index == 2) {
+            showToast(
+              context,
+              message: 'Diary is not implemented yet',
+              type: ToastType.info,
+            );
+          }
+        },
       ),
       body: RequireAuth(
         child: Center(
@@ -99,9 +121,6 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
                     );
                   },
                 ),
-              ),
-              PromptInputField(
-                onChat: (query, reply) => Navigator.pushNamed(context, '/chat'),
               ),
             ],
           ),
