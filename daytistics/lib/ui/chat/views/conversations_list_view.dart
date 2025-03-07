@@ -95,7 +95,6 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
                   ? const Center(child: Text('No conversations found'))
                   : _buildConversationList(),
             ),
-            if (_isLoading) const LinearProgressIndicator(),
           ],
         ),
       ),
