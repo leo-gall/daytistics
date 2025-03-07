@@ -27,8 +27,8 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
     final dashboardViewModelState = ref.watch(dashboardViewModelProvider);
 
     // in format "Monday, 01/01/2021"
-    final readableDate = DateFormat('EEEE, MM/dd/yyyy')
-        .format(dashboardViewModelState.selectedDate);
+    final readableDate =
+        DateFormat('EEEE, MM/dd').format(dashboardViewModelState.selectedDate);
 
     return Card(
       margin: const EdgeInsets.all(10),
