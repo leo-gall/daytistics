@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
@@ -10,6 +12,7 @@ import 'package:daytistics/ui/profile/widgets/help_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/info_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/legal_profile_section.dart';
 import 'package:daytistics/ui/profile/widgets/settings_profile_section.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,6 +26,9 @@ class ProfileView extends ConsumerStatefulWidget {
 }
 
 class _ProfileViewState extends ConsumerState<ProfileView> {
+  String version = 'unknown';
+  String deviceName = 'unknown';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,11 +71,27 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               .currentUser
               ?.email;
 
-          String version = 'unknown';
-
           // postframe callback
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            version = (await PackageInfo.fromPlatform()).version;
+            final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+            final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+
+            late String deviceName;
+
+            if (Platform.isIOS) {
+              final IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
+              deviceName = iosInfo.utsname.machine;
+            } else if (Platform.isAndroid) {
+              final AndroidDeviceInfo androidInfo =
+                  await deviceInfoPlugin.androidInfo;
+              deviceName = androidInfo.model;
+            }
+
+            setState(() {
+              version = packageInfo.version;
+              deviceName =
+                  deviceName.isNotEmpty ? deviceName : 'unknown device';
+            });
           });
 
           return RequireAuth(
@@ -97,6 +119,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                         ),
                       ),
                       StyledText(
+                        deviceName,
+                        style: const TextStyle(
+                          color: ColorSettings.textDark,
+                          fontSize: 12,
+                        ),
+                      ),
+                      StyledText(
                         (email != null && email.isNotEmpty)
                             ? email
                             : 'Anonymous User',
@@ -105,6 +134,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                           fontSize: 12,
                         ),
                       ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
