@@ -26,6 +26,7 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   String error = '';
+  bool loading = false;
   bool hasSubmitted = false;
 
   @override
@@ -71,36 +72,40 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
       actionsOverflowButtonSpacing: 16,
       actions: !hasSubmitted
           ? [
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                    Colors.transparent,
+              if (loading)
+                const CircularProgressIndicator()
+              else ...[
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      Colors.transparent,
+                    ),
+                  ),
+                  child: const StyledText(
+                    'Cancel',
+                    style: TextStyle(
+                      color: ColorSettings.error,
+                    ),
                   ),
                 ),
-                child: const StyledText(
-                  'Cancel',
-                  style: TextStyle(
-                    color: ColorSettings.error,
+                TextButton(
+                  onPressed: () async => handleSubmit(),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      ColorSettings.primary,
+                    ),
+                  ),
+                  child: const StyledText(
+                    'Submit',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              TextButton(
-                onPressed: () async => handleSubmit(),
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(
-                    ColorSettings.primary,
-                  ),
-                ),
-                child: const StyledText(
-                  'Submit',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              ],
             ]
           : [
               TextButton(
@@ -132,6 +137,11 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
 
   Future<void> handleSubmit() async {
     if (await maybeRedirectToConnectionErrorView(context)) return;
+
+    setState(() {
+      loading = true;
+    });
+
     if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
       setState(() {
         error = 'Please fill out all fields.';
@@ -146,6 +156,7 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
 
     setState(() {
       hasSubmitted = true;
+      loading = false;
     });
   }
 }
