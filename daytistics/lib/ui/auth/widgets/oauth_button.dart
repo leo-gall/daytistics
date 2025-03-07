@@ -1,6 +1,6 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
+import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -44,9 +44,9 @@ class OAuthButton extends ConsumerWidget {
         onPressed: () async {
           if (await maybeRedirectToConnectionErrorView(context)) return;
           if (provider == OAuthProvider.google) {
-            await ref.read(authServiceProvider.notifier).signInWithGoogle();
+            await ref.read(userServiceProvider).signInWithGoogle();
           } else if (provider == OAuthProvider.apple) {
-            await ref.read(authServiceProvider.notifier).signInWithApple();
+            await ref.read(userServiceProvider).signInWithApple();
           } else {
             throw UnimplementedError('Unsupported provider: $provider');
           }

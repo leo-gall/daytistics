@@ -1,6 +1,4 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart'
-    show AuthService;
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +19,7 @@ class RequireAuth extends ConsumerStatefulWidget {
   /// )
   /// ```
   ///
+  // ignore: comment_references
   /// The [RequireAuth] widget uses the [AuthService] to check if the user is authenticated.
   /// If the user is not authenticated, they will be redirected to the SignInScreen.
 

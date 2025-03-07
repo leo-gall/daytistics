@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:daytistics/application/providers/di/user/user.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -72,7 +72,7 @@ class OauthProfileSection extends AbstractSettingsSection {
                       )
                     : null,
                 onPressed: (context) async =>
-                    ref.read(authServiceProvider.notifier).signInWithApple(),
+                    ref.read(userServiceProvider).signInWithApple(),
               ),
           ],
         );

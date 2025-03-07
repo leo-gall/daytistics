@@ -6,21 +6,18 @@ import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'auth_service.g.dart';
+part 'user_service.g.dart';
 
-class AuthServiceState {}
+class UserService {
+  final Ref ref;
 
-@Riverpod(keepAlive: true)
-class AuthService extends _$AuthService {
-  @override
-  AuthServiceState build() {
-    return AuthServiceState();
-  }
+  UserService(this.ref);
 
   Future<void> signInAnonymously() async {
     await ref.read(supabaseClientDependencyProvider).auth.signInAnonymously();
@@ -143,11 +140,7 @@ class AuthService extends _$AuthService {
         .read(posthogDependencyProvider)
         .capture(eventName: 'account_deleted');
   }
-
-  Future<void> linkAppleAccount() async {
-    await ref
-        .read(supabaseClientDependencyProvider)
-        .auth
-        .linkIdentity(OAuthProvider.google);
-  }
 }
+
+@Riverpod(keepAlive: true)
+UserService userService(Ref ref) => UserService(ref);
