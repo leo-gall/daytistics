@@ -7,7 +7,7 @@
       required
     />
     <StyledButton type="submit">
-      {{ waitlist ? "Join waitlist" : "Subscribe" }}
+      {{ waitlist ? "Join Waiting List" : "Subscribe" }}
     </StyledButton>
     <p v-if="success" class="text-green-600 dark:text-green-400 text-center">
       {{ waitlist ? "You are on the waitlist!" : "Subscribed!" }}

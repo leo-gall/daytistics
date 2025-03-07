@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   css: ["~/public/globals.css"],
   runtimeConfig: {
     public: {
-      isAppReleased: process.env.NUXT_IS_APP_RELEASED == "true",
+      phase: process.env.PHASE as "development" | "testing" | "released",
       posthogApiKey: process.env.NUXT_POSTHOG_API_KEY,
       posthogApiHost: process.env.NUXT_POSTHOG_API_HOST,
     },
