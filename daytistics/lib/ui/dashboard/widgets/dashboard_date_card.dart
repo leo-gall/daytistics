@@ -1,5 +1,6 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/utils/mixed.dart';
@@ -133,10 +134,41 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
               ],
             ),
           ),
+          // Positioned(
+          //   right: 8,
+          //   top: 8,
+          //   child: DecoratedBox(
+          //     decoration: BoxDecoration(
+          //       color: ColorSettings.secondary.withAlpha(170),
+          //       borderRadius: BorderRadius.circular(15),
+          //     ),
+          //     child: IconButton(
+          //       onPressed: () async {
+          //         if (await maybeRedirectToConnectionErrorView(context)) return;
+          //         await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
+          //               dashboardViewModelState.selectedDate,
+          //             );
+
+          //         if (!context.mounted) {
+          //           return;
+          //         }
+
+          //         await Navigator.push(
+          //           context,
+          //           MaterialPageRoute<void>(
+          //             builder: (context) => const DaytisticDetailsView(),
+          //           ),
+          //         );
+          //       },
+          //       color: Colors.white,
+          //       icon: const Icon(Icons.edit_outlined),
+          //     ),
+          //   ),
+          // ),
           Positioned(
-            right: 1,
-            top: 1,
-            child: IconButton(
+            right: 8,
+            top: 8,
+            child: OutlinedButton.icon(
               onPressed: () async {
                 if (await maybeRedirectToConnectionErrorView(context)) return;
                 await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
@@ -154,7 +186,18 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                   ),
                 );
               },
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  ColorSettings.background,
+                ),
+                side: WidgetStateProperty.all<BorderSide>(
+                  const BorderSide(
+                    color: ColorSettings.primary,
+                  ),
+                ),
+              ),
               icon: const Icon(Icons.edit_outlined),
+              label: const StyledText('Edit'),
             ),
           ),
         ],
