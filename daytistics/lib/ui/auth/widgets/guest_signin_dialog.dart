@@ -1,5 +1,5 @@
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
+import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -34,7 +34,7 @@ class GuestSigninDialog extends ConsumerWidget {
         TextButton(
           onPressed: () async {
             if (await maybeRedirectToConnectionErrorView(context)) return;
-            await ref.read(authServiceProvider.notifier).signInAnonymously();
+            await ref.read(userServiceProvider).signInAnonymously();
 
             if (context.mounted) {
               if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {

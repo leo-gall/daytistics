@@ -1,4 +1,4 @@
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -71,7 +71,7 @@ class _DeleteAccountModalState extends ConsumerState<DeleteAccountModal> {
               onPressed: () async {
                 if (await maybeRedirectToConnectionErrorView(context)) return;
                 if (_canDeleteAccount) {
-                  await ref.read(authServiceProvider.notifier).deleteAccount();
+                  await ref.read(userServiceProvider).deleteAccount();
                   if (context.mounted) {
                     Navigator.of(context).pop();
                     await Navigator.pushNamed(context, '/signin');

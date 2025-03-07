@@ -1,5 +1,5 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/auth/auth_service.dart';
+import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
@@ -42,7 +42,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             icon: const Icon(Icons.logout),
             onPressed: () async {
               if (await maybeRedirectToConnectionErrorView(context)) return;
-              await ref.read(authServiceProvider.notifier).signOut();
+              await ref.read(userServiceProvider).signOut();
 
               if (ref
                       .watch(supabaseClientDependencyProvider)
