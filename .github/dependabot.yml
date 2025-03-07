@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "pub" # Flutter (Dart)
+    directory: "/daytistics"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm" # Nuxt (JavaScript)
+    directory: "/website"
+    schedule:
+      interval: "weekly"

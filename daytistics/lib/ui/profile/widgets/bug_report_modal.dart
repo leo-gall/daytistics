@@ -1,6 +1,8 @@
 import 'package:daytistics/application/providers/services/feedback/feedback_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -117,11 +119,19 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
                   ),
                 ),
               ),
+              TextButton(
+                onPressed: () async =>
+                    openUrl('https://github.com/users/leo-gall/projects/7'),
+                child: const StyledText(
+                  'Roadmap',
+                ),
+              ),
             ],
     );
   }
 
   Future<void> handleSubmit() async {
+    if (await maybeRedirectToConnectionErrorView(context)) return;
     if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
       setState(() {
         error = 'Please fill out all fields.';

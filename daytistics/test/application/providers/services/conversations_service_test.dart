@@ -68,32 +68,4 @@ void main() {
       expect(container.read(currentConversationProvider), isNull);
     });
   });
-
-  group('hasAnyConversations', () {
-    test('returns true if there are conversations', () async {
-      // Setup
-      await mockSupabase.from('conversations').insert([
-        {
-          'id': 'conversation-1',
-          'title': 'Conversation 1',
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        },
-      ]);
-
-      // Act
-      final result = await conversationsService.hasAnyConversations();
-
-      // Assert
-      expect(result, isTrue);
-    });
-
-    test('returns false if there are no conversations', () async {
-      // Act
-      final result = await conversationsService.hasAnyConversations();
-
-      // Assert
-      expect(result, isFalse);
-    });
-  });
 }

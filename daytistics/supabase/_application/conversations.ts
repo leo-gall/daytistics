@@ -72,10 +72,10 @@ export async function sendConversationMessage(
   ];
 
   if (options.conversationId) {
-    const conversationContext = await fetchConversationContext(
-      supabase,
-      options.conversationId
-    );
+    const conversationContext = await fetchConversationContext(supabase, {
+      conversationId: options.conversationId,
+      user,
+    });
     messages.push(...conversationContext);
   }
 
@@ -152,29 +152,32 @@ export async function sendConversationMessage(
 
 async function fetchConversationContext(
   supabase: SupabaseClient,
-  conversationId: string
+  options: {
+    conversationId: string;
+    user: User;
+  }
 ): Promise<OpenAI.Chat.Completions.ChatCompletionMessageParam[]> {
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
   const conversation_messages = await supabase
     .from("conversation_messages")
     .select()
-    .eq("conversation_id", conversationId);
+    .eq("conversation_id", options.conversationId);
 
   if (conversation_messages.data && !conversation_messages.error) {
     for (const message of conversation_messages.data!) {
       messages.push({
         role: "user",
-        content: message.query,
+        content: await decrypt(message.query, options.user),
       });
 
       messages.push({
         role: "assistant",
-        content: message.reply,
+        content: await decrypt(message.reply, options.user),
       });
     }
   }
 
-  return [];
+  return messages;
 }
 
 export async function addMessageToConversation(
@@ -263,7 +266,10 @@ export async function generateConversationTitleFromQuery(
   );
 
   return {
-    title: completion.choices[0].message.content,
+    title: (completion.choices[0].message.content as string).replaceAll(
+      '"',
+      ""
+    ),
     outputTokens: completion.usage?.completion_tokens || 0,
     inputTokens: completion.usage?.prompt_tokens || 0,
   };
@@ -324,7 +330,7 @@ export async function fetchConversations(
       const { data: messagesData, error: messagesError } = await supabase
         .from("conversation_messages")
         .select("*")
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: true })
         .eq("conversation_id", conversation.id);
 
       if (!messagesError && messagesData) {

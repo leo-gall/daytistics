@@ -5,7 +5,7 @@ import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
-import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/exceptions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -27,13 +27,23 @@ class ConversationsService extends _$ConversationsService {
     final currentConversation = ref.read(currentConversationProvider);
     final posthog = ref.read(posthogDependencyProvider);
 
-    final response = await Supabase.instance.client.functions.invoke(
-      'send-conversation-message',
-      body: {
-        'query': query,
-        'conversation_id': currentConversation?.id,
-      },
-    );
+    late FunctionResponse response;
+    try {
+      response = await Supabase.instance.client.functions.invoke(
+        'send-conversation-message',
+        body: {
+          'query': query,
+          'conversation_id': currentConversation?.id,
+        },
+      );
+    } on FunctionException catch (e) {
+      final String error = e.details['error'] as String;
+
+      throw ServerException(error);
+      // ignore: avoid_catches_without_on_clauses
+    } catch (e) {
+      throw ServerException('An unknown error occurred');
+    }
 
     if (currentConversation == null) {
       currentConversationNotifier.setConversation(
@@ -116,23 +126,23 @@ class ConversationsService extends _$ConversationsService {
         .capture(eventName: 'conversation_deleted');
   }
 
-  Future<bool> hasAnyConversations() async {
-    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
+  // Future<bool> hasAnyConversations() async {
+  //   final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
-    try {
-      final result = await supabase
-          .from(SupabaseSettings.conversationsTableName)
-          .select()
-          .limit(1)
-          .maybeSingle();
-      return result != null;
-    } on PostgrestException catch (e) {
-      if (e.code == '42P01') {
-        return false;
-      }
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  //   try {
+  //     final result = await supabase
+  //         .from(SupabaseSettings.conversationsTableName)
+  //         .select()
+  //         .limit(1)
+  //         .maybeSingle();
+  //     return result != null;
+  //   } on PostgrestException catch (e) {
+  //     if (e.code == '42P01') {
+  //       return false;
+  //     }
+  //     rethrow;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 }

@@ -1,6 +1,7 @@
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

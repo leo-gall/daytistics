@@ -2,7 +2,9 @@ import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -16,8 +18,9 @@ class SettingsProfileSection extends AbstractSettingsSection {
       builder: (context, ref, child) {
         final UserSettings? userSettings = ref.watch(settingsProvider);
         if (userSettings == null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(settingsServiceProvider).initializeSettings();
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (await maybeRedirectToConnectionErrorView(context)) return;
+            await ref.read(settingsServiceProvider).initializeSettings();
           });
           return const Center(child: CircularProgressIndicator());
         }

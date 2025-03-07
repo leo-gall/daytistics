@@ -10,12 +10,14 @@ class DashboardCalendar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardViewModelState = ref.watch(dashboardViewModelProvider);
 
+    final bool isLargerDevice = MediaQuery.of(context).size.height > 667;
+
     return TableCalendar<dynamic>(
-      rowHeight: 45,
+      rowHeight: isLargerDevice ? 45 : 37,
       firstDay: DateTime.utc(2010, 10, 16),
       lastDay: DateTime.utc(2030, 3, 14),
       availableCalendarFormats: const {
-        CalendarFormat.month: 'Month',
+        CalendarFormat.month: 'Week',
       },
       focusedDay: dashboardViewModelState.selectedDate,
       selectedDayPredicate: (day) {

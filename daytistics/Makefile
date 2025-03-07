@@ -20,6 +20,7 @@ test-flutter:
 test-supabase:
 	deno test --env-file=./.env --allow-all
 
-all:
-	make analyze-all
-	make test-all
+run-functions:
+	supabase functions serve --env-file=./supabase/.env
+
+https://play.google.com/apps/internaltest/4699890422551366748

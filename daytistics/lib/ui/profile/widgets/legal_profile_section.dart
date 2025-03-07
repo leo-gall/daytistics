@@ -1,7 +1,8 @@
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/browser.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -31,7 +32,7 @@ class LegalProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await openUrl('https://daytistics.com/imprint');
+                await openUrl(LegalSettings.imprintUrl);
                 await ref.read(posthogDependencyProvider).capture(
                       eventName: 'imprint_opened',
                     );
@@ -52,7 +53,7 @@ class LegalProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await openUrl('https://daytistics.com/privacy');
+                await openUrl(LegalSettings.privacyPolicyUrl);
                 await ref.read(posthogDependencyProvider).capture(
                       eventName: 'privacy_policy_opened',
                     );

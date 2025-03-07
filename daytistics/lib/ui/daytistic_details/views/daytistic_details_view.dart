@@ -1,13 +1,15 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/shared/utils/time.dart';
-import 'package:daytistics/shared/widgets/application/prompt_input_field.dart';
+import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+
 import 'package:daytistics/ui/dashboard/viewmodels/dashboard_view_model.dart';
-import 'package:daytistics/ui/daytistic_details/widgets/add_activity_modal.dart';
-import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_modal.dart';
-import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_modal.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/add_activity_dialog.dart';
+import 'package:daytistics/ui/daytistic_details/widgets/edit_activity_dialog.dart';
+
+import 'package:daytistics/ui/daytistic_details/widgets/wellbeing_rating_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
@@ -42,24 +44,24 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.local_library_outlined,
-            ),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(
+          //     Icons.local_library_outlined,
+          //   ),
+          //   onPressed: () {},
+          // ),
           IconButton(
             icon: const Icon(
               Icons.star_outline,
             ),
-            onPressed: () => WellbeingRatingModal.showModal(context),
+            onPressed: () => WellbeingRatingDialog.showDialog(context),
           ),
           IconButton(
             icon: const Icon(
               Icons.add,
             ),
             onPressed: () {
-              AddActivityModal.showModal(context);
+              AddActivityDialog.showDialog(context);
             },
           ),
         ],
@@ -81,7 +83,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
                         ),
                         subtitle: Text(daytistic.activities[index].name),
                         trailing: IconButton(
-                          onPressed: () => EditActivityModal.showModal(
+                          onPressed: () => EditActivityDialog.showDialog(
                             context,
                             daytistic.activities[index],
                           ),

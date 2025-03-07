@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SupabaseSettings {
   static final String url = (kDebugMode && Platform.isAndroid)
-      ? dotenv.env['SUPABASE_ANDROID_URL']!
-      : dotenv.env['SUPABASE_URL']!;
-  static final String anonKey = dotenv.env['SUPABASE_ANON_KEY']!;
+      ? const String.fromEnvironment('SUPABASE_ANDROID_URL')
+      : const String.fromEnvironment('SUPABASE_URL');
+  static const String anonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
   // Tables
   static const String daytisticsTableName = 'daytistics';
@@ -21,11 +20,23 @@ class SupabaseSettings {
   static const String bugReportsTableName = 'bug_reports';
 }
 
+class PosthogSettings {
+  static String apiKey = const String.fromEnvironment('POSTHOG_API_KEY');
+  static String host = const String.fromEnvironment(
+    'POSTHOG_HOST',
+    defaultValue: 'https://eu.i.posthog.com',
+  );
+}
+
+class SentrySettings {
+  static String dsn = const String.fromEnvironment('SENTRY_DSN');
+}
+
 class ColorSettings {
   static const Color primary = Color(0xFF0E9F6E);
   static const Color primaryAccent = Color(0xFF384B41);
-  static const Color secondary = Color.fromARGB(255, 7, 166, 215);
-  static const Color secondaryAccent = Color.fromARGB(255, 96, 178, 234);
+  static const Color secondary = Color.fromRGBO(92, 107, 192, 1);
+  static const Color secondaryAccent = Color(0xFF0064A6);
   static const Color background = Color(0xFFE5E5E5);
   static const Color textDark = Color.fromRGBO(60, 59, 59, 1);
   static const Color textLight = Color.fromRGBO(125, 125, 125, 1);
@@ -35,9 +46,6 @@ class ColorSettings {
 }
 
 class LegalSettings {
-  static const String privacyPolicyUrl =
-      'https://daytistics.com/privacy-policy';
-  static const String termsOfServiceUrl =
-      'https://daytistics.com/terms-of-service';
+  static const String privacyPolicyUrl = 'https://daytistics.com/privacy';
   static const String imprintUrl = 'https://daytistics.com/imprint';
 }
