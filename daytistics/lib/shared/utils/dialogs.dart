@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 enum ToastType {
   success,
   error,
+  info,
 }
 
 void showErrorDialog(BuildContext context, {required String message}) {
@@ -78,8 +79,11 @@ void showToast(
   ToastType type = ToastType.success,
   int duration = 1,
 }) {
-  final Color backgroundColor =
-      type == ToastType.success ? ColorSettings.success : ColorSettings.error;
+  final Color backgroundColor = type == ToastType.success
+      ? ColorSettings.success
+      : type == ToastType.error
+          ? ColorSettings.error
+          : ColorSettings.info;
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       backgroundColor: backgroundColor,
