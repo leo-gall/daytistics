@@ -13,9 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class DashboardDateCard extends ConsumerStatefulWidget {
-  const DashboardDateCard({super.key});
+  final GlobalKey editDaytisticKey;
+
+  const DashboardDateCard({super.key, required this.editDaytisticKey});
 
   @override
   ConsumerState<DashboardDateCard> createState() => _DashboardDateCardState();
@@ -134,70 +137,44 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
               ],
             ),
           ),
-          // Positioned(
-          //   right: 8,
-          //   top: 8,
-          //   child: DecoratedBox(
-          //     decoration: BoxDecoration(
-          //       color: ColorSettings.secondary.withAlpha(170),
-          //       borderRadius: BorderRadius.circular(15),
-          //     ),
-          //     child: IconButton(
-          //       onPressed: () async {
-          //         if (await maybeRedirectToConnectionErrorView(context)) return;
-          //         await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
-          //               dashboardViewModelState.selectedDate,
-          //             );
-
-          //         if (!context.mounted) {
-          //           return;
-          //         }
-
-          //         await Navigator.push(
-          //           context,
-          //           MaterialPageRoute<void>(
-          //             builder: (context) => const DaytisticDetailsView(),
-          //           ),
-          //         );
-          //       },
-          //       color: Colors.white,
-          //       icon: const Icon(Icons.edit_outlined),
-          //     ),
-          //   ),
-          // ),
           Positioned(
             right: 8,
             top: 8,
-            child: OutlinedButton.icon(
-              onPressed: () async {
-                if (await maybeRedirectToConnectionErrorView(context)) return;
-                await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
-                      dashboardViewModelState.selectedDate,
-                    );
+            child: Showcase(
+              key: widget.editDaytisticKey,
+              title: 'Edit Daytistic',
+              description: 'Click here to edit the daytistic.',
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  if (await maybeRedirectToConnectionErrorView(context)) return;
+                  await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
+                        dashboardViewModelState.selectedDate,
+                      );
 
-                if (!context.mounted) {
-                  return;
-                }
+                  if (!context.mounted) {
+                    return;
+                  }
 
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) => const DaytisticDetailsView(),
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => const DaytisticDetailsView(),
+                    ),
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(
+                    ColorSettings.background,
                   ),
-                );
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
-                  ColorSettings.background,
-                ),
-                side: WidgetStateProperty.all<BorderSide>(
-                  const BorderSide(
-                    color: ColorSettings.primary,
+                  side: WidgetStateProperty.all<BorderSide>(
+                    const BorderSide(
+                      color: ColorSettings.primary,
+                    ),
                   ),
                 ),
+                icon: const Icon(Icons.edit_outlined),
+                label: const StyledText('Edit'),
               ),
-              icon: const Icon(Icons.edit_outlined),
-              label: const StyledText('Edit'),
             ),
           ),
         ],

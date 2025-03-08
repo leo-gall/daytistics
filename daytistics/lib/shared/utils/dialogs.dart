@@ -34,6 +34,7 @@ void showConfirmationDialog(
   required String message,
   required void Function() onConfirm,
   void Function()? onCancel,
+  bool popBeforeConfirm = false,
   String confirmText = 'Confirm',
   String cancelText = 'Cancel',
 }) {
@@ -62,8 +63,13 @@ void showConfirmationDialog(
           ),
           TextButton(
             onPressed: () {
-              onConfirm();
-              Navigator.of(context).pop();
+              if (popBeforeConfirm) {
+                Navigator.of(context).pop();
+                onConfirm();
+              } else {
+                onConfirm();
+                Navigator.of(context).pop();
+              }
             },
             child: StyledText(confirmText),
           ),
