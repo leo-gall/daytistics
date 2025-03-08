@@ -14,6 +14,7 @@ import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -32,6 +33,15 @@ Future<void> initPosthog() async {
   await Posthog().setup(config);
 }
 
+Future<void> initOneSignal() async {
+  await OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+  OneSignal.initialize('a0dde149-c25e-4fe8-a7e6-214100e9fea7');
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  await OneSignal.Notifications.requestPermission(true);
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -42,6 +52,7 @@ Future<void> main() async {
     appRunner: () async {
       await initSupabase();
       await initPosthog();
+      await initOneSignal();
 
       runApp(
         const ProviderScope(child: DaytisticsApp()),
