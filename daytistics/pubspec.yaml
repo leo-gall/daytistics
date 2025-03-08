@@ -18,6 +18,7 @@ dependencies:
   google_fonts: '^6.2.1'
   google_sign_in: '^6.2.2'
   mock_supabase_http_client: '^0.0.3+1'
+  onesignal_flutter: ^5.3.0
   package_info_plus: ^8.2.1
   path_provider: ^2.1.5
   posthog_flutter: ^4.10.2
