@@ -54,7 +54,9 @@ class OAuthButton extends ConsumerWidget {
           if (context.mounted &&
               ref.watch(supabaseClientDependencyProvider).auth.currentUser !=
                   null) {
-            if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
+            if (!ref
+                .read(onboardingServiceProvider)
+                .hasCompletedOnboardingScreens) {
               await Navigator.pushReplacementNamed(
                 context,
                 '/onboarding',

@@ -1,3 +1,5 @@
+import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -26,79 +28,106 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     return RequireAuth(
       child: ShowCaseWidget(
         builder: (context) {
-          return Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                title: Row(
-                  children: <Widget>[
-                    const SizedBox(width: 4),
-                    StyledText(
-                      'Dashboard',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-                actions: <Widget>[
-                  //
-                  IconButton(
-                    icon: const Icon(Icons.featured_play_list),
-                    onPressed: () => ShowCaseWidget.of(context).startShowCase([
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (!ref
+                .read(onboardingServiceProvider)
+                .hasCompletedDashboardOnboarding) {
+              showConfirmationDialog(
+                context,
+                title: 'Showcase',
+                message:
+                    'Would you like to take a quick tour of the dashboard?',
+                onConfirm: () async {
+                  await ref
+                      .read(onboardingServiceProvider)
+                      .completeDashboardOnboarding();
+                  if (context.mounted) {
+                    ShowCaseWidget.of(context).startShowCase([
                       _selectDate,
                       _editDaytistic,
                       _startConversation,
                       _listConversations,
-                      _viewProfile
-                    ]),
-                  ),
-                  Showcase(
-                    key: _listConversations,
-                    title: 'Conversations List',
-                    description: 'View your previous conversations.',
-                    child: IconButton(
-                      icon: const Icon(Icons.all_inbox_outlined),
-                      onPressed: () async {
-                        await Navigator.pushNamed(
-                            context, '/conversations-list');
-                      },
-                    ),
-                  ),
-                  Showcase(
-                    key: _viewProfile,
-                    title: 'Profile',
-                    description: 'View and edit your preferences.',
-                    child: IconButton(
-                      icon: const Icon(Icons.person_2_outlined),
-                      onPressed: () async {
-                        await Navigator.pushNamed(context, '/profile');
-                      },
-                    ),
+                      _viewProfile,
+                    ]);
+                  }
+                },
+                onCancel: () async => ref
+                    .read(onboardingServiceProvider)
+                    .completeDashboardOnboarding(),
+                cancelText: 'No',
+                confirmText: 'Yes',
+                popBeforeConfirm: true,
+              );
+            }
+          });
+
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: Row(
+                children: <Widget>[
+                  const SizedBox(width: 4),
+                  StyledText(
+                    'Dashboard',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
               ),
-              body: Center(
-                child: Column(
-                  children: <Widget>[
-                    const SizedBox(height: 20),
-                    Showcase(
-                      key: _startConversation,
-                      title: 'Chat',
-                      description: 'Type in your question and press enter.',
-                      child: PromptInputField(
-                        onChat: (query, reply) =>
-                            Navigator.pushNamed(context, '/chat'),
-                      ),
-                    ),
-                    Expanded(
-                        child: Showcase(
-                            key: _selectDate,
-                            title: 'Calendar',
-                            description:
-                                'Select a date, where you want to view the daytistic.',
-                            child: const DashboardCalendar())),
-                    DashboardDateCard(editDaytisticKey: _editDaytistic),
-                  ],
+              actions: <Widget>[
+                Showcase(
+                  key: _listConversations,
+                  title: 'Conversations List',
+                  description: 'View your previous conversations.',
+                  child: IconButton(
+                    icon: const Icon(Icons.all_inbox_outlined),
+                    onPressed: () async {
+                      await Navigator.pushNamed(
+                        context,
+                        '/conversations-list',
+                      );
+                    },
+                  ),
                 ),
-              ));
+                Showcase(
+                  key: _viewProfile,
+                  title: 'Profile',
+                  description: 'View and edit your preferences.',
+                  child: IconButton(
+                    icon: const Icon(Icons.person_2_outlined),
+                    onPressed: () async {
+                      await Navigator.pushNamed(context, '/profile');
+                    },
+                  ),
+                ),
+              ],
+            ),
+            body: Center(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 20),
+                  Showcase(
+                    key: _startConversation,
+                    title: 'Chat',
+                    description: 'Type in your question and press enter.',
+                    child: PromptInputField(
+                      onChat: (query, reply) =>
+                          Navigator.pushNamed(context, '/chat'),
+                    ),
+                  ),
+                  Expanded(
+                    child: Showcase(
+                      key: _selectDate,
+                      title: 'Calendar',
+                      description:
+                          'Select a date, where you want to view the daytistic.',
+                      child: const DashboardCalendar(),
+                    ),
+                  ),
+                  DashboardDateCard(editDaytisticKey: _editDaytistic),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );
