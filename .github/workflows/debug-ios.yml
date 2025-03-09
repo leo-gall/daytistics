@@ -3,7 +3,7 @@ name: iOS Build and Deploy to App Store with Custom Version
 on:
   push:
     branches:
-        -daily-reminder-notification
+        - daily-reminder-notification
 
 env:
   FLUTTER_CHANNEL: "stable"
