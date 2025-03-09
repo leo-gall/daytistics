@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
@@ -73,7 +75,9 @@ class SettingsProfileSection extends AbstractSettingsSection {
               title: const StyledText('Daily reminder'),
               description: userSettings.dailyReminderTime != null
                   ? Align(
-                      alignment: Alignment.centerRight,
+                      alignment: Platform.isIOS
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: GestureDetector(
                         onTap: () async {
                           await ref
