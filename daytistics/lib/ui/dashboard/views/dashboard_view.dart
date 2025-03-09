@@ -1,5 +1,4 @@
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
-import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';

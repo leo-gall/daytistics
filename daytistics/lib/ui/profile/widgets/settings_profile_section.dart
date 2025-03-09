@@ -8,7 +8,6 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class SettingsProfileSection extends AbstractSettingsSection {

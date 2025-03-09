@@ -98,7 +98,8 @@ void main() {
 
       // Update daily reminder time
       await settingsService.updateDailyReminderTime(
-          timeOfDay: const TimeOfDay(hour: 9, minute: 30));
+        timeOfDay: const TimeOfDay(hour: 9, minute: 30),
+      );
 
       // Verify Supabase was updated
       final response = await mockSupabase
@@ -166,7 +167,8 @@ void main() {
 
       // Update daily reminder time with single-digit hour and minute
       await settingsService.updateDailyReminderTime(
-          timeOfDay: const TimeOfDay(hour: 7, minute: 5));
+        timeOfDay: const TimeOfDay(hour: 7, minute: 5),
+      );
 
       // Verify Supabase was updated with padded values
       final response = await mockSupabase
