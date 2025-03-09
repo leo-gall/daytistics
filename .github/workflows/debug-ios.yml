@@ -64,10 +64,6 @@ jobs:
         working-directory: ./daytistics
         run: flutter clean
 
-      - name: Clean Fastlane 
-        working-directory: ./daytistics
-        run: bundle exec fastlane clean
-
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
