@@ -1,3 +1,4 @@
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,7 +29,7 @@ class UserSettings {
       'id': id,
       'user_id': userId,
       'daily_reminder_time': dailyReminderTime != null
-          ? '${dailyReminderTime!.hour.toString().padLeft(2, '0')}:${dailyReminderTime!.minute.toString().padLeft(2, '0')}' // returns a
+          ? '${timeToUtc(dailyReminderTime!).hour.toString().padLeft(2, '0')}:${timeToUtc(dailyReminderTime!).minute.toString().padLeft(2, '0')}'
           : null,
       'conversation_analytics': conversationAnalytics,
       'created_at': createdAt.toIso8601String(),
@@ -49,12 +50,13 @@ class UserSettings {
     }
 
     final parts = dailyReminderTime.toString().split(':');
-    final hour = int.parse(parts[0]);
+    final hour =
+        (int.parse(parts[0]) + DateTime.now().timeZoneOffset.inHours) % 24;
     final minute = int.parse(parts[1]);
 
     return UserSettings(
       id: data['id'] as String,
-      dailyReminderTime: TimeOfDay(hour: hour, minute: minute),
+      dailyReminderTime: timeFromUtc(TimeOfDay(hour: hour, minute: minute)),
       conversationAnalytics: data['conversation_analytics'] as bool,
       createdAt: DateTime.parse(data['created_at'] as String),
       updatedAt: DateTime.parse(data['updated_at'] as String),

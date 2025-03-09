@@ -4,6 +4,7 @@ import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -64,7 +65,7 @@ class SettingsService {
         .from(SupabaseSettings.settingsTableName)
         .update({
       'daily_reminder_time': timeOfDay != null
-          ? '${timeOfDay.hour.toString().padLeft(2, '0')}:${timeOfDay.minute.toString().padLeft(2, '0')}'
+          ? '${timeToUtc(timeOfDay).hour.toString().padLeft(2, '0')}:${timeToUtc(timeOfDay).minute.toString().padLeft(2, '0')}'
           : null,
     }).eq('user_id', ref.read(userDependencyProvider)!.id);
 

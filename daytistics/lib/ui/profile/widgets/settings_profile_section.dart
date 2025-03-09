@@ -57,9 +57,9 @@ class SettingsProfileSection extends AbstractSettingsSection {
                       userSettings.dailyReminderTime ?? TimeOfDay.now(),
                 );
 
-                await ref
-                    .read(settingsServiceProvider)
-                    .updateDailyReminderTime(timeOfDay: pickedTime);
+                await ref.read(settingsServiceProvider).updateDailyReminderTime(
+                    timeOfDay: pickedTime ??
+                        ref.read(settingsProvider)!.dailyReminderTime!);
               },
               leading: const Icon(
                 Icons.notifications,

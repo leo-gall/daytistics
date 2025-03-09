@@ -37,12 +37,10 @@ class GuestSigninDialog extends ConsumerWidget {
             await ref.read(userServiceProvider).signInAnonymously();
 
             if (context.mounted) {
-              if (!ref
-                  .read(onboardingServiceProvider)
-                  .hasCompletedOnboardingScreens) {
+              if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
                 await Navigator.pushReplacementNamed(
                   context,
-                  '/onboarding',
+                  '/',
                 );
               }
             }

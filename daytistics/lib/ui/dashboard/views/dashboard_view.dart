@@ -22,6 +22,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   final GlobalKey _startConversation = GlobalKey();
   final GlobalKey _listConversations = GlobalKey();
   final GlobalKey _viewProfile = GlobalKey();
+  bool _isShowcaseActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,35 +30,30 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       child: ShowCaseWidget(
         builder: (context) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
-            if (!ref
-                .read(onboardingServiceProvider)
-                .hasCompletedDashboardOnboarding) {
-              showConfirmationDialog(
-                context,
-                title: 'Showcase',
-                message:
-                    'Would you like to take a quick tour of the dashboard?',
-                onConfirm: () async {
-                  await ref
-                      .read(onboardingServiceProvider)
-                      .completeDashboardOnboarding();
-                  if (context.mounted) {
+            if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
+              await Navigator.pushReplacementNamed(context, '/onboarding');
+            }
+
+            if (context.mounted) {
+              final arguments = ModalRoute.of(context)?.settings.arguments;
+              if (arguments != null) {
+                final args = arguments as Map<String, dynamic>;
+                if (args['shouldStartShowcase'] as bool? ?? false) {
+                  await Future<void>.delayed(const Duration(milliseconds: 500));
+                  if (context.mounted && !_isShowcaseActive) {
                     ShowCaseWidget.of(context).startShowCase([
+                      _startConversation,
                       _selectDate,
                       _editDaytistic,
-                      _startConversation,
                       _listConversations,
                       _viewProfile,
                     ]);
+                    setState(() {
+                      _isShowcaseActive = true;
+                    });
                   }
-                },
-                onCancel: () async => ref
-                    .read(onboardingServiceProvider)
-                    .completeDashboardOnboarding(),
-                cancelText: 'No',
-                confirmText: 'Yes',
-                popBeforeConfirm: true,
-              );
+                }
+              }
             }
           });
 
