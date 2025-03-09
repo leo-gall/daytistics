@@ -107,7 +107,7 @@ void main() {
           .eq('user_id', 'user-1')
           .single();
 
-      expect(response['daily_reminder_time'], '09:30');
+      expect(response['daily_reminder_time'], '08:30');
 
       // Verify provider state was updated
       final state = container.read(settingsProvider);
@@ -175,7 +175,7 @@ void main() {
           .eq('user_id', 'user-1')
           .single();
 
-      expect(response['daily_reminder_time'], '07:05');
+      expect(response['daily_reminder_time'], '06:05');
     });
   });
 

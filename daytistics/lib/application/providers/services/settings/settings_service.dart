@@ -7,6 +7,7 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_service.g.dart';
@@ -83,6 +84,21 @@ class SettingsService {
         .update(userSettings.copyWith(dailyReminderTime: timeOfDay));
 
     return;
+  }
+
+  Future<void> requestDailyReminderPermission({
+    required TimeOfDay timeOfDay,
+  }) async {
+    await OneSignal.login(ref.read(userDependencyProvider)!.id);
+    await OneSignal.User.addEmail(
+      ref.read(userDependencyProvider)!.email ?? 'anonymous',
+    );
+    await OneSignal.Notifications.requestPermission(true);
+    await OneSignal.User.addTagWithKey(
+      'daily_reminder_time',
+      '${timeToUtc(timeOfDay).hour.toString().padLeft(2, '0')}:${timeToUtc(timeOfDay).minute.toString().padLeft(2, '0')}'
+          .replaceAll(' ', ''),
+    );
   }
 
   Future<void> initializeSettings() async {

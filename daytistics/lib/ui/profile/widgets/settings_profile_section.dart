@@ -8,6 +8,7 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class SettingsProfileSection extends AbstractSettingsSection {
@@ -57,9 +58,14 @@ class SettingsProfileSection extends AbstractSettingsSection {
                       userSettings.dailyReminderTime ?? TimeOfDay.now(),
                 );
 
-                await ref.read(settingsServiceProvider).updateDailyReminderTime(
-                    timeOfDay: pickedTime ??
-                        ref.read(settingsProvider)!.dailyReminderTime!);
+                final timeOfDay = pickedTime ?? userSettings.dailyReminderTime!;
+                await ref
+                    .read(settingsServiceProvider)
+                    .requestDailyReminderPermission(timeOfDay: timeOfDay);
+
+                await ref
+                    .read(settingsServiceProvider)
+                    .updateDailyReminderTime(timeOfDay: timeOfDay);
               },
               leading: const Icon(
                 Icons.notifications,

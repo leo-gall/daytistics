@@ -5,11 +5,13 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/input/time_picker_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardingView extends ConsumerStatefulWidget {
@@ -193,11 +195,15 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
               ),
             ),
             TextButton(
-              onPressed: () {
-                ref
+              onPressed: () async {
+                await ref
+                    .read(settingsServiceProvider)
+                    .requestDailyReminderPermission(timeOfDay: timeOfDay);
+
+                await ref
                     .read(settingsServiceProvider)
                     .updateDailyReminderTime(timeOfDay: timeOfDay);
-                Navigator.of(context).pop();
+                if (context.mounted) Navigator.of(context).pop();
                 onDone();
               },
               child: const StyledText(

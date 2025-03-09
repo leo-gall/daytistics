@@ -35,11 +35,7 @@ Future<void> initPosthog() async {
 
 Future<void> initOneSignal() async {
   await OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
   OneSignal.initialize('a0dde149-c25e-4fe8-a7e6-214100e9fea7');
-
-// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
-  await OneSignal.Notifications.requestPermission(true);
 }
 
 Future<void> main() async {
