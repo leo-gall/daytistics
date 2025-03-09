@@ -125,16 +125,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
 
   Future<void> _handleSubmit() async {
     if (await maybeRedirectToConnectionErrorView(context)) return;
-    if (!((ref
-                    .read(userDependencyProvider)
-                    ?.userMetadata?['has_viewed_conversation_analytics_dialog']
-                as bool?) ??
-            false) ==
-        true) {
-      _askAllowConversationAnalytics(onDone: _handleSendMessage);
-    } else {
-      await _handleSendMessage();
-    }
+    await _handleSendMessage();
   }
 
   Future<void> _handleSendMessage() async {
@@ -165,40 +156,5 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     if (widget.onChat != null) {
       widget.onChat?.call(_controller.text, reply);
     }
-  }
-
-  void _askAllowConversationAnalytics({
-    required void Function() onDone,
-  }) {
-    showConfirmationDialog(
-      context,
-      title: 'Allow Analytics',
-      message: 'Do you want to allow conversation analytics? '
-          'By enabling this setting, you agree to share your conversation data with us to improve our services.',
-      onConfirm: () async {
-        await ref
-            .read(settingsServiceProvider)
-            .updateConversationAnalytics(value: true);
-        await ref.read(supabaseClientDependencyProvider).auth.updateUser(
-              UserAttributes(
-                data: {'has_viewed_conversation_analytics_dialog': true},
-              ),
-            );
-        onDone();
-      },
-      onCancel: () async {
-        await ref
-            .read(settingsServiceProvider)
-            .updateConversationAnalytics(value: false);
-        await ref.read(supabaseClientDependencyProvider).auth.updateUser(
-              UserAttributes(
-                data: {'has_viewed_conversation_analytics_dialog': true},
-              ),
-            );
-        onDone();
-      },
-      cancelText: 'Deny',
-      confirmText: 'Accept',
-    );
   }
 }
