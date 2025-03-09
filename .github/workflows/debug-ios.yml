@@ -3,7 +3,7 @@ name: iOS Build and Deploy to App Store with Custom Version
 on:
   push:
     branches:
-        - daily-reminder-notification
+      - daily-reminder-notification
 
 env:
   FLUTTER_CHANNEL: "stable"
@@ -13,7 +13,7 @@ jobs:
   build_ios:
     name: Build iOS
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 30 # Increased timeout
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,23 +42,14 @@ jobs:
 
       - name: Get Flutter Packages
         working-directory: ./daytistics
-        run: xcode-select -p
-
-      - name: Get Flutter Packages
-        working-directory: ./daytistics
         run: flutter pub get
-
-      - name: Install Bundler Gems
-        working-directory: 'daytistics/ios'
-        run: |
-          bundle install
-          bundle exec pod repo update  # Add this line
-
-      # Remove the "Reinstall CocoaPods" step entirely
 
       - name: Pod Install
         working-directory: 'daytistics/ios'
-        run: bundle exec pod install --repo-update
+        run: |
+          bundle install
+          bundle exec pod repo update
+          bundle exec pod install --repo-update
 
       - name: Clean Flutter build
         working-directory: ./daytistics
@@ -67,9 +58,6 @@ jobs:
       - name: Create .env file
         working-directory: ./daytistics
         run: touch .env
-
-      - name: Select Xcode version
-        run: sudo xcode-select --switch /Applications/Xcode_15.3.app/Contents/Developer
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
@@ -92,5 +80,3 @@ jobs:
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-
-   
