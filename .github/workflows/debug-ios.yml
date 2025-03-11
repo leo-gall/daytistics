@@ -10,10 +10,10 @@ env:
   RUBY_VERSION: "3.2.2"
 
 jobs:
-  build_ios:
+   build_ios:
     name: Build iOS
     runs-on: macos-latest
-    timeout-minutes: 30 # Increased timeout
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,12 +44,17 @@ jobs:
         working-directory: ./daytistics
         run: flutter pub get
 
-      - name: Pod Install
+      - name: Install Bundler Gems
         working-directory: 'daytistics/ios'
         run: |
           bundle install
-          bundle exec pod repo update
-          bundle exec pod install --repo-update
+          bundle exec pod repo update  # Add this line
+
+      # Remove the "Reinstall CocoaPods" step entirely
+
+      - name: Pod Install
+        working-directory: 'daytistics/ios'
+        run: export USE_XCODE_15=1 && bundle exec pod install 
 
       - name: Clean Flutter build
         working-directory: ./daytistics
@@ -64,7 +69,7 @@ jobs:
           lane: 'release_app_store'
           subdirectory: daytistics/ios
           options: '{
-            "version_number": "0.3.0", 
+            "version_number": "${{ github.event.inputs.version }}", 
             "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_DSN"]
             }'
         env:
@@ -80,3 +85,5 @@ jobs:
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+   
