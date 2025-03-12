@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
-import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
