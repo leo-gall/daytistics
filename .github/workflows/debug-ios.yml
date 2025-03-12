@@ -53,9 +53,13 @@ jobs:
       - name: List available Xcode versions
         run: ls /Applications | grep Xcode
 
-      - name: Pod Install
+      - name: Reinstall Pods
         working-directory: 'daytistics/ios'
-        run:  bundle exec pod install 
+        run: |
+          rm -rf Pods Podfile.lock
+          bundle install
+          bundle exec pod repo update
+          bundle exec pod install --clean-install
 
       - name: Clean Flutter build
         working-directory: ./daytistics
