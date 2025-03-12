@@ -51,7 +51,7 @@ jobs:
           bundle exec pod repo update  # Add this line
 
       - name: List available Xcode versions
-        run: ls /Applications | grep Xcode
+        run: xcode-select --switch /Applications/16.2.0.app
 
       - name: Reinstall Pods
         working-directory: 'daytistics/ios'
