@@ -4,6 +4,7 @@ import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,6 +82,9 @@ class SettingsService {
     ref
         .read(settingsProvider.notifier)
         .update(userSettings.copyWith(dailyReminderTime: timeOfDay));
+
+    await cancelDailyReminderNotification();
+    if (timeOfDay != null) await scheduleDailyReminderNotification(timeOfDay);
 
     return;
   }

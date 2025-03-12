@@ -42,9 +42,17 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
   end
 
+  awesome_pod_file = File.expand_path(File.join('plugins', 'awesome_notifications', 'ios', 'Scripts', 'AwesomePodFile'), '.symlinks')
+  require awesome_pod_file
+  update_awesome_pod_build_settings(installer)
+
   flutter_env_plugin_path = File.join(Dir.pwd, '.symlinks', 'plugins', 'flutter_env_native', 'ios', 'setup_env.sh')
   root_dir = File.expand_path('..', Dir.pwd)
 
   # Run the setup_env.sh script from the plugin
   system("sh \"#{flutter_env_plugin_path}\" \"#{root_dir}\"")
 end
+
+awesome_pod_file = File.expand_path(File.join('plugins', 'awesome_notifications', 'ios', 'Scripts', 'AwesomePodFile'), '.symlinks')
+require awesome_pod_file
+update_awesome_main_target_settings('Runner', File.dirname(File.realpath(__FILE__)), flutter_root)

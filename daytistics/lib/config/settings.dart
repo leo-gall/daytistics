@@ -50,3 +50,10 @@ class LegalSettings {
   static const String privacyPolicyUrl = 'https://daytistics.com/privacy';
   static const String imprintUrl = 'https://daytistics.com/imprint';
 }
+
+class NotificationSettings {
+  static const String channelId = 'daytistics_channel';
+  static const String channelName = 'Daytistics';
+  static const String channelDescription = 'Daytistics notifications';
+  static const int dailyReminderId = 1;
+}
