@@ -2,7 +2,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/main.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 void maybeAskAllowNotifications() {
   AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
@@ -22,14 +21,31 @@ Future<void> scheduleDailyReminderNotification(TimeOfDay reminderTime) async {
     reminderTime.minute,
   );
 
-  await AwesomeNotifications().createNotification(
+  final bool succeeded = await AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: NotificationSettings.dailyReminderId,
-      channelKey: NotificationSettings.channelId,
+      channelKey: NotificationSettings.scheduledChannelId,
       title: 'Daily Reminder',
       body: "Don't forget to log your day!",
     ),
-    schedule: NotificationCalendar.fromDate(date: scheduledDate),
+    schedule: NotificationCalendar.fromDate(
+      date: scheduledDate,
+    ),
+  );
+
+  if (!succeeded) {
+    throw Exception('Failed to schedule daily reminder notification');
+  }
+}
+
+Future<void> sendDebugNotification() async {
+  await AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: NotificationSettings.debugId,
+      channelKey: NotificationSettings.channelId,
+      title: 'Debug Notification',
+      body: 'This is a debug notification.',
+    ),
   );
 }
 

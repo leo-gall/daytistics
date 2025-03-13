@@ -1,5 +1,5 @@
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
-import 'package:daytistics/shared/utils/dialogs.dart';
+import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -70,6 +70,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ],
               ),
               actions: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.sos_outlined),
+                  onPressed: () async {
+                    await sendDebugNotification();
+                  },
+                ),
                 Showcase(
                   key: _listConversations,
                   title: 'Conversations List',

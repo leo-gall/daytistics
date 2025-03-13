@@ -1,4 +1,3 @@
-import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
@@ -11,7 +10,6 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardingView extends ConsumerStatefulWidget {
   const OnboardingView({super.key});
@@ -101,7 +99,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                                     '/',
                                     (route) => false,
                                     arguments: {
-                                      'shouldStartShowcase': shouldStartShowcase
+                                      'shouldStartShowcase':
+                                          shouldStartShowcase,
                                     },
                                   );
                                 }
@@ -153,8 +152,10 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     );
   }
 
-  Future<void> _showDailyReminderTimeDialog(BuildContext context,
-      {required void Function() onDone}) async {
+  Future<void> _showDailyReminderTimeDialog(
+    BuildContext context, {
+    required void Function() onDone,
+  }) async {
     TimeOfDay timeOfDay = TimeOfDay.now();
 
     await showDialog<AlertDialog>(
@@ -167,13 +168,15 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                  'Would you like to set a daily reminder to track your day?'),
+                'Would you like to set a daily reminder to track your day?',
+              ),
               const SizedBox(height: 20),
               TimePickerInputField(
-                  onChanged: (selectedTime) async {
-                    timeOfDay = selectedTime;
-                  },
-                  title: 'Daily Reminder Time'),
+                onChanged: (selectedTime) async {
+                  timeOfDay = selectedTime;
+                },
+                title: 'Daily Reminder Time',
+              ),
             ],
           ),
           contentPadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 6.0),

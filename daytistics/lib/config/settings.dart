@@ -55,5 +55,10 @@ class NotificationSettings {
   static const String channelId = 'daytistics_channel';
   static const String channelName = 'Daytistics';
   static const String channelDescription = 'Daytistics notifications';
+  static const String scheduledChannelId = 'daytistics_scheduled_channel';
+  static const String scheduledChannelName = 'Daytistics scheduled';
+  static const String scheduledChannelDescription =
+      'Daytistics scheduled notifications';
   static const int dailyReminderId = 1;
+  static const int debugId = 999;
 }

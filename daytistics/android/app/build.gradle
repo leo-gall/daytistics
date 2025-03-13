@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.1'
+    }
+}
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -15,6 +21,7 @@ android {
     namespace = "com.daytistics.daytistics"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,7 +40,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        minSdkVersion 21
+        minSdkVersion 23
+        targetSdkVersion 34
     }
 
     signingConfigs {

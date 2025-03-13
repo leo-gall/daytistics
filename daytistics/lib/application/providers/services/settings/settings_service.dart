@@ -83,9 +83,6 @@ class SettingsService {
         .read(settingsProvider.notifier)
         .update(userSettings.copyWith(dailyReminderTime: timeOfDay));
 
-    await cancelDailyReminderNotification();
-    if (timeOfDay != null) await scheduleDailyReminderNotification(timeOfDay);
-
     return;
   }
 

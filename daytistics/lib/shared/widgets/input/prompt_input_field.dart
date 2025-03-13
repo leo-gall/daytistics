@@ -1,7 +1,4 @@
-import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
-import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
@@ -9,7 +6,6 @@ import 'package:daytistics/shared/utils/internet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PromptInputField extends ConsumerStatefulWidget {
   /// A callback function that is triggered when a chat event occurs.

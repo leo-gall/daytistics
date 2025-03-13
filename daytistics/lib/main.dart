@@ -1,16 +1,13 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/notifications.dart';
-import 'package:daytistics/shared/presets/home_view_preset.dart';
-import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/startup.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/chat/views/chat_view.dart';
 import 'package:daytistics/ui/chat/views/conversations_list_view.dart';
-import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/ui/onboarding/views/onboarding_view.dart';
 import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
@@ -57,13 +54,21 @@ Future<void> initPosthog() async {
 
 Future<bool> initAwesomeNotifications() {
   return AwesomeNotifications().initialize(
-    null,
+    'resource://drawable/res_app_icon',
     [
       NotificationChannel(
         channelGroupKey: NotificationSettings.channelId,
         channelKey: NotificationSettings.channelId,
         channelName: NotificationSettings.channelName,
         channelDescription: NotificationSettings.channelDescription,
+        defaultColor: ColorSettings.primary,
+        ledColor: Colors.white,
+      ),
+      NotificationChannel(
+        channelGroupKey: NotificationSettings.scheduledChannelId,
+        channelKey: NotificationSettings.scheduledChannelId,
+        channelName: NotificationSettings.scheduledChannelName,
+        channelDescription: NotificationSettings.scheduledChannelDescription,
         defaultColor: ColorSettings.primary,
         ledColor: Colors.white,
       ),
@@ -97,10 +102,11 @@ class _DaytisticsAppState extends ConsumerState<DaytisticsApp> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(settingsServiceProvider).initializeSettings();
       if (ref.read(settingsProvider)?.dailyReminderTime != null) {
         final TimeOfDay reminderTime =
             ref.read(settingsProvider)!.dailyReminderTime!;
-        scheduleDailyReminderNotification(
+        await scheduleDailyReminderNotification(
           reminderTime,
         );
       }
