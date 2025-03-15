@@ -54,50 +54,41 @@ class SettingsProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 final TimeOfDay? pickedTime = await showTimePicker(
+                  barrierDismissible: false,
                   context: context,
+                  cancelText: 'Unset',
                   initialTime: userSettings.dailyReminderTime != null
                       ? userSettings.dailyReminderTime!
                       : TimeOfDay.now(),
                 );
 
-                await ref.read(settingsServiceProvider).updateDailyReminderTime(
-                      timeOfDay: pickedTime ??
-                          ref.read(settingsProvider)!.dailyReminderTime!,
+                if (pickedTime == null) {
+                  await ref
+                      .read(settingsServiceProvider)
+                      .updateDailyReminderTime(timeOfDay: null);
+                  if (context.mounted) {
+                    showToast(
+                      context,
+                      message: 'Daily reminder disabled.',
                     );
-                await scheduleDailyReminderNotification(pickedTime!);
+                  }
+                } else {
+                  await ref
+                      .read(settingsServiceProvider)
+                      .updateDailyReminderTime(
+                        timeOfDay: pickedTime,
+                      );
+                  await scheduleDailyReminderNotification(pickedTime);
+                }
               },
               leading: const Icon(
                 Icons.notifications,
                 color: ColorSettings.primary,
               ),
               title: const StyledText('Daily reminder'),
-              description: userSettings.dailyReminderTime != null
-                  ? Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () async {
-                          await ref
-                              .read(settingsServiceProvider)
-                              .updateDailyReminderTime(timeOfDay: null);
-                          if (context.mounted) {
-                            showToast(
-                              context,
-                              message: 'Daily reminder disabled.',
-                            );
-                          }
-                        },
-                        child: const StyledText(
-                          'Click here to disable your daily reminder.',
-                          style: TextStyle(
-                            color: ColorSettings.error,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    )
-                  : const StyledText(
-                      'Set a daily notification reminder for logging your day. This helps maintain consistent tracking.',
-                    ),
+              description: const StyledText(
+                'Set a daily notification reminder for logging your day. This helps maintain consistent tracking.',
+              ),
             ),
           ],
         );

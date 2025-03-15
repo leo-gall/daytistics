@@ -13,7 +13,7 @@ void maybeAskAllowNotifications() {
 
 Future<void> scheduleDailyReminderNotification(TimeOfDay reminderTime) async {
   await AwesomeNotifications().cancel(NotificationSettings.dailyReminderId);
-  final bool succeeded = await AwesomeNotifications().createNotification(
+  await AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: NotificationSettings.dailyReminderId,
       channelKey: NotificationSettings.channelId,
