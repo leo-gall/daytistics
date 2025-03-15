@@ -37,9 +37,11 @@ void showConfirmationDialog(
   bool popBeforeConfirm = false,
   String confirmText = 'Confirm',
   String cancelText = 'Cancel',
+  bool disableOutsideClickClose = false,
 }) {
   showDialog<AlertDialog>(
     context: context,
+    barrierDismissible: !disableOutsideClickClose,
     builder: (context) {
       return AlertDialog(
         title: Text(title),

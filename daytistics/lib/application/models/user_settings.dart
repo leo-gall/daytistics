@@ -1,22 +1,23 @@
+import 'package:daytistics/shared/utils/time.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class UserSettings {
   late String id;
-  late bool notifications;
+  late TimeOfDay? dailyReminderTime;
   late bool conversationAnalytics;
   late DateTime createdAt;
   late DateTime updatedAt;
 
   UserSettings({
     String? id,
-    bool? notifications,
+    this.dailyReminderTime,
     bool? conversationAnalytics,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     this.id = id ?? const Uuid().v4();
     this.conversationAnalytics = conversationAnalytics ?? false;
-    this.notifications = notifications ?? false;
     this.createdAt = createdAt ?? DateTime.now();
     this.updatedAt = updatedAt ?? DateTime.now();
   }
@@ -27,7 +28,9 @@ class UserSettings {
     return {
       'id': id,
       'user_id': userId,
-      'notifications': notifications,
+      'daily_reminder_time': dailyReminderTime != null
+          ? '${timeToUtc(dailyReminderTime!).hour.toString().padLeft(2, '0')}:${timeToUtc(dailyReminderTime!).minute.toString().padLeft(2, '0')}'
+          : null,
       'conversation_analytics': conversationAnalytics,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -35,9 +38,27 @@ class UserSettings {
   }
 
   factory UserSettings.fromSupabase(Map<String, dynamic> data) {
+    final dailyReminderTime = data['daily_reminder_time'];
+
+    if (dailyReminderTime == null) {
+      return UserSettings(
+        id: data['id'] as String,
+        conversationAnalytics: data['conversation_analytics'] as bool,
+        createdAt: DateTime.parse(data['created_at'] as String),
+        updatedAt: DateTime.parse(data['updated_at'] as String),
+      );
+    }
+
+    final parts = dailyReminderTime.toString().split(':');
+
     return UserSettings(
       id: data['id'] as String,
-      notifications: data['notifications'] as bool,
+      dailyReminderTime: timeFromUtc(
+        TimeOfDay(
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        ),
+      ),
       conversationAnalytics: data['conversation_analytics'] as bool,
       createdAt: DateTime.parse(data['created_at'] as String),
       updatedAt: DateTime.parse(data['updated_at'] as String),
@@ -46,14 +67,14 @@ class UserSettings {
 
   UserSettings copyWith({
     String? id,
-    bool? notifications,
     bool? conversationAnalytics,
+    TimeOfDay? dailyReminderTime,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return UserSettings(
       id: id ?? this.id,
-      notifications: notifications ?? this.notifications,
+      dailyReminderTime: dailyReminderTime,
       conversationAnalytics:
           conversationAnalytics ?? this.conversationAnalytics,
       createdAt: createdAt ?? this.createdAt,

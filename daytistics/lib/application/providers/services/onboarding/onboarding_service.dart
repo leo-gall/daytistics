@@ -11,56 +11,19 @@ class OnboardingService {
 
   OnboardingService(this.ref);
 
-  Future<void> completeOnboardingScreens() async {
+  Future<void> completeOnboarding() async {
     await ref.read(supabaseClientDependencyProvider).auth.updateUser(
           UserAttributes(
-            data: {
-              'onboarding': {
-                'screens': true,
-                'dashboard': hasCompletedDashboardOnboarding,
-              },
-            },
+            data: {'onboarding': true},
           ),
         );
   }
 
-  Future<void> completeDashboardOnboarding() async {
-    await ref.read(supabaseClientDependencyProvider).auth.updateUser(
-          UserAttributes(
-            data: {
-              'onboarding': {
-                'dashboard': true,
-                'screens': hasCompletedOnboardingScreens,
-              },
-            },
-          ),
-        );
-  }
-
-  bool get hasCompletedOnboardingScreens {
+  bool get hasCompletedOnboarding {
     final user = ref.read(userDependencyProvider);
     final onboarding = user?.userMetadata?['onboarding'];
 
-    if (onboarding is Map) {
-      return (onboarding['screens'] as bool?) ?? false;
-    } else if (onboarding is bool) {
-      return onboarding;
-    }
-
-    return false;
-  }
-
-  bool get hasCompletedDashboardOnboarding {
-    final user = ref.read(userDependencyProvider);
-    final onboarding = user?.userMetadata?['onboarding'];
-
-    if (onboarding is Map) {
-      return (onboarding['dashboard'] as bool?) ?? false;
-    } else if (onboarding is bool) {
-      return onboarding;
-    }
-
-    return false;
+    return onboarding != null && onboarding as bool;
   }
 }
 
