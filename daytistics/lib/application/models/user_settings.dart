@@ -50,13 +50,15 @@ class UserSettings {
     }
 
     final parts = dailyReminderTime.toString().split(':');
-    final hour =
-        (int.parse(parts[0]) + DateTime.now().timeZoneOffset.inHours) % 24;
-    final minute = int.parse(parts[1]);
 
     return UserSettings(
       id: data['id'] as String,
-      dailyReminderTime: timeFromUtc(TimeOfDay(hour: hour, minute: minute)),
+      dailyReminderTime: timeFromUtc(
+        TimeOfDay(
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        ),
+      ),
       conversationAnalytics: data['conversation_analytics'] as bool,
       createdAt: DateTime.parse(data['created_at'] as String),
       updatedAt: DateTime.parse(data['updated_at'] as String),

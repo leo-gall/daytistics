@@ -2,10 +2,10 @@ import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/main.dart';
 import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/material.dart';
@@ -56,11 +56,10 @@ class SettingsProfileSection extends AbstractSettingsSection {
                 final TimeOfDay? pickedTime = await showTimePicker(
                   context: context,
                   initialTime: userSettings.dailyReminderTime != null
-                      ? timeToUtc(userSettings.dailyReminderTime!)
+                      ? userSettings.dailyReminderTime!
                       : TimeOfDay.now(),
                 );
 
-                await cancelDailyReminderNotification();
                 await ref.read(settingsServiceProvider).updateDailyReminderTime(
                       timeOfDay: pickedTime ??
                           ref.read(settingsProvider)!.dailyReminderTime!,
@@ -77,7 +76,6 @@ class SettingsProfileSection extends AbstractSettingsSection {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () async {
-                          await cancelDailyReminderNotification();
                           await ref
                               .read(settingsServiceProvider)
                               .updateDailyReminderTime(timeOfDay: null);

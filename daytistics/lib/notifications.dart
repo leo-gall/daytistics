@@ -12,30 +12,20 @@ void maybeAskAllowNotifications() {
 }
 
 Future<void> scheduleDailyReminderNotification(TimeOfDay reminderTime) async {
-  final now = DateTime.now();
-  final scheduledDate = DateTime(
-    now.year,
-    now.month,
-    now.day,
-    reminderTime.hour,
-    reminderTime.minute,
-  );
-
+  await AwesomeNotifications().cancel(NotificationSettings.dailyReminderId);
   final bool succeeded = await AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: NotificationSettings.dailyReminderId,
-      channelKey: NotificationSettings.scheduledChannelId,
+      channelKey: NotificationSettings.channelId,
       title: 'Daily Reminder',
       body: "Don't forget to log your day!",
     ),
-    schedule: NotificationCalendar.fromDate(
-      date: scheduledDate,
+    schedule: NotificationCalendar(
+      hour: reminderTime.hour,
+      minute: reminderTime.minute,
+      repeats: true,
     ),
   );
-
-  if (!succeeded) {
-    throw Exception('Failed to schedule daily reminder notification');
-  }
 }
 
 Future<void> sendDebugNotification() async {
@@ -47,10 +37,6 @@ Future<void> sendDebugNotification() async {
       body: 'This is a debug notification.',
     ),
   );
-}
-
-Future<void> cancelDailyReminderNotification() async {
-  await AwesomeNotifications().cancel(NotificationSettings.dailyReminderId);
 }
 
 class NotificationController {

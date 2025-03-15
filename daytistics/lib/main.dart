@@ -64,14 +64,6 @@ Future<bool> initAwesomeNotifications() {
         defaultColor: ColorSettings.primary,
         ledColor: Colors.white,
       ),
-      NotificationChannel(
-        channelGroupKey: NotificationSettings.scheduledChannelId,
-        channelKey: NotificationSettings.scheduledChannelId,
-        channelName: NotificationSettings.scheduledChannelName,
-        channelDescription: NotificationSettings.scheduledChannelDescription,
-        defaultColor: ColorSettings.primary,
-        ledColor: Colors.white,
-      ),
     ],
     debug: true,
   );

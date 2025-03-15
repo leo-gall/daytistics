@@ -4,7 +4,6 @@ import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,13 +60,15 @@ class SettingsService {
 
     if (userSettings == null) return initializeSettings();
 
+    final timeAsUtc = timeOfDay != null ? timeToUtc(timeOfDay) : null;
+    final hours = timeAsUtc?.hour.toString().padLeft(2, '0') ?? '';
+    final minutes = timeAsUtc?.minute.toString().padLeft(2, '0') ?? '';
+
     await ref
         .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.settingsTableName)
         .update({
-      'daily_reminder_time': timeOfDay != null
-          ? '${timeToUtc(timeOfDay).hour.toString().padLeft(2, '0')}:${timeToUtc(timeOfDay).minute.toString().padLeft(2, '0')}'
-          : null,
+      'daily_reminder_time': timeOfDay != null ? '$hours:$minutes' : null,
     }).eq('user_id', ref.read(userDependencyProvider)!.id);
 
     await ref.read(posthogDependencyProvider).capture(
@@ -82,8 +83,6 @@ class SettingsService {
     ref
         .read(settingsProvider.notifier)
         .update(userSettings.copyWith(dailyReminderTime: timeOfDay));
-
-    return;
   }
 
   Future<void> initializeSettings() async {

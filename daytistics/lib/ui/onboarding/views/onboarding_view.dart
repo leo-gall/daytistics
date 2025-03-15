@@ -1,6 +1,7 @@
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/main.dart';
 import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/presets/home_view_preset.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
@@ -197,12 +198,13 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 maybeAskAllowNotifications();
-                ref
+                await ref
                     .read(settingsServiceProvider)
                     .updateDailyReminderTime(timeOfDay: timeOfDay);
-                Navigator.of(context).pop();
+                await scheduleDailyReminderNotification(timeOfDay);
+                if (context.mounted) Navigator.of(context).pop();
                 onDone();
               },
               child: const StyledText(

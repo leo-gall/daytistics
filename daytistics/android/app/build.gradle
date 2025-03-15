@@ -1,9 +1,3 @@
-buildscript {
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
-    }
-}
-
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -24,6 +18,7 @@ android {
     compileSdkVersion 34
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -42,6 +37,7 @@ android {
         versionName = flutter.versionName
         minSdkVersion 23
         targetSdkVersion 34
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -56,8 +52,24 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        profile {
+            signingConfig = signingConfigs.debug
+
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
         }
     }
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 }
 
 flutter {
