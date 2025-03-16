@@ -1,3 +1,4 @@
+import 'package:daytistics/application/models/user_settings.dart';
 import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
@@ -108,7 +109,11 @@ void main() {
           .eq('user_id', 'user-1')
           .single();
 
-      expect(response['daily_reminder_time'], '09:30');
+      final UserSettings userSettings = UserSettings.fromSupabase(response);
+      final String formattedDailyReminderTime =
+          '${userSettings.dailyReminderTime!.hour.toString().padLeft(2, '0')}:${userSettings.dailyReminderTime!.minute.toString().padLeft(2, '0')}';
+
+      expect(formattedDailyReminderTime, '09:30');
 
       // Verify provider state was updated
       final state = container.read(settingsProvider);
@@ -177,7 +182,11 @@ void main() {
           .eq('user_id', 'user-1')
           .single();
 
-      expect(response['daily_reminder_time'], '07:05');
+      final UserSettings userSettings = UserSettings.fromSupabase(response);
+      final String formattedDailyReminderTime =
+          '${userSettings.dailyReminderTime!.hour.toString().padLeft(2, '0')}:${userSettings.dailyReminderTime!.minute.toString().padLeft(2, '0')}';
+
+      expect(formattedDailyReminderTime, '07:05');
     });
   });
 

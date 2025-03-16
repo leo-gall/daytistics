@@ -1,4 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:daytistics/application/providers/di/awesome_notifications/awesome_notifications.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/main.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'notification_service.g.dart';
 
 class NotificationService {
+  final AwesomeNotifications awesomeNotifications;
+
+  NotificationService({required this.awesomeNotifications});
+
   /// Use this method to detect when a new notification or a schedule is created
   @pragma('vm:entry-point')
   static Future<void> onNotificationCreatedMethod(
@@ -59,14 +64,14 @@ class NotificationService {
   }
 
   Future<void> scheduleDailyReminderNotification(TimeOfDay reminderTime) async {
-    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    await awesomeNotifications.isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
+        awesomeNotifications.requestPermissionToSendNotifications();
       }
     });
 
-    await AwesomeNotifications().cancel(NotificationSettings.dailyReminderId);
-    await AwesomeNotifications().createNotification(
+    await awesomeNotifications.cancel(NotificationSettings.dailyReminderId);
+    await awesomeNotifications.createNotification(
       content: NotificationContent(
         id: NotificationSettings.dailyReminderId,
         channelKey: NotificationSettings.channelId,
@@ -84,4 +89,6 @@ class NotificationService {
 }
 
 @Riverpod(keepAlive: true)
-NotificationService notificationService(Ref ref) => NotificationService();
+NotificationService notificationService(Ref ref) => NotificationService(
+      awesomeNotifications: ref.read(awesomeNotificationsDependencyProvider),
+    );

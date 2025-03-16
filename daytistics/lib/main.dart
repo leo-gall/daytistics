@@ -1,7 +1,4 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:daytistics/application/providers/services/notification/notification_service.dart';
-import 'package:daytistics/application/providers/services/settings/settings_service.dart';
-import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/initializers.dart';
@@ -16,9 +13,7 @@ import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
