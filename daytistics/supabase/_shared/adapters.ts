@@ -5,7 +5,7 @@ import { Resend } from "npm:resend";
 
 export function initSentry(): void {
   Sentry.init({
-    dsn: Deno.env.get("SENTRY_DSN")!,
+    dsn: Deno.env.get("SENTRY_DENO_DSN")!,
     defaultIntegrations: false,
     tracesSampleRate: 1.0,
     environment: Deno.env.get("ENVIRONMENT")!.toLowerCase(),
