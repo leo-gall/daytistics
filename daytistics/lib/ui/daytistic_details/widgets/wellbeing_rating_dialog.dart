@@ -26,13 +26,15 @@ class WellbeingRatingDialog extends ConsumerStatefulWidget {
 class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
   @override
   Widget build(BuildContext context) {
-    final Daytistic daytistic = ref.watch(currentDaytisticProvider)!;
+    final Daytistic? daytistic = ref.watch(currentDaytisticProvider);
+    if (daytistic == null) {
+      return const SizedBox(); // Falls kein Daytistic geladen ist, wird ein leeres Widget zurückgegeben.
+    }
 
-    // iterate over the wellbeing ratings (daytistic)
+    final wellbeingsService = ref.read(wellbeingsServiceProvider.notifier);
     final Map<String, int?> wellbeingMap = daytistic.wellbeing!.toRatingMap();
 
     return Column(
-      spacing: 15,
       children: List.generate(wellbeingMap.length, (index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -43,9 +45,7 @@ class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
                     .elementAt(index)
                     .capitalize()
                     .replaceAll('_', ' '),
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
+                style: const TextStyle(fontSize: 16),
               ),
               const Expanded(child: SizedBox()),
               StarRatingInputField(
@@ -56,17 +56,17 @@ class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
 
                   if (await maybeRedirectToConnectionErrorView(context)) return;
 
-                  await ref
-                      .read(wellbeingsServiceProvider.notifier)
-                      .updateWellbeing(
-                        Wellbeing.fromSupabase(
-                          {
-                            ...wellbeingMap,
-                            'daytistic_id': daytistic.id,
-                            'id': daytistic.wellbeing!.id,
-                          },
-                        ),
-                      );
+                  if (mounted) {
+                    await wellbeingsService.updateWellbeing(
+                      Wellbeing.fromSupabase(
+                        {
+                          ...wellbeingMap,
+                          'daytistic_id': daytistic.id,
+                          'id': daytistic.wellbeing!.id,
+                        },
+                      ),
+                    );
+                  }
                 },
                 showFullRating: true,
               ),

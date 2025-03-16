@@ -11,8 +11,6 @@ class GuestSigninDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final AuthViewModel authViewModel = ref.watch(authViewModelProvider);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -34,15 +32,14 @@ class GuestSigninDialog extends ConsumerWidget {
         TextButton(
           onPressed: () async {
             if (await maybeRedirectToConnectionErrorView(context)) return;
-            await ref.read(userServiceProvider).signInAnonymously();
 
-            if (context.mounted) {
-              if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
-                await Navigator.pushReplacementNamed(
-                  context,
-                  '/',
-                );
-              }
+            final userService = ref.read(userServiceProvider);
+            final onboardingService = ref.read(onboardingServiceProvider);
+
+            await userService.signInAnonymously();
+
+            if (context.mounted && !onboardingService.hasCompletedOnboarding) {
+              await Navigator.pushReplacementNamed(context, '/');
             }
           },
           child: const StyledText('Continue'),
