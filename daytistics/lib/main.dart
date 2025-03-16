@@ -1,9 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:daytistics/application/providers/services/notification/notification_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
-import 'package:daytistics/notifications.dart';
+import 'package:daytistics/initializers.dart';
 import 'package:daytistics/startup.dart';
 import 'package:daytistics/ui/auth/views/sign_in_view.dart';
 import 'package:daytistics/ui/chat/views/chat_view.dart';
@@ -38,37 +39,6 @@ Future<void> main() async {
   );
 }
 
-Future<void> initSupabase() async {
-  await Supabase.initialize(
-    url: SupabaseSettings.url,
-    anonKey: SupabaseSettings.anonKey,
-  );
-}
-
-Future<void> initPosthog() async {
-  final config = PostHogConfig(PosthogSettings.apiKey);
-  config.captureApplicationLifecycleEvents = true;
-  config.host = PosthogSettings.host;
-  await Posthog().setup(config);
-}
-
-Future<bool> initAwesomeNotifications() {
-  return AwesomeNotifications().initialize(
-    'resource://drawable/res_app_icon',
-    [
-      NotificationChannel(
-        channelGroupKey: NotificationSettings.channelId,
-        channelKey: NotificationSettings.channelId,
-        channelName: NotificationSettings.channelName,
-        channelDescription: NotificationSettings.channelDescription,
-        defaultColor: ColorSettings.primary,
-        ledColor: Colors.white,
-      ),
-    ],
-    debug: true,
-  );
-}
-
 class DaytisticsApp extends ConsumerStatefulWidget {
   const DaytisticsApp({super.key});
 
@@ -83,27 +53,7 @@ class DaytisticsApp extends ConsumerStatefulWidget {
 class _DaytisticsAppState extends ConsumerState<DaytisticsApp> {
   @override
   void initState() {
-    AwesomeNotifications().setListeners(
-      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-      onNotificationCreatedMethod:
-          NotificationController.onNotificationCreatedMethod,
-      onNotificationDisplayedMethod:
-          NotificationController.onNotificationDisplayedMethod,
-      onDismissActionReceivedMethod:
-          NotificationController.onDismissActionReceivedMethod,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(settingsServiceProvider).initializeSettings();
-      if (ref.read(settingsProvider)?.dailyReminderTime != null) {
-        final TimeOfDay reminderTime =
-            ref.read(settingsProvider)!.dailyReminderTime!;
-        await scheduleDailyReminderNotification(
-          reminderTime,
-        );
-      }
-    });
-
+    NotificationService.setListeners();
     super.initState();
   }
 

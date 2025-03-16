@@ -1,9 +1,8 @@
 import 'package:daytistics/application/models/user_settings.dart';
+import 'package:daytistics/application/providers/services/notification/notification_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/main.dart';
-import 'package:daytistics/notifications.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -78,7 +77,9 @@ class SettingsProfileSection extends AbstractSettingsSection {
                       .updateDailyReminderTime(
                         timeOfDay: pickedTime,
                       );
-                  await scheduleDailyReminderNotification(pickedTime);
+                  await ref
+                      .read(notificationServiceProvider)
+                      .scheduleDailyReminderNotification(pickedTime);
                 }
               },
               leading: const Icon(
