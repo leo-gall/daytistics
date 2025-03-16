@@ -14,6 +14,8 @@ class LegalProfileSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
+        final posthog = ref.read(posthogDependencyProvider);
+
         return SettingsSection(
           title: const StyledText('Legal'),
           tiles: [
@@ -23,19 +25,15 @@ class LegalProfileSection extends AbstractSettingsSection {
                 color: ColorSettings.primary,
                 size: 25,
               ),
-              trailing: const Icon(
-                Icons.open_in_new,
-                color: ColorSettings.textLight,
-              ),
+              trailing:
+                  const Icon(Icons.open_in_new, color: ColorSettings.textLight),
               title: const StyledText(
                 'Imprint',
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.imprintUrl);
-                await ref.read(posthogDependencyProvider).capture(
-                      eventName: 'imprint_opened',
-                    );
+                await posthog.capture(eventName: 'imprint_opened');
               },
             ),
             SettingsTile.navigation(
@@ -44,19 +42,15 @@ class LegalProfileSection extends AbstractSettingsSection {
                 color: ColorSettings.primary,
                 size: 25,
               ),
-              trailing: const Icon(
-                Icons.open_in_new,
-                color: ColorSettings.textLight,
-              ),
+              trailing:
+                  const Icon(Icons.open_in_new, color: ColorSettings.textLight),
               title: const StyledText(
                 'Privacy Policy',
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.privacyPolicyUrl);
-                await ref.read(posthogDependencyProvider).capture(
-                      eventName: 'privacy_policy_opened',
-                    );
+                await posthog.capture(eventName: 'privacy_policy_opened');
               },
             ),
             SettingsTile.navigation(

@@ -74,6 +74,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
           TextButton(
             onPressed: () async {
               if (await maybeRedirectToConnectionErrorView(context)) return;
+
               if (_currentPage < pages.length - 1) {
                 setState(() {
                   _currentPage++;
@@ -83,39 +84,37 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                   await _showConversationAnalyticsDialog(
                     context,
                     onDone: () {
-                      if (context.mounted) {
-                        _showDailyReminderTimeDialog(
-                          context,
-                          onDone: () async {
-                            await _showShowcaseDialog(
-                              context,
-                              onDone: ({required shouldStartShowcase}) async {
-                                await ref
-                                    .read(onboardingServiceProvider)
-                                    .completeOnboarding();
-                                if (context.mounted) {
-                                  await Navigator.of(context)
-                                      .pushNamedAndRemoveUntil(
-                                    '/',
-                                    (route) => false,
-                                    arguments: {
-                                      'shouldStartShowcase':
-                                          shouldStartShowcase,
-                                    },
-                                  );
-                                }
-                              },
-                            );
-                          },
-                        );
-                      }
+                      _showDailyReminderTimeDialog(
+                        context,
+                        onDone: () async {
+                          await _showShowcaseDialog(
+                            context,
+                            onDone: ({required shouldStartShowcase}) async {
+                              final onboardingService =
+                                  ref.read(onboardingServiceProvider);
+                              await onboardingService.completeOnboarding();
+
+                              if (mounted && context.mounted) {
+                                await Navigator.of(context)
+                                    .pushNamedAndRemoveUntil(
+                                  '/',
+                                  (route) => false,
+                                  arguments: {
+                                    'shouldStartShowcase': shouldStartShowcase,
+                                  },
+                                );
+                              }
+                            },
+                          );
+                        },
+                      );
                     },
                   );
                 }
               }
             },
             child: StyledText(
-              pages.length - 1 == _currentPage ? "Okay, let's go!" : 'Next',
+              _currentPage == pages.length - 1 ? "Okay, let's go!" : 'Next',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
@@ -128,23 +127,20 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     BuildContext context, {
     required void Function() onDone,
   }) async {
+    final settingsService = ref.read(settingsServiceProvider);
+
     showConfirmationDialog(
       context,
       title: 'Allow Analytics',
       message: 'Do you want to allow conversation analytics? '
           'By enabling this setting, you agree to share your conversation data with us to improve our services.',
       onConfirm: () async {
-        await ref
-            .read(settingsServiceProvider)
-            .updateConversationAnalytics(value: true);
-
-        onDone();
+        await settingsService.updateConversationAnalytics(value: true);
+        if (mounted) onDone();
       },
       onCancel: () async {
-        await ref
-            .read(settingsServiceProvider)
-            .updateConversationAnalytics(value: false);
-        onDone();
+        await settingsService.updateConversationAnalytics(value: false);
+        if (mounted) onDone();
       },
       cancelText: 'Deny',
       confirmText: 'Accept',
@@ -157,6 +153,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     required void Function() onDone,
   }) async {
     TimeOfDay timeOfDay = TimeOfDay.now();
+    final settingsService = ref.read(settingsServiceProvider);
+    final notificationService = ref.read(notificationServiceProvider);
 
     await showDialog<AlertDialog>(
       context: context,
@@ -184,13 +182,8 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                onDone();
+                if (mounted) onDone();
               },
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(
-                  Colors.transparent,
-                ),
-              ),
               child: const StyledText(
                 'Skip',
                 style: TextStyle(color: ColorSettings.error),
@@ -198,18 +191,17 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
             ),
             TextButton(
               onPressed: () async {
-                await ref
-                    .read(settingsServiceProvider)
-                    .updateDailyReminderTime(timeOfDay: timeOfDay);
-                await ref
-                    .read(notificationServiceProvider)
+                await settingsService.updateDailyReminderTime(
+                  timeOfDay: timeOfDay,
+                );
+                await notificationService
                     .scheduleDailyReminderNotification(timeOfDay);
-                if (context.mounted) Navigator.of(context).pop();
-                onDone();
+                if (mounted && context.mounted) {
+                  Navigator.of(context).pop();
+                  onDone();
+                }
               },
-              child: const StyledText(
-                'Done',
-              ),
+              child: const StyledText('Done'),
             ),
           ],
         );
@@ -221,23 +213,16 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
     BuildContext context, {
     required void Function({required bool shouldStartShowcase}) onDone,
   }) async {
-    bool shouldStartShowcase = false;
     showConfirmationDialog(
       context,
       disableOutsideClickClose: true,
       title: 'Showcase',
       message: 'Would you like to take a quick tour of the dashboard?',
-      onConfirm: () async {
-        shouldStartShowcase = true;
-        onDone(
-          shouldStartShowcase: shouldStartShowcase,
-        );
+      onConfirm: () {
+        if (mounted) onDone(shouldStartShowcase: true);
       },
-      onCancel: () async {
-        shouldStartShowcase = false;
-        onDone(
-          shouldStartShowcase: shouldStartShowcase,
-        );
+      onCancel: () {
+        if (mounted) onDone(shouldStartShowcase: false);
       },
       cancelText: 'No',
       confirmText: 'Yes',
