@@ -88,8 +88,10 @@ class UserService {
         //     );
         // print('Sign in with Apple initiated.');
       }
-    } catch (e) {
-      rethrow;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code != AuthorizationErrorCode.canceled) {
+        rethrow;
+      }
     }
   }
 
@@ -128,8 +130,10 @@ class UserService {
       await ref.read(posthogDependencyProvider).capture(
             eventName: 'google_sign_in',
           );
-    } catch (e) {
-      rethrow;
+    } on Exception catch (e) {
+      if (!e.toString().contains('User cancelled the sign-in process')) {
+        return;
+      }
     }
   }
 
