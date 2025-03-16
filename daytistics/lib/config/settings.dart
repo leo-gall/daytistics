@@ -16,8 +16,6 @@ class SupabaseSettings {
   static const String conversationsTableName = 'conversations';
   static const String conversationMessagesTableName = 'conversation_messages';
   static const String settingsTableName = 'user_settings';
-  static const String featureRequestsTableName = 'feature_requests';
-  static const String bugReportsTableName = 'bug_reports';
 }
 
 class PosthogSettings {
@@ -49,4 +47,12 @@ class ColorSettings {
 class LegalSettings {
   static const String privacyPolicyUrl = 'https://daytistics.com/privacy';
   static const String imprintUrl = 'https://daytistics.com/imprint';
+}
+
+class NotificationSettings {
+  static const String channelId = 'daytistics_channel';
+  static const String channelName = 'Daytistics';
+  static const String channelDescription = 'Daytistics notifications';
+  static const int dailyReminderId = 1;
+  static const int debugId = 999;
 }

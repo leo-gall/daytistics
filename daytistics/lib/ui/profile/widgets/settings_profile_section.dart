@@ -1,7 +1,9 @@
 import 'package:daytistics/application/models/user_settings.dart';
+import 'package:daytistics/application/providers/services/notification/notification_service.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -24,6 +26,7 @@ class SettingsProfileSection extends AbstractSettingsSection {
           });
           return const Center(child: CircularProgressIndicator());
         }
+
         return SettingsSection(
           title: const StyledText('Settings'),
           tiles: [
@@ -43,20 +46,51 @@ class SettingsProfileSection extends AbstractSettingsSection {
                 'By enabling this setting, you agree to share your conversation data with us to improve our services.',
               ),
             ),
-            // SettingsTile.switchTile(
-            //   onToggle: (value) async {
-            //     await ref.read(settingsServiceProvider).toggleNotifications();
-            //   },
-            //   initialValue: userSettings.notifications,
-            //   leading: const Icon(
-            //     Icons.notifications,
-            //     color: ColorSettings.primary,
-            //   ),
-            //   title: const StyledText('Enable notifications'),
-            //   description: const StyledText(
-            //     'Receive notifications to remind you of tracking your daily activities.',
-            //   ),
-            // ),
+            SettingsTile.navigation(
+              trailing: const Icon(
+                Icons.calendar_month_outlined,
+                color: ColorSettings.textLight,
+              ),
+              onPressed: (context) async {
+                final TimeOfDay? pickedTime = await showTimePicker(
+                  barrierDismissible: false,
+                  context: context,
+                  cancelText: 'Unset',
+                  initialTime: userSettings.dailyReminderTime != null
+                      ? userSettings.dailyReminderTime!
+                      : TimeOfDay.now(),
+                );
+
+                if (pickedTime == null) {
+                  await ref
+                      .read(settingsServiceProvider)
+                      .updateDailyReminderTime(timeOfDay: null);
+                  if (context.mounted) {
+                    showToast(
+                      context,
+                      message: 'Daily reminder disabled.',
+                    );
+                  }
+                } else {
+                  await ref
+                      .read(settingsServiceProvider)
+                      .updateDailyReminderTime(
+                        timeOfDay: pickedTime,
+                      );
+                  await ref
+                      .read(notificationServiceProvider)
+                      .scheduleDailyReminderNotification(pickedTime);
+                }
+              },
+              leading: const Icon(
+                Icons.notifications,
+                color: ColorSettings.primary,
+              ),
+              title: const StyledText('Daily reminder'),
+              description: const StyledText(
+                'Set a daily notification reminder for logging your day. This helps maintain consistent tracking.',
+              ),
+            ),
           ],
         );
       },

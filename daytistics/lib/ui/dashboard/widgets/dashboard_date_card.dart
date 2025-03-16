@@ -3,7 +3,7 @@ import 'package:daytistics/application/providers/services/daytistics/daytistics_
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/internet.dart';
-import 'package:daytistics/shared/utils/mixed.dart';
+import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/input/star_rating_input_field.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
