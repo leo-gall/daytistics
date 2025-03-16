@@ -26,7 +26,6 @@ dependencies:
   sentry_flutter: ^8.13.2
   settings_ui: ^2.0.2
   share_plus: ^10.1.4
-  shared_preferences: ^2.5.2
   showcaseview: ^4.0.1
   sign_in_with_apple: ^6.1.4
   supabase_flutter: '^2.8.3'
