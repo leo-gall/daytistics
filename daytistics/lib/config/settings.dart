@@ -27,7 +27,7 @@ class PosthogSettings {
 }
 
 class SentrySettings {
-  static String dsn = const String.fromEnvironment('SENTRY_DSN');
+  static String dsn = const String.fromEnvironment('SENTRY_FLUTTER_DSN');
 }
 
 class ColorSettings {
