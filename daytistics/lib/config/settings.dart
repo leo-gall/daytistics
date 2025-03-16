@@ -16,8 +16,6 @@ class SupabaseSettings {
   static const String conversationsTableName = 'conversations';
   static const String conversationMessagesTableName = 'conversation_messages';
   static const String settingsTableName = 'user_settings';
-  static const String featureRequestsTableName = 'feature_requests';
-  static const String bugReportsTableName = 'bug_reports';
 }
 
 class PosthogSettings {
@@ -55,10 +53,6 @@ class NotificationSettings {
   static const String channelId = 'daytistics_channel';
   static const String channelName = 'Daytistics';
   static const String channelDescription = 'Daytistics notifications';
-  static const String scheduledChannelId = 'daytistics_scheduled_channel';
-  static const String scheduledChannelName = 'Daytistics scheduled';
-  static const String scheduledChannelDescription =
-      'Daytistics scheduled notifications';
   static const int dailyReminderId = 1;
   static const int debugId = 999;
 }
