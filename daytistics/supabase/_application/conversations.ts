@@ -1,7 +1,6 @@
 import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { v4 as uuidv4 } from "npm:uuid";
 import OpenAI from "jsr:@openai/openai";
-import { OpenAI as PostHogOpenAI } from "npm:@posthog/ai";
 import {
   Conversation,
   ConversationMessage,
@@ -53,21 +52,22 @@ const TOOLS: OpenAI.ChatCompletionTool[] = [
 
 export async function sendConversationMessage(
   supabase: SupabaseClient,
-  openai: OpenAI | PostHogOpenAI,
+  openai: OpenAI,
   user: User,
   options: {
     query: string;
-    conversationId: string | null;
+    conversationId: string | null | undefined;
     model: string;
     systemPrompt: string;
-  }
+  },
 ) {
   const messages: OpenAI.ChatCompletionMessageParam[] = [
     {
       role: "system",
-      content: `${
-        options.systemPrompt
-      } - The current time in your timezone is ${new Date().toISOString()} and you are using UTC`,
+      content:
+        `${options.systemPrompt} - The current time in your timezone is ${
+          new Date().toISOString()
+        } and you are using UTC`,
     },
   ];
 
@@ -89,7 +89,7 @@ export async function sendConversationMessage(
     messages,
     options.model,
     user,
-    TOOLS
+    TOOLS,
   );
 
   let outputTokens = completion!.usage?.completion_tokens || 0;
@@ -130,7 +130,7 @@ export async function sendConversationMessage(
       openai,
       messages,
       options.model,
-      user
+      user,
     );
 
     outputTokens += feededCompletion.usage?.completion_tokens || 0;
@@ -155,7 +155,7 @@ async function fetchConversationContext(
   options: {
     conversationId: string;
     user: User;
-  }
+  },
 ): Promise<OpenAI.Chat.Completions.ChatCompletionMessageParam[]> {
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [];
   const conversation_messages = await supabase
@@ -188,7 +188,7 @@ export async function addMessageToConversation(
     query: string;
     reply: string;
     toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[];
-  }
+  },
 ) {
   const encryptedQuery = await encrypt(options.query, user!);
   const encryptedReply = await encrypt(options.reply!, user!);
@@ -201,11 +201,10 @@ export async function addMessageToConversation(
       conversation_id: options.conversationId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      called_functions:
-        options.toolCalls?.map(
-          (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
-            JSON.stringify(toolCall)
-        ) || [],
+      called_functions: options.toolCalls?.map(
+        (toolCall: OpenAI.Chat.Completions.ChatCompletionMessageToolCall) =>
+          JSON.stringify(toolCall),
+      ) || [],
     },
   ]);
 }
@@ -213,7 +212,7 @@ export async function addMessageToConversation(
 export async function createConversation(
   supabase: SupabaseClient,
   user: User,
-  title: string
+  title: string,
 ) {
   const id = uuidv4();
   await supabase.from("conversations").insert([
@@ -229,7 +228,7 @@ export async function createConversation(
 
 export async function existsConversation(
   supabase: SupabaseClient,
-  conversationId: string
+  conversationId: string,
 ): Promise<boolean> {
   const conversation = await supabase
     .from("conversations")
@@ -241,13 +240,13 @@ export async function existsConversation(
 }
 
 export async function generateConversationTitleFromQuery(
-  openai: OpenAI | PostHogOpenAI,
+  openai: OpenAI,
   user: User,
   options: {
     query: string;
     model: string;
     prompt: string;
-  }
+  },
 ) {
   const completion = await generateCompletion(
     openai,
@@ -262,13 +261,13 @@ export async function generateConversationTitleFromQuery(
       },
     ],
     options.model,
-    user
+    user,
   );
 
   return {
     title: (completion.choices[0].message.content as string).replaceAll(
       '"',
-      ""
+      "",
     ),
     outputTokens: completion.usage?.completion_tokens || 0,
     inputTokens: completion.usage?.prompt_tokens || 0,
@@ -276,27 +275,18 @@ export async function generateConversationTitleFromQuery(
 }
 
 async function generateCompletion(
-  openai: OpenAI | PostHogOpenAI,
+  openai: OpenAI,
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
   model: string,
   user: User,
-  tools?: OpenAI.ChatCompletionTool[]
+  tools?: OpenAI.ChatCompletionTool[],
 ): Promise<OpenAI.Chat.Completions.ChatCompletion> {
-  return openai instanceof PostHogOpenAI
-    ? ((await openai.chat.completions.create({
-        messages: messages,
-        tools: tools,
-        model: model,
-        stream: false,
-        posthogDistinctId: user!.id,
-        posthogTraceId: user!.id,
-      })) as OpenAI.Chat.Completions.ChatCompletion)
-    : await (openai as OpenAI).chat.completions.create({
-        messages: messages,
-        tools: tools,
-        model: model,
-        stream: false,
-      });
+  return await (openai as OpenAI).chat.completions.create({
+    messages: messages,
+    tools: tools,
+    model: model,
+    stream: false,
+  });
 }
 
 export async function fetchConversations(
@@ -307,7 +297,7 @@ export async function fetchConversations(
     offset?: number;
     amount?: number;
     id?: string;
-  }
+  },
 ): Promise<Conversation[]> {
   const offset = options?.offset ?? 0;
   const amount = options?.amount ?? 10;
@@ -342,7 +332,7 @@ export async function fetchConversations(
                 query: await decrypt(message.query, user),
                 reply: await decrypt(message.reply, user),
               };
-            })
+            }),
           );
           messages.push(...decryptedMessages);
         } else {
@@ -356,10 +346,10 @@ export async function fetchConversations(
         return {
           ...conversation,
           messages: messages.filter(
-            (message) => message.conversation_id === conversation.id
+            (message) => message.conversation_id === conversation.id,
           ),
         };
-      })
+      }),
     );
   }
 
@@ -368,7 +358,7 @@ export async function fetchConversations(
 
 export async function hasConversationAnalyticsEnabled(
   user: User,
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
 ): Promise<boolean> {
   const { data: settings } = await supabase
     .from("user_settings")

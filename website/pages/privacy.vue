@@ -135,13 +135,13 @@
             </li>
             <li>
               <StyledLink to="https://sentry.io/privacy/" target="_blank"
-                >Sentry:
+                >Bugsink:
               </StyledLink>
               Error Tracking, Monitoring
             </li>
             <li>
               <StyledLink to="https://www.posthog.com/privacy" target="_blank"
-                >Posthog:
+                >OpenPanel:
               </StyledLink>
               Analytics, User Tracking
             </li>

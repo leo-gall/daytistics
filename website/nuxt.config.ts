@@ -8,14 +8,14 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       phase: process.env.PHASE as "development" | "testing" | "released",
-      posthogApiKey: process.env.NUXT_POSTHOG_API_KEY,
-      posthogApiHost: process.env.NUXT_POSTHOG_API_HOST,
+      openPanelClientId: "",
+      openPanelClientSecret: "",
     },
-    emailOctopusListId: process.env.NUXT_EMAIL_OCTOPUS_LIST_ID,
-    emailOctopusApiKey: process.env.NUXT_EMAIL_OCTOPUS_API_KEY,
+    emailOctopusListId: "",
+    emailOctopusApiKey: "",
   },
 
-  plugins: [{ src: "./plugins/posthog", mode: "client" }],
+  plugins: [{ src: "./plugins/openpanel", mode: "client" }],
 
   app: {
     head: {

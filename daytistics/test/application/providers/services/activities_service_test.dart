@@ -1,6 +1,5 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
@@ -13,17 +12,14 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../container.dart';
-import '../../../fakes.dart';
 
 void main() {
   late ActivitiesService activitiesService;
   late final SupabaseClient mockSupabase;
   late final MockSupabaseHttpClient mockHttpClient;
   late ProviderContainer container;
-  late final FakePosthog fakePosthog;
 
   setUpAll(() {
-    fakePosthog = FakePosthog();
     mockHttpClient = MockSupabaseHttpClient();
 
     mockSupabase = SupabaseClient(
@@ -37,7 +33,6 @@ void main() {
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
-        posthogDependencyProvider.overrideWith((ref) => fakePosthog),
         currentDaytisticProvider.overrideWith(CurrentDaytistic.new),
       ],
     );
@@ -75,9 +70,6 @@ void main() {
       final updatedDaytistic = container.read(currentDaytisticProvider);
       expect(updatedDaytistic!.activities.length, 1);
       expect(updatedDaytistic.activities[0].name, 'Running');
-
-      // Verify PostHog event
-      expect(fakePosthog.capturedEvents.contains('activity_added'), isTrue);
     });
 
     test('should throw when name is empty', () async {
@@ -174,9 +166,6 @@ void main() {
       // Check that the current daytistic was updated
       final finalDaytistic = container.read(currentDaytisticProvider);
       expect(finalDaytistic!.activities.length, 0);
-
-      // Verify PostHog event
-      expect(fakePosthog.capturedEvents.contains('activity_deleted'), isTrue);
     });
 
     test('should throw when activity does not exist', () async {
@@ -246,9 +235,6 @@ void main() {
       final finalDaytistic = container.read(currentDaytisticProvider);
       expect(finalDaytistic!.activities.length, 1);
       expect(finalDaytistic.activities[0].name, 'Swimming');
-
-      // Verify PostHog event
-      expect(fakePosthog.capturedEvents.contains('activity_updated'), isTrue);
     });
 
     test('should update activity time', () async {

@@ -1,5 +1,5 @@
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/analytics.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -14,8 +14,6 @@ class LegalProfileSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final posthog = ref.read(posthogDependencyProvider);
-
         return SettingsSection(
           title: const StyledText('Legal'),
           tiles: [
@@ -33,7 +31,7 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.imprintUrl);
-                await posthog.capture(eventName: 'imprint_opened');
+                await trackEvent(eventName: 'imprint_opened');
               },
             ),
             SettingsTile.navigation(
@@ -50,7 +48,7 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.privacyPolicyUrl);
-                await posthog.capture(eventName: 'privacy_policy_opened');
+                await trackEvent(eventName: 'privacy_policy_opened');
               },
             ),
             SettingsTile.navigation(

@@ -1,6 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/wellbeings/wellbeings_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
@@ -11,17 +10,14 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../container.dart';
-import '../../../fakes.dart';
 
 void main() {
   late WellbeingsService wellbeingsService;
   late final SupabaseClient mockSupabase;
   late final MockSupabaseHttpClient mockHttpClient;
   late ProviderContainer container;
-  late final FakePosthog fakePosthog;
 
   setUpAll(() {
-    fakePosthog = FakePosthog();
     mockHttpClient = MockSupabaseHttpClient();
 
     mockSupabase = SupabaseClient(
@@ -35,7 +31,6 @@ void main() {
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
-        posthogDependencyProvider.overrideWith((ref) => fakePosthog),
         currentDaytisticProvider.overrideWith(CurrentDaytistic.new),
       ],
     );
@@ -96,9 +91,6 @@ void main() {
       expect(updatedDaytistic.wellbeing!.sleep, 7);
       expect(updatedDaytistic.wellbeing!.stress, 2);
       expect(updatedDaytistic.wellbeing!.mood, 4);
-
-      // Verify PostHog event
-      expect(fakePosthog.capturedEvents.contains('wellbeing_updated'), isTrue);
     });
   });
 }

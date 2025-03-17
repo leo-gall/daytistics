@@ -2,10 +2,10 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/exceptions.dart';
+import 'package:daytistics/shared/utils/analytics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,7 +25,6 @@ class ConversationsService extends _$ConversationsService {
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
     final currentConversation = ref.read(currentConversationProvider);
-    final posthog = ref.read(posthogDependencyProvider);
 
     late FunctionResponse response;
     try {
@@ -72,9 +71,9 @@ class ConversationsService extends _$ConversationsService {
     );
 
     if (currentConversation?.id == null) {
-      await posthog.capture(eventName: 'conversation_started');
+      await trackEvent(eventName: 'conversation_started');
     }
-    await posthog.capture(eventName: 'conversation_message_sent');
+    await trackEvent(eventName: 'conversation_message_sent');
 
     return response.data['reply'] as String;
   }
@@ -101,9 +100,7 @@ class ConversationsService extends _$ConversationsService {
           .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
     }
 
-    await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'conversations_fetched');
+    await trackEvent(eventName: 'conversations_fetched');
 
     return conversations;
   }
@@ -121,9 +118,7 @@ class ConversationsService extends _$ConversationsService {
       }
     }
 
-    await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'conversation_deleted');
+    await trackEvent(eventName: 'conversation_deleted');
   }
 
   // Future<bool> hasAnyConversations() async {

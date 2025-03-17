@@ -11,12 +11,13 @@
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "6.13.1",
+    "@openpanel/web": "^1.0.1",
+    "esbuild": ">=0.25.1",
     "nuxt": "^3.16.0",
     "nuxt-swiper": "2.0.0",
     "posthog-js": "^1.229.5",
     "vue": "latest",
-    "vue-router": "latest",
-    "esbuild": ">=0.25.1"
+    "vue-router": "latest"
   },
   "devDependencies": {
     "esbuild": ">=0.25.1"

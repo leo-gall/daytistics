@@ -1,5 +1,5 @@
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/analytics.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
@@ -45,9 +45,7 @@ class InfoProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com');
-                await ref
-                    .read(posthogDependencyProvider)
-                    .capture(eventName: 'newsletter_opened');
+                await trackEvent(eventName: 'newsletter_opened');
               },
             ),
           ],
