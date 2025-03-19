@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     public: {
       phase: process.env.PHASE as "development" | "testing" | "released",
       openPanelClientId: "",
-      openPanelClientSecret: "",
     },
     emailOctopusListId: "",
     emailOctopusApiKey: "",
