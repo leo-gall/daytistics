@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxtjs/tailwindcss": "6.13.1",
+    "@nuxtjs/tailwindcss": "6.13.2",
     "nuxt": "^3.16.0",
     "nuxt-swiper": "2.0.0",
     "posthog-js": "^1.231.0",
