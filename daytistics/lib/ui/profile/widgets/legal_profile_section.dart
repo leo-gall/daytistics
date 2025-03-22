@@ -1,8 +1,7 @@
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -14,8 +13,6 @@ class LegalProfileSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final posthog = ref.read(posthogDependencyProvider);
-
         return SettingsSection(
           title: const StyledText('Legal'),
           tiles: [
@@ -33,7 +30,9 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.imprintUrl);
-                await posthog.capture(eventName: 'imprint_opened');
+                await ref
+                    .read(analyticsDependencyProvider)
+                    .trackEvent(eventName: 'imprint_opened');
               },
             ),
             SettingsTile.navigation(
@@ -50,7 +49,9 @@ class LegalProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl(LegalSettings.privacyPolicyUrl);
-                await posthog.capture(eventName: 'privacy_policy_opened');
+                await ref
+                    .read(analyticsDependencyProvider)
+                    .trackEvent(eventName: 'privacy_policy_opened');
               },
             ),
             SettingsTile.navigation(

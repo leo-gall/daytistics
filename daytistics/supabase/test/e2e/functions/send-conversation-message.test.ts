@@ -4,16 +4,15 @@ import {
   User,
 } from "jsr:@supabase/supabase-js@2";
 import {
-  assertEquals,
   assert,
-  assertGreaterOrEqual,
+  assertEquals,
   assertFalse,
   assertGreater,
+  assertGreaterOrEqual,
 } from "jsr:@std/assert";
 import { generateFakeDaytistics } from "../../e2e-utils.ts";
 import { Conversation } from "../../../_shared/types.ts";
-import { initPosthog } from "../../../_shared/adapters.ts";
-import * as Conversations from "../../../_application/conversations.ts";
+import config from "../../../config.ts";
 
 const query1 =
   "What would you recommend to improve my wellbeing? Based on: a) my activities in the last week, b) my activities yesterday, c) all my activities. Answer 3 times.";
@@ -27,7 +26,7 @@ interface StepResult {
 
 async function testContainsNoDailyTokenBudgets(
   supabase: SupabaseClient,
-  date: Date
+  date: Date,
 ) {
   const { data: dailyTokenBudgets } = await supabase
     .from("daily_token_budgets")
@@ -45,8 +44,10 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
       body: {
         query: query1,
       },
-    }
+    },
   );
+
+  console.log(response);
 
   const conversation: Conversation = (
     await supabase
@@ -95,7 +96,7 @@ async function testWithConversationId(
   supabase: SupabaseClient,
   user: User,
   date: Date,
-  conversationId: string
+  conversationId: string,
 ) {
   const response = await supabase.functions.invoke(
     "send-conversation-message",
@@ -104,7 +105,7 @@ async function testWithConversationId(
         query: query2,
         conversation_id: conversationId,
       },
-    }
+    },
   );
 
   assertEquals(response.error, null);
@@ -154,20 +155,12 @@ async function testWithConversationId(
 async function testWithExceededTokenBudget(
   supabase: SupabaseClient,
   date: Date,
-  user: User
 ) {
-  const posthog = initPosthog();
-  const featureFlagPayload = (await posthog.getFeatureFlagPayload(
-    "conversations",
-    user.id
-  )) as unknown as Conversations.FeatureFlags;
-  const maxOutputTokensPerDay =
-    await featureFlagPayload?.max_free_output_tokens_per_day;
-
   const _ = await supabase
     .from("daily_token_budgets")
     .update({
-      output_tokens: maxOutputTokensPerDay! + 1,
+      output_tokens: config.conversations.options.maxFreeOutputTokensPerDay! +
+        1,
     })
     .eq("date", date.toISOString().split("T")[0])
     .select();
@@ -178,12 +171,10 @@ async function testWithExceededTokenBudget(
       body: {
         query: query1,
       },
-    }
+    },
   );
 
   assertFalse(error === null);
-
-  await posthog.shutdown();
 }
 
 function testTokensIncreased(step1Result: StepResult, step2Result: StepResult) {
@@ -200,7 +191,7 @@ async function testRequiresAuthentication(supabase: SupabaseClient) {
       body: {
         query: query1,
       },
-    }
+    },
   );
 
   assert(error !== null);
@@ -226,14 +217,14 @@ Deno.test(
       "Contains no daily token budgets before doing a request",
       async () => {
         await testContainsNoDailyTokenBudgets(supabase, date);
-      }
+      },
     );
 
     let testWithoutConversationIdResult: StepResult;
     await t.step("Without conversation ID", async () => {
       testWithoutConversationIdResult = await testWithoutConversationId(
         supabase,
-        date
+        date,
       );
     });
 
@@ -243,18 +234,18 @@ Deno.test(
         supabase,
         user!,
         date,
-        testWithoutConversationIdResult.conversation.id
+        testWithoutConversationIdResult.conversation.id,
       );
     });
 
     await t.step("Exceeded token budget", async () => {
-      await testWithExceededTokenBudget(supabase, date, user!);
+      await testWithExceededTokenBudget(supabase, date);
     });
 
     await t.step("Tokens increased", () => {
       testTokensIncreased(
         testWithoutConversationIdResult,
-        testWithConversationIdResult
+        testWithConversationIdResult,
       );
     });
 
@@ -269,5 +260,5 @@ Deno.test(
       clearInterval(i);
       clearTimeout(i);
     }
-  }
+  },
 );

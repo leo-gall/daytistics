@@ -3,7 +3,7 @@ import 'dart:io';
 
 // ignore: depend_on_referenced_packages
 import 'package:crypto/crypto.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/shared/exceptions.dart';
@@ -26,7 +26,7 @@ class UserService {
 
     await ref.read(settingsServiceProvider).initializeSettings();
 
-    await ref.read(posthogDependencyProvider).capture(
+    await ref.read(analyticsDependencyProvider).trackEvent(
           eventName: 'anonymous_sign_in',
         );
   }
@@ -41,7 +41,9 @@ class UserService {
     if (isAnonymous) await deleteAccount();
     await ref.read(supabaseClientDependencyProvider).auth.signOut();
 
-    await ref.read(posthogDependencyProvider).capture(eventName: 'sign_out');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'sign_out');
   }
 
   Future<void> signInWithApple() async {
@@ -74,7 +76,7 @@ class UserService {
 
         await ref.read(settingsServiceProvider).initializeSettings();
 
-        await ref.read(posthogDependencyProvider).capture(
+        await ref.read(analyticsDependencyProvider).trackEvent(
               eventName: 'apple_sign_in',
             );
       } else {
@@ -127,7 +129,7 @@ class UserService {
 
       await ref.read(settingsServiceProvider).initializeSettings();
 
-      await ref.read(posthogDependencyProvider).capture(
+      await ref.read(analyticsDependencyProvider).trackEvent(
             eventName: 'google_sign_in',
           );
     } on Exception catch (e) {
@@ -143,8 +145,8 @@ class UserService {
         .rpc<dynamic>('delete_account');
 
     await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'account_deleted');
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'account_deleted');
   }
 
   /// Exports user data to a JSON file.
@@ -164,8 +166,8 @@ class UserService {
         .invoke('data-export');
 
     await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'data_exported');
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'data_exported');
 
     if (response.status == 200) {
       final String jsonString = jsonEncode(response.data);
@@ -177,7 +179,7 @@ class UserService {
 
       return file.path;
     } else {
-      await ref.read(posthogDependencyProvider).capture(
+      await ref.read(analyticsDependencyProvider).trackEvent(
         eventName: 'data_export_failed',
         properties: {
           'data': response.data.toString(),

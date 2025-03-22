@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
@@ -23,9 +23,11 @@ void main() {
   late final MockSupabaseHttpClient mockHttpClient;
   late final User mockUser;
   late ProviderContainer container;
+  late final FakeAnalytics fakeAnalytics;
 
   setUpAll(() {
     mockHttpClient = MockSupabaseHttpClient();
+    fakeAnalytics = FakeAnalytics();
 
     // Pass the mock client to the Supabase client
     mockSupabase = SupabaseClient(
@@ -47,7 +49,7 @@ void main() {
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
         userDependencyProvider.overrideWith((ref) => mockUser),
-        posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
+        analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
       ],
     );
     daytisticsService = container.read(daytisticsServiceProvider.notifier);
@@ -93,6 +95,11 @@ void main() {
       expect(fetchedDaytistic.date, daytistic.date);
       expect(fetchedDaytistic.wellbeing, null);
       expect(fetchedDaytistic.activities, <Activity>[]);
+
+      expect(
+        fakeAnalytics.capturedEvents.contains('daytistic_fetched'),
+        isTrue,
+      );
     });
 
     test('should return a daytistic with wellbeing and activities', () async {
@@ -137,6 +144,11 @@ void main() {
       expect(fetchedDaytistic.id, daytistic.id);
       expect(fetchedDaytistic.date, daytistic.date);
       expect(fetchedDaytistic.wellbeing!.daytisticId, wellbeing.daytisticId);
+
+      expect(
+        fakeAnalytics.capturedEvents.contains('daytistic_fetched'),
+        isTrue,
+      );
     });
 
     test('should throw a NotFoundException when no daytistic is found',
@@ -218,6 +230,11 @@ void main() {
           .eq('daytistic_id', createdDaytistic.id)
           .single();
       expect(wellbeingInDb['daytistic_id'], createdDaytistic.id);
+
+      expect(
+        fakeAnalytics.capturedEvents.contains('daytistic_created'),
+        isTrue,
+      );
     });
 
     test('should set the created daytistic as current in the provider',

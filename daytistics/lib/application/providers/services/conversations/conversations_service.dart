@@ -2,7 +2,7 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/exceptions.dart';
@@ -25,7 +25,6 @@ class ConversationsService extends _$ConversationsService {
     final currentConversationNotifier =
         ref.read(currentConversationProvider.notifier);
     final currentConversation = ref.read(currentConversationProvider);
-    final posthog = ref.read(posthogDependencyProvider);
 
     late FunctionResponse response;
     try {
@@ -72,9 +71,13 @@ class ConversationsService extends _$ConversationsService {
     );
 
     if (currentConversation?.id == null) {
-      await posthog.capture(eventName: 'conversation_started');
+      await ref
+          .read(analyticsDependencyProvider)
+          .trackEvent(eventName: 'conversation_started');
     }
-    await posthog.capture(eventName: 'conversation_message_sent');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversation_message_sent');
 
     return response.data['reply'] as String;
   }
@@ -102,8 +105,8 @@ class ConversationsService extends _$ConversationsService {
     }
 
     await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'conversations_fetched');
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversations_fetched');
 
     return conversations;
   }
@@ -122,8 +125,8 @@ class ConversationsService extends _$ConversationsService {
     }
 
     await ref
-        .read(posthogDependencyProvider)
-        .capture(eventName: 'conversation_deleted');
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversation_deleted');
   }
 
   // Future<bool> hasAnyConversations() async {

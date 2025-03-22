@@ -1,7 +1,5 @@
 import { createClient, User } from "jsr:@supabase/supabase-js@2";
 import * as Sentry from "npm:@sentry/deno";
-import { PostHog } from "npm:posthog-node";
-import { Resend } from "npm:resend";
 
 export function initSentry(): void {
   Sentry.init({
@@ -10,16 +8,6 @@ export function initSentry(): void {
     tracesSampleRate: 1.0,
     environment: Deno.env.get("ENVIRONMENT")!.toLowerCase(),
   });
-}
-
-export function initPosthog(): PostHog {
-  return new PostHog(Deno.env.get("POSTHOG_API_KEY")!, {
-    host: Deno.env.get("POSTHOG_HOST") || "https://eu.i.posthog.com",
-  });
-}
-
-export function initResend() {
-  return new Resend(Deno.env.get("RESEND_API_KEY")!);
 }
 
 export async function initSupabase(

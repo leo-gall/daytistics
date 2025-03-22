@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/user_settings.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/settings/settings.dart';
@@ -45,7 +45,7 @@ class SettingsService {
         .read(settingsProvider.notifier)
         .update(userSettings!.copyWith(conversationAnalytics: value));
 
-    await ref.read(posthogDependencyProvider).capture(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'settings_changed',
       properties: {
         'field': 'conversation_analytics',
@@ -71,7 +71,7 @@ class SettingsService {
       'daily_reminder_time': timeOfDay != null ? '$hours:$minutes' : null,
     }).eq('user_id', ref.read(userDependencyProvider)!.id);
 
-    await ref.read(posthogDependencyProvider).capture(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'settings_changed',
       properties: {
         'field': 'daily_reminder_time',

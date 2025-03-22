@@ -1,22 +1,13 @@
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 
-class FakePosthog extends Fake implements Posthog {
+class FakeAnalytics extends Fake implements Analytics {
   List<String> capturedEvents = [];
 
   @override
-  Future<void> identify({
-    required String userId,
-    Map<String, Object>? userProperties,
-    Map<String, Object>? userPropertiesSetOnce,
-  }) async {
-    // Do nothing.
-  }
-
-  @override
-  Future<void> capture({
+  Future<void> trackEvent({
     required String eventName,
-    Map<String, Object>? properties,
+    Map<String, dynamic>? properties,
   }) async {
     capturedEvents.add(eventName);
   }

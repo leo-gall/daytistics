@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/wellbeing.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
@@ -23,7 +23,7 @@ class WellbeingsService extends _$WellbeingsService {
         .upsert(wellbeing.toSupabase());
     ref.read(currentDaytisticProvider.notifier).wellbeing = wellbeing;
 
-    await ref.read(posthogDependencyProvider).capture(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'wellbeing_updated',
       properties: {
         'wellbeing': wellbeing.toSupabase(),

@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/conversation.dart';
-import 'package:daytistics/application/providers/di/posthog/posthog_dependency.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/conversations/conversations_service.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
@@ -16,9 +16,11 @@ void main() {
   late final SupabaseClient mockSupabase;
   late final MockSupabaseHttpClient mockHttpClient;
   late ProviderContainer container;
+  late final FakeAnalytics fakeAnalytics;
 
   setUpAll(() {
     mockHttpClient = MockSupabaseHttpClient();
+    fakeAnalytics = FakeAnalytics();
 
     mockSupabase = SupabaseClient(
       'https://mock.supabase.co',
@@ -31,7 +33,7 @@ void main() {
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
-        posthogDependencyProvider.overrideWith((ref) => FakePosthog()),
+        analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
       ],
     );
     conversationsService =
@@ -66,6 +68,11 @@ void main() {
       final dbResult = await mockSupabase.from('conversations').select();
       expect(dbResult, isEmpty);
       expect(container.read(currentConversationProvider), isNull);
+
+      expect(
+        fakeAnalytics.capturedEvents.contains('conversation_deleted'),
+        isTrue,
+      );
     });
   });
 }
