@@ -69,8 +69,10 @@ void main() {
       expect(dbResult, isEmpty);
       expect(container.read(currentConversationProvider), isNull);
 
-      expect(fakeAnalytics.capturedEvents.contains('conversation_deleted'),
-          isTrue);
+      expect(
+        fakeAnalytics.capturedEvents.contains('conversation_deleted'),
+        isTrue,
+      );
     });
   });
 }

@@ -98,7 +98,9 @@ void main() {
       expect(updatedDaytistic.wellbeing!.mood, 4);
 
       expect(
-          fakeAnalytics.capturedEvents.contains('wellbeing_updated'), isTrue);
+        fakeAnalytics.capturedEvents.contains('wellbeing_updated'),
+        isTrue,
+      );
     });
   });
 }

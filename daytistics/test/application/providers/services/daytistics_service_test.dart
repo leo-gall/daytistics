@@ -97,7 +97,9 @@ void main() {
       expect(fetchedDaytistic.activities, <Activity>[]);
 
       expect(
-          fakeAnalytics.capturedEvents.contains('daytistic_fetched'), isTrue);
+        fakeAnalytics.capturedEvents.contains('daytistic_fetched'),
+        isTrue,
+      );
     });
 
     test('should return a daytistic with wellbeing and activities', () async {
@@ -144,7 +146,9 @@ void main() {
       expect(fetchedDaytistic.wellbeing!.daytisticId, wellbeing.daytisticId);
 
       expect(
-          fakeAnalytics.capturedEvents.contains('daytistic_fetched'), isTrue);
+        fakeAnalytics.capturedEvents.contains('daytistic_fetched'),
+        isTrue,
+      );
     });
 
     test('should throw a NotFoundException when no daytistic is found',
@@ -228,7 +232,9 @@ void main() {
       expect(wellbeingInDb['daytistic_id'], createdDaytistic.id);
 
       expect(
-          fakeAnalytics.capturedEvents.contains('daytistic_created'), isTrue);
+        fakeAnalytics.capturedEvents.contains('daytistic_created'),
+        isTrue,
+      );
     });
 
     test('should set the created daytistic as current in the provider',

@@ -3,11 +3,10 @@ import 'dart:io';
 
 // ignore: depend_on_referenced_packages
 import 'package:crypto/crypto.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/shared/exceptions.dart';
-import 'package:daytistics/application/providers/di/analytics/analytics.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';

@@ -1,9 +1,8 @@
 import 'package:daytistics/application/models/wellbeing.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/application/providers/di/analytics/analytics.dart';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'wellbeings_service.g.dart';
