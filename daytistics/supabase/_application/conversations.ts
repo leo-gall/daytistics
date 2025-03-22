@@ -88,7 +88,6 @@ export async function sendConversationMessage(
     openai,
     messages,
     options.model,
-    user,
     TOOLS,
   );
 
@@ -130,7 +129,7 @@ export async function sendConversationMessage(
       openai,
       messages,
       options.model,
-      user,
+      TOOLS,
     );
 
     outputTokens += feededCompletion.usage?.completion_tokens || 0;
@@ -241,7 +240,6 @@ export async function existsConversation(
 
 export async function generateConversationTitleFromQuery(
   openai: OpenAI,
-  user: User,
   options: {
     query: string;
     model: string;
@@ -261,7 +259,6 @@ export async function generateConversationTitleFromQuery(
       },
     ],
     options.model,
-    user,
   );
 
   return {
@@ -278,7 +275,6 @@ async function generateCompletion(
   openai: OpenAI,
   messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
   model: string,
-  user: User,
   tools?: OpenAI.ChatCompletionTool[],
 ): Promise<OpenAI.Chat.Completions.ChatCompletion> {
   return await (openai as OpenAI).chat.completions.create({

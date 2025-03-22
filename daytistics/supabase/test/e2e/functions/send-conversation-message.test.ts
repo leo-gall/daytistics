@@ -155,7 +155,6 @@ async function testWithConversationId(
 async function testWithExceededTokenBudget(
   supabase: SupabaseClient,
   date: Date,
-  user: User,
 ) {
   const _ = await supabase
     .from("daily_token_budgets")
@@ -240,7 +239,7 @@ Deno.test(
     });
 
     await t.step("Exceeded token budget", async () => {
-      await testWithExceededTokenBudget(supabase, date, user!);
+      await testWithExceededTokenBudget(supabase, date);
     });
 
     await t.step("Tokens increased", () => {
