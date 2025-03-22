@@ -73,7 +73,6 @@ Deno.serve(async (req) => {
     if (!conversationId) {
       titleLlmResponse = await Conversations.generateConversationTitleFromQuery(
         openai,
-        user!,
         {
           query: validatedBody.data.query,
           model: config.conversations.options.title.model,
