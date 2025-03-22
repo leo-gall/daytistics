@@ -2,10 +2,10 @@
 
 import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/exceptions.dart';
-import 'package:daytistics/shared/utils/analytics.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -71,9 +71,13 @@ class ConversationsService extends _$ConversationsService {
     );
 
     if (currentConversation?.id == null) {
-      await trackEvent(eventName: 'conversation_started');
+      await ref
+          .read(analyticsDependencyProvider)
+          .trackEvent(eventName: 'conversation_started');
     }
-    await trackEvent(eventName: 'conversation_message_sent');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversation_message_sent');
 
     return response.data['reply'] as String;
   }
@@ -100,7 +104,9 @@ class ConversationsService extends _$ConversationsService {
           .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
     }
 
-    await trackEvent(eventName: 'conversations_fetched');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversations_fetched');
 
     return conversations;
   }
@@ -118,7 +124,9 @@ class ConversationsService extends _$ConversationsService {
       }
     }
 
-    await trackEvent(eventName: 'conversation_deleted');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'conversation_deleted');
   }
 
   // Future<bool> hasAnyConversations() async {

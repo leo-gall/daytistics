@@ -1,8 +1,7 @@
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/utils/analytics.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -45,7 +44,9 @@ class InfoProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com');
-                await trackEvent(eventName: 'newsletter_opened');
+                await ref
+                    .read(analyticsDependencyProvider)
+                    .trackEvent(eventName: 'newsletter_opened');
               },
             ),
           ],

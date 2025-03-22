@@ -6,7 +6,8 @@ import 'package:crypto/crypto.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
 import 'package:daytistics/shared/exceptions.dart';
-import 'package:daytistics/shared/utils/analytics.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,9 +27,9 @@ class UserService {
 
     await ref.read(settingsServiceProvider).initializeSettings();
 
-    await trackEvent(
-      eventName: 'anonymous_sign_in',
-    );
+    await ref.read(analyticsDependencyProvider).trackEvent(
+          eventName: 'anonymous_sign_in',
+        );
   }
 
   Future<void> signOut() async {
@@ -41,7 +42,9 @@ class UserService {
     if (isAnonymous) await deleteAccount();
     await ref.read(supabaseClientDependencyProvider).auth.signOut();
 
-    await trackEvent(eventName: 'sign_out');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'sign_out');
   }
 
   Future<void> signInWithApple() async {
@@ -74,9 +77,9 @@ class UserService {
 
         await ref.read(settingsServiceProvider).initializeSettings();
 
-        await trackEvent(
-          eventName: 'apple_sign_in',
-        );
+        await ref.read(analyticsDependencyProvider).trackEvent(
+              eventName: 'apple_sign_in',
+            );
       } else {
         // gets the app name from the flutter manifest not .env
         // final String appName = (await PackageInfo.fromPlatform()).appName;
@@ -127,9 +130,9 @@ class UserService {
 
       await ref.read(settingsServiceProvider).initializeSettings();
 
-      await trackEvent(
-        eventName: 'google_sign_in',
-      );
+      await ref.read(analyticsDependencyProvider).trackEvent(
+            eventName: 'google_sign_in',
+          );
     } on Exception catch (e) {
       if (!e.toString().contains('User cancelled the sign-in process')) {
         return;
@@ -142,7 +145,9 @@ class UserService {
         .read(supabaseClientDependencyProvider)
         .rpc<dynamic>('delete_account');
 
-    await trackEvent(eventName: 'account_deleted');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'account_deleted');
   }
 
   /// Exports user data to a JSON file.
@@ -161,7 +166,9 @@ class UserService {
         .functions
         .invoke('data-export');
 
-    await trackEvent(eventName: 'data_exported');
+    await ref
+        .read(analyticsDependencyProvider)
+        .trackEvent(eventName: 'data_exported');
 
     if (response.status == 200) {
       final String jsonString = jsonEncode(response.data);
@@ -173,7 +180,7 @@ class UserService {
 
       return file.path;
     } else {
-      await trackEvent(
+      await ref.read(analyticsDependencyProvider).trackEvent(
         eventName: 'data_export_failed',
         properties: {
           'data': response.data.toString(),

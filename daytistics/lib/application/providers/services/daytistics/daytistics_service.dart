@@ -6,7 +6,8 @@ import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
-import 'package:daytistics/shared/utils/analytics.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -55,7 +56,7 @@ class DaytisticsService extends _$DaytisticsService {
 
     ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
-    await trackEvent(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'daytistic_fetched',
       properties: {
         'date': date.toIso8601String(),
@@ -89,8 +90,8 @@ class DaytisticsService extends _$DaytisticsService {
           .from(SupabaseSettings.wellbeingsTableName)
           .upsert(daytistic.wellbeing!.toSupabase());
 
-      await trackEvent(
-        eventName: 'daytistic_added',
+      await ref.read(analyticsDependencyProvider).trackEvent(
+        eventName: 'daytistic_created',
         properties: {
           'date': date.toIso8601String(),
         },

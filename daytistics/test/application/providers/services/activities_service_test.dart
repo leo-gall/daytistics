@@ -1,5 +1,6 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
@@ -12,14 +13,17 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../container.dart';
+import '../../../fakes.dart';
 
 void main() {
   late ActivitiesService activitiesService;
   late final SupabaseClient mockSupabase;
   late final MockSupabaseHttpClient mockHttpClient;
   late ProviderContainer container;
+  late final FakeAnalytics fakeAnalytics;
 
   setUpAll(() {
+    fakeAnalytics = FakeAnalytics();
     mockHttpClient = MockSupabaseHttpClient();
 
     mockSupabase = SupabaseClient(
@@ -33,6 +37,7 @@ void main() {
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
+        analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
         currentDaytisticProvider.overrideWith(CurrentDaytistic.new),
       ],
     );
@@ -70,6 +75,8 @@ void main() {
       final updatedDaytistic = container.read(currentDaytisticProvider);
       expect(updatedDaytistic!.activities.length, 1);
       expect(updatedDaytistic.activities[0].name, 'Running');
+
+      expect(fakeAnalytics.capturedEvents.contains('activity_added'), isTrue);
     });
 
     test('should throw when name is empty', () async {
@@ -166,6 +173,8 @@ void main() {
       // Check that the current daytistic was updated
       final finalDaytistic = container.read(currentDaytisticProvider);
       expect(finalDaytistic!.activities.length, 0);
+
+      expect(fakeAnalytics.capturedEvents.contains('activity_deleted'), isTrue);
     });
 
     test('should throw when activity does not exist', () async {
@@ -235,6 +244,8 @@ void main() {
       final finalDaytistic = container.read(currentDaytisticProvider);
       expect(finalDaytistic!.activities.length, 1);
       expect(finalDaytistic.activities[0].name, 'Swimming');
+
+      expect(fakeAnalytics.capturedEvents.contains('activity_updated'), isTrue);
     });
 
     test('should update activity time', () async {

@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/user_settings.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/settings/settings_service.dart';
@@ -11,12 +12,14 @@ import 'package:mock_supabase_http_client/mock_supabase_http_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../container.dart';
+import '../../../fakes.dart';
 
 void main() {
   late SettingsService settingsService;
   late final SupabaseClient mockSupabase;
   late final MockSupabaseHttpClient mockHttpClient;
   late ProviderContainer container;
+  late FakeAnalytics fakeAnalytics;
 
   setUpAll(() {
     mockHttpClient = MockSupabaseHttpClient();
@@ -29,6 +32,8 @@ void main() {
   });
 
   setUp(() {
+    fakeAnalytics = FakeAnalytics();
+
     container = createContainer(
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
@@ -41,6 +46,7 @@ void main() {
             userMetadata: {},
           ),
         ),
+        analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
       ],
     );
     settingsService = container.read(settingsServiceProvider);
@@ -75,6 +81,8 @@ void main() {
         .single();
 
     expect(response['conversation_analytics'], false);
+
+    expect(fakeAnalytics.capturedEvents.contains('settings_changed'), isTrue);
   });
 
   group('updateDailyReminderTime', () {
@@ -116,6 +124,8 @@ void main() {
       final state = container.read(settingsProvider);
       expect(state!.dailyReminderTime!.hour, 9);
       expect(state.dailyReminderTime!.minute, 30);
+
+      expect(fakeAnalytics.capturedEvents.contains('settings_changed'), isTrue);
     });
 
     test('should set daily reminder time to null', () async {
@@ -149,6 +159,8 @@ void main() {
       // Verify provider state was updated
       final state = container.read(settingsProvider);
       expect(state!.dailyReminderTime, null);
+
+      expect(fakeAnalytics.capturedEvents.contains('settings_changed'), isTrue);
     });
 
     test('should pad hours and minutes correctly', () async {
@@ -184,6 +196,8 @@ void main() {
           '${userSettings.dailyReminderTime!.hour.toString().padLeft(2, '0')}:${userSettings.dailyReminderTime!.minute.toString().padLeft(2, '0')}';
 
       expect(formattedDailyReminderTime, '07:05');
+
+      expect(fakeAnalytics.capturedEvents.contains('settings_changed'), isTrue);
     });
   });
 

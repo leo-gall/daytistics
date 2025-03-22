@@ -134,13 +134,15 @@
               In-App Purchases, Subscriptions
             </li>
             <li>
-              <StyledLink to="https://sentry.io/privacy/" target="_blank"
+              <StyledLink
+                to="https://www.bugsink.com/privacy-policy/"
+                target="_blank"
                 >Bugsink:
               </StyledLink>
               Error Tracking, Monitoring
             </li>
             <li>
-              <StyledLink to="https://www.posthog.com/privacy" target="_blank"
+              <StyledLink to="https://openpanel.dev/privacy" target="_blank"
                 >OpenPanel:
               </StyledLink>
               Analytics, User Tracking

@@ -1,11 +1,10 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
-import 'package:daytistics/shared/utils/analytics.dart';
-
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -75,7 +74,7 @@ class ActivitiesService extends _$ActivitiesService {
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
 
-    await trackEvent(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_added',
       properties: {
         'name': name,
@@ -107,7 +106,7 @@ class ActivitiesService extends _$ActivitiesService {
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
 
-    await trackEvent(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_deleted',
       properties: {
         'name': activity.name,
@@ -189,7 +188,7 @@ class ActivitiesService extends _$ActivitiesService {
 
     ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
 
-    await trackEvent(
+    await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_updated',
       properties: {
         'name': activity.name,
