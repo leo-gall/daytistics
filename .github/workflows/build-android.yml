@@ -67,7 +67,7 @@ jobs:
           subdirectory: daytistics/android
           options: '{
             "version_number": "${{ github.event.inputs.version }}", 
-            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_FLUTTER_DSN"]
+            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_FLUTTER_DSN", "OPENPANEL_CLIENT_ID", "OPENPANEL_CLIENT_SECRET"]
             }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
@@ -76,3 +76,5 @@ jobs:
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SENTRY_FLUTTER_DSN: ${{ secrets.SENTRY_FLUTTER_DSN }}
+          OPENPANEL_CLIENT_ID: ${{ secrets.OPENPANEL_CLIENT_ID }}
+          OPENPANEL_CLIENT_SECRET: ${{ secrets.OPENPANEL_CLIENT_SECRET }}
