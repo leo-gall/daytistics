@@ -80,8 +80,8 @@ jobs:
           lane: 'release_app_store'
           subdirectory: daytistics/ios
           options: '{
-            "version_number": "${{ github.event.inputs.version }}",
-           }'
+            "version_number": "${{ github.event.inputs.version }}" 
+            }'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
