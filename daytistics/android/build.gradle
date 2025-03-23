@@ -2,7 +2,14 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
+        exclusiveContent {
+            forRepository {
+                maven { url 'https://maven.scijava.org/content/repositories/public/' }
+            }
+            filter {
+                includeGroup "me.carda"
+            }
+        }
     }
 }
 
