@@ -59,22 +59,25 @@ jobs:
 
       - name: Create .env file
         working-directory: ./daytistics
-        run: touch .env
+        run: |
+          cat <<EOT >> .env
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
+          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
+          SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
+          OPENPANEL_CLIENT_ID=${{ secrets.OPENPANEL_CLIENT_ID }}
+          OPENPANEL_CLIENT_SECRET=${{ secrets.OPENPANEL_CLIENT_SECRET }}
+          OPENPANEL_URL=${{ secrets.OPENPANEL_URL }}
+          EOT
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: 'release_play_store'
-          subdirectory: daytistics/android
+          lane: 'release_app_store'
+          subdirectory: daytistics/ios
           options: '{
-            "version_number": "${{ github.event.inputs.version }}", 
-            "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "POSTHOG_API_KEY", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SENTRY_FLUTTER_DSN", "OPENPANEL_CLIENT_ID", "OPENPANEL_CLIENT_SECRET"]
+            "version_number": "${{ github.event.inputs.version }}" 
             }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
-          SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
-          SENTRY_FLUTTER_DSN: ${{ secrets.SENTRY_FLUTTER_DSN }}
-          OPENPANEL_CLIENT_ID: ${{ secrets.OPENPANEL_CLIENT_ID }}
-          OPENPANEL_CLIENT_SECRET: ${{ secrets.OPENPANEL_CLIENT_SECRET }}
+         
