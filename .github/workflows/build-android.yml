@@ -76,8 +76,7 @@ jobs:
           lane: 'release_play_store'
           subdirectory: daytistics/android
           options: '{
-            "version_number": "${{ github.event.inputs.version }}" 
+            "version_number": "${{ github.event.inputs.version }}"
             }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-         
