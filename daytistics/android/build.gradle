@@ -2,6 +2,14 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        exclusiveContent {
+            forRepository {
+                maven { url 'https://maven.scijava.org/content/repositories/public/' }
+            }
+            filter {
+                includeGroup "me.carda"
+            }
+        }
     }
 }
 
