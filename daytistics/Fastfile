@@ -43,17 +43,8 @@ lane :build_flutter_app do |options|
   command += " --config-only" if config_only
 
   # Fix for env_vars handling
-  env_vars = options[:env_vars] || []
-  
-  # Convert to array if it's a string (handling both single values and comma-separated lists)
-  if env_vars.is_a?(String)
-    env_vars = env_vars.split(',').map(&:strip)
-  end
-
-  env_vars.each do |key|
-    UI.message("Adding env var #{key} to binary")
-    command += " --dart-define=#{key}=#{ENV[key]}"
-  end
+  env_file = options[:env_file] || '.env'
+  command += " --env-file=#{env_file}"
 
 	UI.message("Building #{type} - version: #{version_number} - build: #{build_number} - commit: #{commit[:abbreviated_commit_hash]}")
 
