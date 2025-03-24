@@ -1,5 +1,4 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
@@ -54,17 +53,10 @@ class OAuthButton extends ConsumerWidget {
           if (context.mounted &&
               ref.watch(supabaseClientDependencyProvider).auth.currentUser !=
                   null) {
-            if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
-              await Navigator.pushReplacementNamed(
-                context,
-                '/',
-              );
-            } else {
-              await Navigator.pushReplacementNamed(
-                context,
-                '/',
-              );
-            }
+            await Navigator.pushReplacementNamed(
+              context,
+              '/',
+            );
           }
         },
         child: Row(

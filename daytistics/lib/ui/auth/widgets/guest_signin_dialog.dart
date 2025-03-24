@@ -1,4 +1,4 @@
-import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
@@ -34,11 +34,10 @@ class GuestSigninDialog extends ConsumerWidget {
             if (await maybeRedirectToConnectionErrorView(context)) return;
 
             final userService = ref.read(userServiceProvider);
-            final onboardingService = ref.read(onboardingServiceProvider);
 
             await userService.signInAnonymously();
 
-            if (context.mounted && !onboardingService.hasCompletedOnboarding) {
+            if (context.mounted && ref.read(userDependencyProvider) != null) {
               await Navigator.pushReplacementNamed(context, '/');
             }
           },

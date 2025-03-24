@@ -184,6 +184,9 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                 Navigator.of(context).pop();
                 if (mounted) onDone();
               },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.transparent,
+              ),
               child: const StyledText(
                 'Skip',
                 style: TextStyle(color: ColorSettings.error),
