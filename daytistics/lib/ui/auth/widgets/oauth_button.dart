@@ -54,17 +54,10 @@ class OAuthButton extends ConsumerWidget {
           if (context.mounted &&
               ref.watch(supabaseClientDependencyProvider).auth.currentUser !=
                   null) {
-            if (!ref.read(onboardingServiceProvider).hasCompletedOnboarding) {
-              await Navigator.pushReplacementNamed(
-                context,
-                '/',
-              );
-            } else {
-              await Navigator.pushReplacementNamed(
-                context,
-                '/',
-              );
-            }
+            await Navigator.pushReplacementNamed(
+              context,
+              '/',
+            );
           }
         },
         child: Row(
