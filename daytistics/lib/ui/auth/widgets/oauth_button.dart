@@ -1,5 +1,4 @@
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
 import 'package:daytistics/application/providers/services/user/user_service.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
