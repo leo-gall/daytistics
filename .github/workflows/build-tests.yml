@@ -1,54 +1,18 @@
-name: Release
+name: Build Tests
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
   FLUTTER_CHANNEL: "stable"
   RUBY_VERSION: "3.2.2"
 
 jobs:
-  deploy-supabase:
-    name: Deploy Supabase Functions, Migrations, and Config
-    runs-on: ubuntu-latest
-    steps:
-        - uses: actions/checkout@v2
-        - uses: supabase/setup-cli@v1
-          with:
-            version: latest
-
-        - name: Authenticate CLI
-          working-directory: ./daytistics
-          run: supabase login --no-browser --token ${{ secrets.SUPABASE_PERSONAL_ACCESS_TOKEN }}
-
-        - name: Link project
-          working-directory: ./daytistics
-          run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --password ${{ secrets.SUPABASE_DB_PASS }}
-
-        - name: Update config to use secrets
-          working-directory: ./daytistics
-          run: |
-            sed -i 's/env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)/${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}/g' supabase/config.toml
-            sed -i 's/env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)/${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET }}/g' supabase/config.toml
-            sed -i 's/env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)/${{ secrets.SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID }}/g' supabase/config.toml
-            sed -i 's/env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)/${{ secrets.SUPABASE_AUTH_EXTERNAL_APPLE_SECRET }}/g' supabase/config.toml
-
-
-        - name: Push config
-          working-directory: ./daytistics
-          run: echo "y" | supabase config push
-
-        - name: Push migrations
-          working-directory: ./daytistics
-          run: supabase db push --password ${{ secrets.SUPABASE_DB_PASS }}
-
-        - name: Deploy functions
-          working-directory: ./daytistics
-          run: supabase functions deploy
-
-  build-android:
-    name: Build & Deploy Android App to Play Store
+  build-test-android:
+    name: Test if Android Build is Successful
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -107,7 +71,7 @@ jobs:
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: 'release_play_store'
+          lane: 'build_without_deploy'
           subdirectory: daytistics/android
           options: '{
             "version_number": "${{ github.event.release.tag_name }}",
@@ -115,8 +79,8 @@ jobs:
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
 
-  build-ios:
-    name: Build & Deploy iOS App to TestFlight
+  build-test-ios:
+    name: Test if iOS Build is Successful
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
@@ -179,7 +143,7 @@ jobs:
 
       - uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: 'release_app_store'
+          lane: 'build_without_deploy'
           subdirectory: daytistics/ios
           options: '{
             "version_number": "${{ github.event.release.tag_name }}"
