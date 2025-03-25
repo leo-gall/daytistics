@@ -64,27 +64,27 @@ class NotificationService {
   }
 
   Future<void> scheduleDailyReminderNotification(TimeOfDay reminderTime) async {
-    await awesomeNotifications.isNotificationAllowed().then((isAllowed) {
+    await awesomeNotifications.isNotificationAllowed().then((isAllowed) async {
       if (!isAllowed) {
-        awesomeNotifications.requestPermissionToSendNotifications();
+        await awesomeNotifications.requestPermissionToSendNotifications();
       }
+    }).then((_) async {
+      await awesomeNotifications.cancel(NotificationSettings.dailyReminderId);
+      await awesomeNotifications.createNotification(
+        content: NotificationContent(
+          id: NotificationSettings.dailyReminderId,
+          channelKey: NotificationSettings.channelId,
+          title: 'Daily Reminder',
+          body: "Don't forget to log your day!",
+        ),
+        schedule: NotificationCalendar(
+          hour: reminderTime.hour,
+          minute: reminderTime.minute,
+          second: 0,
+          repeats: true,
+        ),
+      );
     });
-
-    await awesomeNotifications.cancel(NotificationSettings.dailyReminderId);
-    await awesomeNotifications.createNotification(
-      content: NotificationContent(
-        id: NotificationSettings.dailyReminderId,
-        channelKey: NotificationSettings.channelId,
-        title: 'Daily Reminder',
-        body: "Don't forget to log your day!",
-      ),
-      schedule: NotificationCalendar(
-        hour: reminderTime.hour,
-        minute: reminderTime.minute,
-        second: 0,
-        repeats: true,
-      ),
-    );
   }
 }
 
