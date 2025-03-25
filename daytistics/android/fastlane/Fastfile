@@ -61,4 +61,15 @@ platform :android do
       )
     end
   end
+
+  desc "Builds the application without deploying it"
+  lane :build_without_deploy do |options|
+    build(
+      no_codesign: options[:no_codesign],
+      config_only: options[:config_only],
+      build_number: options[:build_number],
+      version_number: options[:version_number],
+      env_vars: options[:env_vars] || []
+    )
+  end
 end
