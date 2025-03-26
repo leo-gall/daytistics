@@ -36,8 +36,7 @@ void main() {
         analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
       ],
     );
-    conversationsService =
-        container.read(conversationsServiceProvider.notifier);
+    conversationsService = container.read(conversationsServiceProvider);
   });
 
   tearDown(() async {
