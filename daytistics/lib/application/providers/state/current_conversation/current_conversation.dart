@@ -54,4 +54,12 @@ class CurrentConversation extends _$CurrentConversation {
       state = Conversation(title: title);
     }
   }
+
+  void unsetIfEqual(Conversation conversation) {
+    if (state == null) {
+      return;
+    } else if (state!.id == conversation.id) {
+      state = null;
+    }
+  }
 }

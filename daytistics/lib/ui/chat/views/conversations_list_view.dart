@@ -44,12 +44,11 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
     setState(() => _isLoading = true);
 
     try {
-      final conversations = await ref
-          .read(conversationsServiceProvider.notifier)
-          .fetchConversations(
-            offset: _currentPage * _pageSize,
-            amount: _pageSize,
-          );
+      final conversations =
+          await ref.read(conversationsServiceProvider).fetchConversations(
+                offset: _currentPage * _pageSize,
+                amount: _pageSize,
+              );
 
       setState(() {
         _currentPage++;
@@ -136,7 +135,7 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
       onDismissed: (direction) async {
         if (await maybeRedirectToConnectionErrorView(context)) return;
         await ref
-            .read(conversationsServiceProvider.notifier)
+            .read(conversationsServiceProvider)
             .deleteConversation(conversation);
         setState(() => _conversations.remove(conversation));
       },
