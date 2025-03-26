@@ -15,6 +15,7 @@ export async function hasExceededTokensToday(
 
   if (
     !dailyTokensResponse.error &&
+    dailyTokensResponse.data &&
     dailyTokensResponse.data.output_tokens >= maxTokens
   ) {
     return {
