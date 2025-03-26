@@ -1,4 +1,3 @@
-import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';

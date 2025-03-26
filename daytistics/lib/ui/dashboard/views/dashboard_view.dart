@@ -57,8 +57,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                         backgroundColor:
                             WidgetStateProperty.all<Color>(Colors.transparent),
                       ),
-                      child: const Text('Send Email',
-                          style: TextStyle(color: ColorSettings.primary)),
+                      child: const Text(
+                        'Send Email',
+                        style: TextStyle(color: ColorSettings.primary),
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
