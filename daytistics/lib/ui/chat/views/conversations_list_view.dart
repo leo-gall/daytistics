@@ -30,11 +30,10 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_loadMore);
-    _fetchInitialConversations();
-  }
 
-  Future<void> _fetchInitialConversations() async {
-    await _fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _fetchData();
+    });
   }
 
   Future<void> _fetchData() async {
