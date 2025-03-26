@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:daytistics/application/providers/services/onboarding/onboarding_service.dart';
+import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:showcaseview/showcaseview.dart';
@@ -22,9 +27,58 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   final GlobalKey _listConversations = GlobalKey();
   final GlobalKey _viewProfile = GlobalKey();
   bool _isShowcaseActive = false;
+  bool _helpDialogShown = false;
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Platform.isAndroid && !_helpDialogShown) {
+        final deviceInfo = DeviceInfoPlugin();
+
+        deviceInfo.androidInfo.then((androidInfo) async {
+          if (!context.mounted) return;
+          if (androidInfo.brand == 'HUAWEI' || androidInfo.brand == 'OnePlus') {
+            await showDialog<AlertDialog>(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('We Need Your Help!'),
+                  content: const Text(
+                    'It looks like you are using a Huawei or OnePlus device. We are experiencing some issues with our app on these devices and need your assistance to resolve them. If you are willing to help, please contact us via email.',
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () async {
+                        await openUrl(
+                          'mailto:contact@daytistics.com?subject=I%20can%20help%20with%20Huawei%20or%20OnePlus%20issue',
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all<Color>(Colors.transparent),
+                      ),
+                      child: const Text('Send Email',
+                          style: TextStyle(color: ColorSettings.primary)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        });
+
+        setState(() {
+          _helpDialogShown = true;
+        });
+      }
+    });
+
     return RequireAuth(
       child: ShowCaseWidget(
         builder: (context) {
