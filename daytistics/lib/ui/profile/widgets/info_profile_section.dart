@@ -21,12 +21,17 @@ class InfoProfileSection extends AbstractSettingsSection {
                 Icons.emoji_emotions,
                 color: ColorSettings.primary,
               ),
+              trailing: const Icon(
+                Icons.open_in_new,
+                color: ColorSettings.textLight,
+              ),
               title: const StyledText(
                 'About',
                 style: TextStyle(color: ColorSettings.textLight),
               ),
-              onPressed: (context) async =>
-                  Navigator.pushNamed(context, '/profile/about'),
+              onPressed: (context) async {
+                await openUrl('https://lgll.dev');
+              },
             ),
             SettingsTile.navigation(
               leading: const Icon(
@@ -44,9 +49,6 @@ class InfoProfileSection extends AbstractSettingsSection {
               ),
               onPressed: (context) async {
                 await openUrl('https://daytistics.com');
-                await ref
-                    .read(analyticsDependencyProvider)
-                    .trackEvent(eventName: 'newsletter_opened');
               },
             ),
           ],
