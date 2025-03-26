@@ -132,8 +132,9 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     late String reply;
     try {
       reply = await ref.read(conversationsServiceProvider).sendMessage(
-          _controller.text,
-          conversation: ref.read(currentConversationProvider));
+            _controller.text,
+            conversation: ref.read(currentConversationProvider),
+          );
     } on ServerException catch (e) {
       if (mounted) {
         showToast(
