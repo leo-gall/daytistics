@@ -88,6 +88,8 @@ platform :ios do
       )
     end
 
+    sh("rm -f #{lane_context[:XCODEBUILD_ARCHIVE]}/Products/Applications/Runner.app/Frameworks/AppFrameworkInfo.plist")
+
     upload_to_testflight(
       skip_waiting_for_build_processing: true
     )
