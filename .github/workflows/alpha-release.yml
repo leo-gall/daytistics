@@ -3,8 +3,11 @@ name: Alpha Release
 on:
   release:
     types:
-      - prereleased
+      - STAGINGreleased
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 env:
   FLUTTER_CHANNEL: "stable"
@@ -26,7 +29,7 @@ jobs:
 
         - name: Link project
           working-directory: ./daytistics
-          run: supabase link --project-ref ${{ secrets.SUPABASE_PRE_PROJECT_ID }} --password ${{ secrets.SUPABASE_PRE_DB_PASS }}
+          run: supabase link --project-ref ${{ secrets.SUPABASE_STAGING_PROJECT_ID }} --password ${{ secrets.SUPABASE_STAGING_DB_PASS }}
 
         - name: Update config to use secrets
           working-directory: ./daytistics
@@ -43,7 +46,7 @@ jobs:
 
         - name: Push migrations
           working-directory: ./daytistics
-          run: supabase db push --password ${{ secrets.SUPABASE_PRE_DB_PASS }}
+          run: supabase db push --password ${{ secrets.SUPABASE_STAGING_DB_PASS }}
 
         - name: Deploy functions
           working-directory: ./daytistics
