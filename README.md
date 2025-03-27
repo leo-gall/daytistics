@@ -3,6 +3,9 @@
 
 # Daytistics
 
+> [!IMPORTANT]
+> **Code Freeze**: Except for critical bugs that occur in the final testing phase, no issues will be merged until the 1.0 release.
+
 Daytistics is a cross-platform mobile app designed to improve the well-being of its users by analyzing their daily activities using modern AI technologies. It is built with Dart, Flutter and Supabase. It currently has the following features:
 
 - [x] ⛳ Activity & Well-being Tracking
