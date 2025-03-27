@@ -31,69 +31,65 @@ platform :ios do
   end
 
 
-  desc "Release a new build to Apple Store"
-  lane :release_app_store do |options|
-    verify_env(envs: [
-      "ASC_KEY_ID",
-      "ASC_ISSUER_ID",
-      "ASC_KEY_P8_BASE64",
-      "APP_BUNDLE_ID",
-      "MATCH_PASSWORD",
-      "MATCH_GIT_BASIC_AUTHORIZATION",
-    ])
+desc "Release a new build to Apple Store"
+lane :release_app_store do |options|
+  verify_env(envs: [
+    "ASC_KEY_ID",
+    "ASC_ISSUER_ID",
+    "ASC_KEY_P8_BASE64",
+    "APP_BUNDLE_ID",
+    "MATCH_PASSWORD",
+    "MATCH_GIT_BASIC_AUTHORIZATION",
+  ])
 
-    authenticate_apple_store
+  authenticate_apple_store
 
-    build_number = options.fetch(:build_number, get_build_number('appstore'))
-    version_number = options.fetch(:version_number, get_version_from_pubspec())
+  build_number = options.fetch(:build_number, get_build_number('appstore'))
+  version_number = options.fetch(:version_number, get_version_from_pubspec())
 
-    # Verify version number is correct
-    if !is_ci && (!options[:version_number])
-      continue = UI.confirm("Deploying version #{version_number} (from pubspec.yaml) to App Store. Continue?")
+  if !is_ci && (!options[:version_number])
+    continue = UI.confirm("Deploying version #{version_number} (from pubspec.yaml) to App Store. Continue?")
+    UI.user_error!("Aborted") unless continue
+  end
 
-      unless continue
-        UI.user_error!("Aborted")
-      end
-    end
+  UI.message("Syncing certificates and profiles")
+  setup_ci if is_ci
 
-    # Sync certificates and profiles using match
-    UI.message("Syncing certificates and profiles")
-    
-    if is_ci
-      UI.message("CI detected. Setting up CI environment")
-      setup_ci
-    end
+  sync_code_signing(
+    type: "appstore",
+    readonly: is_ci,
+  )
 
-    sync_code_signing(
-      type: "appstore",
-      readonly: is_ci,
-    )
+  build_ipa(
+    build_number: build_number,
+    version_number: version_number,
+    env_vars: options[:env_vars] || []
+  )
 
-    build_ipa(
-      build_number: build_number,
-      version_number: version_number,
-      env_vars: options[:env_vars] || []
-    )
+  build_app(
+    skip_build_archive: true,
+    archive_path: "../build/ios/archive/Runner.xcarchive",
+  )
 
-    build_app(
-      skip_build_archive: true,
-      archive_path: "../build/ios/archive/Runner.xcarchive",
-    )
-
-    # If GoogleService-Info.plist exists and Pods/FirebaseCrashlytics exists
-    # Upload symbols to Firebase Crashlytics
-    if File.file?("../ios/Runner/GoogleService-Info.plist") && File.directory?("../ios/Pods/FirebaseCrashlytics")
-      upload_symbols_to_crashlytics(
-        gsp_path: "../ios/Runner/GoogleService-Info.plist"
-      )
-    end
-
-    sh("rm -f #{lane_context[:XCODEBUILD_ARCHIVE]}/Products/Applications/Runner.app/Frameworks/AppFrameworkInfo.plist")
-
-    upload_to_testflight(
-      skip_waiting_for_build_processing: true
+  if File.file?("../ios/Runner/GoogleService-Info.plist") && File.directory?("../ios/Pods/FirebaseCrashlytics")
+    upload_symbols_to_crashlytics(
+      gsp_path: "../ios/Runner/GoogleService-Info.plist"
     )
   end
+
+  # Remove AppFrameworkInfo.plist from .ipa before upload
+  ipa_path = lane_context[:IPA_OUTPUT_PATH]
+  sh("mkdir -p temp_payload")
+  sh("unzip -q '#{ipa_path}' -d temp_payload")
+  sh("rm -f temp_payload/Payload/Runner.app/Frameworks/AppFrameworkInfo.plist")
+  sh("cd temp_payload && zip -qr fixed.ipa Payload")
+  sh("mv temp_payload/fixed.ipa '#{ipa_path}'")
+  sh("rm -rf temp_payload")
+
+  upload_to_testflight(
+    skip_waiting_for_build_processing: true
+  )
+end
   
   desc "Builds the application without deploying it"
   lane :build_without_deploy do |options|
