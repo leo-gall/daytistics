@@ -2,7 +2,8 @@ name: Release
 
 on:
   release:
-    types: [published]
+    types: 
+     - released
 
 env:
   FLUTTER_CHANNEL: "stable"
