@@ -30,11 +30,10 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
   void initState() {
     super.initState();
     _scrollController = ScrollController()..addListener(_loadMore);
-    _fetchInitialConversations();
-  }
 
-  Future<void> _fetchInitialConversations() async {
-    await _fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _fetchData();
+    });
   }
 
   Future<void> _fetchData() async {
@@ -44,12 +43,11 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
     setState(() => _isLoading = true);
 
     try {
-      final conversations = await ref
-          .read(conversationsServiceProvider.notifier)
-          .fetchConversations(
-            offset: _currentPage * _pageSize,
-            amount: _pageSize,
-          );
+      final conversations =
+          await ref.read(conversationsServiceProvider).fetchConversations(
+                offset: _currentPage * _pageSize,
+                amount: _pageSize,
+              );
 
       setState(() {
         _currentPage++;
@@ -136,7 +134,7 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
       onDismissed: (direction) async {
         if (await maybeRedirectToConnectionErrorView(context)) return;
         await ref
-            .read(conversationsServiceProvider.notifier)
+            .read(conversationsServiceProvider)
             .deleteConversation(conversation);
         setState(() => _conversations.remove(conversation));
       },
