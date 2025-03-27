@@ -109,6 +109,16 @@ platform :ios do
     build_number = options.fetch(:build_number, get_build_number('appstore'))
     version_number = options.fetch(:version_number, get_version_from_pubspec())
 
+    if is_ci
+      UI.message("CI detected. Setting up CI environment")
+      setup_ci
+    end
+
+    sync_code_signing(
+      type: "appstore",
+      readonly: is_ci,
+    )
+
     build_ipa(
       build_number: build_number,
       version_number: version_number,
