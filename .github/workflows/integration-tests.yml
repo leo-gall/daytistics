@@ -1,58 +1,13 @@
-name: Quality Checks 
+name: Integration Tests
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  analyze:
-    name: Analyzing Dart and TypeScript code
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
-      - name: Install dependencies
-        working-directory: ./daytistics
-        run: flutter pub get
-      - name: Create .env file
-        working-directory: ./daytistics
-        run: touch .env
-      - name: Run built-in linter (Flutter)
-        working-directory: ./daytistics
-        run: flutter analyze
-      - name: Run custom linter (Flutter)
-        working-directory: ./daytistics
-        run: dart run custom_lint
-      - name: Run linter (Deno)
-        working-directory: ./daytistics
-        run: deno lint
-
-  flutter-unit-tests:
-    name: Flutter Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-
-      - name: Install dependencies
-        working-directory: ./daytistics
-        run: flutter pub get
-      - name: Create .env file
-        working-directory: ./daytistics
-        run: touch .env
-      - name: Run tests (Flutter)
-        working-directory: ./daytistics
-        run: flutter test
-
-  deno-e2e-tests:
-    name: Deno End-to-End Tests
+  supabase-int-tests:
+    name: Supabase Integration Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
