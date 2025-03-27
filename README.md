@@ -3,13 +3,6 @@
 
 # Daytistics
 
-![Testing Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/checks.yml?branch=main&label=testing)
-![Android Build Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/build-android.yml?branch=main&label=build-android)
-![iOS Build Status](https://img.shields.io/github/actions/workflow/status/leo-gall/daytistics/build-ios.yml?branch=main&label=build-ios)
-
-
-
-
 Daytistics is a cross-platform mobile app designed to improve the well-being of its users by analyzing their daily activities using modern AI technologies. It is built with Dart, Flutter and Supabase. It currently has the following features:
 
 - [x] ⛳ Activity & Well-being Tracking

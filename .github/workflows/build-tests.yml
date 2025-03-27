@@ -74,7 +74,7 @@ jobs:
           lane: 'build_without_deploy'
           subdirectory: daytistics/android
           options: '{
-            "version_number": "${{ github.event.release.tag_name }}",
+            "version_number": "${{ github.event.release.tag_name }}"
             }'
         env:
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
