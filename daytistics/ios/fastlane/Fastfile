@@ -93,41 +93,17 @@ platform :ios do
     )
   end
   
-  desc "Builds the application without deploying it"
-  lane :build_without_deploy do |options|
-    verify_env(envs: [
-      "ASC_KEY_ID",
-      "ASC_ISSUER_ID",
-      "ASC_KEY_P8_BASE64",
-      "APP_BUNDLE_ID",
-      "MATCH_PASSWORD",
-      "MATCH_GIT_BASIC_AUTHORIZATION",
-    ])
+  # This is a work in progress, requiring ad-hoc export method
+  # desc "Release to Play Store using Firebase App Distribution"
+  # lane :release_to_firebase do |options|
+  #   begin
+  #     build_ipa
 
-    authenticate_apple_store
-
-    build_number = options.fetch(:build_number, get_build_number('appstore'))
-    version_number = options.fetch(:version_number, get_version_from_pubspec())
-
-    if is_ci
-      UI.message("CI detected. Setting up CI environment")
-      setup_ci
-    end
-
-    sync_code_signing(
-      type: "appstore",
-      readonly: is_ci,
-    )
-
-    build_ipa(
-      build_number: build_number,
-      version_number: version_number,
-      env_vars: options[:env_vars] || []
-    )
-
-    build_app(
-      skip_build_archive: true,
-      archive_path: "../build/ios/archive/Runner.xcarchive",
-    )
-  end
+  #     firebase_app_distribution(
+  #       app: ENV["FIREBASE_APP_ID"],
+  #       service_credentials_file: google_service_account_json_path,
+  #       ipa_path: "../build/ios/Runner.ipa"
+  #     )
+  #   end
+  # end
 end
