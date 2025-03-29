@@ -33,7 +33,7 @@ void main() {
     mockSupabase = SupabaseClient(
       'https://mock.supabase.co', // Does not matter what URL you pass here as long as it's a valid URL
       'fakeAnonKey', // Does not matter what string you pass here
-      httpClient: MockSupabaseHttpClient(),
+      httpClient: mockHttpClient,
     );
     mockUser = User(
       id: const Uuid().v4(),
@@ -249,6 +249,43 @@ void main() {
       final currentDaytistic = container.read(currentDaytisticProvider);
       expect(currentDaytistic!.id, createdDaytistic.id);
       expect(currentDaytistic.date, createdDaytistic.date);
+    });
+  });
+
+  group('fetchAll', () {
+    test('should return all daytistics', () async {
+      // arrange
+      final DateTime date1 = DateTime.now();
+      final DateTime date2 = DateTime.now().add(const Duration(days: 1));
+
+      final Daytistic daytistic1 = Daytistic(date: date1);
+      final Daytistic daytistic2 = Daytistic(date: date2);
+
+      await mockSupabase.from(SupabaseSettings.daytisticsTableName).insert(
+            daytistic1.toSupabase(userId: mockUser.id),
+          );
+
+      await mockSupabase.from(SupabaseSettings.daytisticsTableName).insert(
+            daytistic2.toSupabase(userId: mockUser.id),
+          );
+
+      // act
+      final List<Daytistic> fetchedDaytistics =
+          await daytisticsService.fetchAll();
+
+      // assert
+      expect(fetchedDaytistics.length, 2);
+      expect(fetchedDaytistics[0].date, date1);
+      expect(fetchedDaytistics[1].date, date2);
+    });
+
+    test('should return an empty list when no daytistics exist', () async {
+      // act
+      final List<Daytistic> fetchedDaytistics =
+          await daytisticsService.fetchAll();
+
+      // assert
+      expect(fetchedDaytistics, isEmpty);
     });
   });
 }

@@ -101,4 +101,18 @@ class DaytisticsService extends _$DaytisticsService {
 
     return daytistic;
   }
+
+  Future<List<Daytistic>> fetchAll() async {
+    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
+
+    final List<Map<String, dynamic>> daytisticsMap = await supabase
+        .from(SupabaseSettings.daytisticsTableName)
+        .select()
+        .eq('user_id', ref.read(userDependencyProvider)!.id);
+
+    final List<Daytistic> daytistics =
+        daytisticsMap.map(Daytistic.fromSupabase).toList();
+
+    return daytistics;
+  }
 }
