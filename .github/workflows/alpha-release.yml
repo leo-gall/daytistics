@@ -149,20 +149,16 @@ jobs:
         working-directory: ./daytistics
         run: flutter pub get
 
-      - name: Update iOS Deployment Target in Podfile
-        working-directory: daytistics/ios
-        run: |
-          sed -i '' "s/platform :ios, '9.0'/platform :ios, '11.0'/g" Podfile
-
-      - name: Remove Pods and Podfile.lock
+      - name: Install Bundler Gems
         working-directory: 'daytistics/ios'
         run: |
-          rm -rf Pods
-          rm Podfile.lock
+          bundle install
+          bundle exec pod repo update
 
-      - name: Install Pods
+      - name: Pod Install
         working-directory: 'daytistics/ios'
         run: bundle exec pod install
+
 
       - name: Clean Flutter build
         working-directory: ./daytistics
