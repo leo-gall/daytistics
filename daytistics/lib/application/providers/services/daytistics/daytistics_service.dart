@@ -4,7 +4,7 @@ import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -53,7 +53,7 @@ class DaytisticsService extends _$DaytisticsService {
 
     daytistic.activities = activitiesMap.map(Activity.fromSupabase).toList();
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
+    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(daytistic);
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'daytistic_fetched',
@@ -97,7 +97,7 @@ class DaytisticsService extends _$DaytisticsService {
       );
     }
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
+    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(daytistic);
 
     return daytistic;
   }

@@ -2,7 +2,7 @@ import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class ActivitiesService extends _$ActivitiesService {
       throw InvalidInputException('Start time cannot be the same as end time');
     }
 
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
 
     final startTimeAsDateTime = DateTime(
       daytistic.date.year,
@@ -72,7 +72,9 @@ class ActivitiesService extends _$ActivitiesService {
       activities: [...daytistic.activities, activity],
     );
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(
+          updatedDaytistic,
+        );
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_added',
@@ -85,7 +87,7 @@ class ActivitiesService extends _$ActivitiesService {
   }
 
   Future<void> deleteActivity(Activity activity) async {
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
 
     if (!await existsActivity(activity)) {
       throw Exception('Activity does not exist');
@@ -104,7 +106,9 @@ class ActivitiesService extends _$ActivitiesService {
     final Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(
+          updatedDaytistic,
+        );
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_deleted',
@@ -122,7 +126,7 @@ class ActivitiesService extends _$ActivitiesService {
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
+    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
 
     if (name == null && startTime == null && endTime == null) {
       throw InvalidInputException('No changes to update');
@@ -186,7 +190,9 @@ class ActivitiesService extends _$ActivitiesService {
     final Daytistic updatedDaytistic =
         daytistic.copyWith(activities: updatedActivities);
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(
+          updatedDaytistic,
+        );
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_updated',

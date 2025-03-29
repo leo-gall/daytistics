@@ -3,7 +3,7 @@ import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,6 @@ void main() {
   setUpAll(() {
     fakeAnalytics = FakeAnalytics();
     mockHttpClient = MockSupabaseHttpClient();
-
     mockSupabase = SupabaseClient(
       'https://mock.supabase.co',
       'fakeAnonKey',
@@ -38,15 +37,19 @@ void main() {
       overrides: [
         supabaseClientDependencyProvider.overrideWith((ref) => mockSupabase),
         analyticsDependencyProvider.overrideWith((ref) => fakeAnalytics),
-        currentDaytisticProvider.overrideWith(CurrentDaytistic.new),
       ],
     );
-    container.read(currentDaytisticProvider.notifier).daytistic =
-        Daytistic(date: DateTime(2025, 3), activities: []);
+    // Initialisiere den aktuellen Daytistic mit leeren Aktivitäten
+    final initialDaytistic = Daytistic(date: DateTime(2025, 3), activities: []);
+    container
+        .read(daytisticsProvider.notifier)
+        .updateCurrentDaytistic(initialDaytistic);
+
     activitiesService = container.read(activitiesServiceProvider.notifier);
   });
 
   tearDown(() async {
+    container.dispose();
     mockHttpClient.reset();
   });
 
@@ -56,31 +59,27 @@ void main() {
 
   group('addActivity', () {
     test('should add an activity to a daytistic', () async {
-      // Act
       await activitiesService.addActivity(
         name: 'Running',
         startTime: const TimeOfDay(hour: 9, minute: 0),
         endTime: const TimeOfDay(hour: 10, minute: 0),
       );
 
-      // Assert
-      // Check that activity was inserted into database
       final dbResult = await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
           .select();
       expect(dbResult.length, 1);
       expect(dbResult[0]['name'], 'Running');
 
-      // Check that the current daytistic was updated
-      final updatedDaytistic = container.read(currentDaytisticProvider);
-      expect(updatedDaytistic!.activities.length, 1);
+      final updatedDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
+      expect(updatedDaytistic.activities.length, 1);
       expect(updatedDaytistic.activities[0].name, 'Running');
 
       expect(fakeAnalytics.capturedEvents.contains('activity_added'), isTrue);
     });
 
     test('should throw when name is empty', () async {
-      // Assert
       expect(
         () => activitiesService.addActivity(
           name: '',
@@ -98,7 +97,6 @@ void main() {
     });
 
     test('should throw when start time is after end time', () async {
-      // Assert
       expect(
         () => activitiesService.addActivity(
           name: 'Running',
@@ -116,7 +114,6 @@ void main() {
     });
 
     test('should throw when start time equals end time', () async {
-      // Assert
       expect(
         () => activitiesService.addActivity(
           name: 'Running',
@@ -136,32 +133,29 @@ void main() {
 
   group('deleteActivity', () {
     test('should delete an activity', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final activity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
 
-      // Add the activity to the database and update the daytistic
       await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
           .insert(activity.toSupabase());
 
-      final updatedDaytistic = daytistic.copyWith(
+      final updatedDaytistic = currentDaytistic.copyWith(
         activities: [activity],
       );
-      container.read(currentDaytisticProvider.notifier).daytistic =
-          updatedDaytistic;
+      container
+          .read(daytisticsProvider.notifier)
+          .updateCurrentDaytistic(updatedDaytistic);
 
-      // Act
       await activitiesService.deleteActivity(activity);
 
-      // Assert
-      // Check that activity was deleted from database
       expect(
         () async => await mockSupabase
             .from(SupabaseSettings.activitiesTableName)
@@ -170,25 +164,24 @@ void main() {
         throwsA(isA<StateError>()),
       );
 
-      // Check that the current daytistic was updated
-      final finalDaytistic = container.read(currentDaytisticProvider);
-      expect(finalDaytistic!.activities.length, 0);
+      final finalDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
+      expect(finalDaytistic.activities.length, 0);
 
       expect(fakeAnalytics.capturedEvents.contains('activity_deleted'), isTrue);
     });
 
     test('should throw when activity does not exist', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final nonExistentActivity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
 
-      // Assert
       expect(
         () => activitiesService.deleteActivity(nonExistentActivity),
         throwsA(
@@ -204,35 +197,32 @@ void main() {
 
   group('updateActivity', () {
     test('should update an activity name', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final activity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
 
-      // Add the activity to the database and update the daytistic
       await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
           .insert(activity.toSupabase());
 
-      final updatedDaytistic = daytistic.copyWith(
+      final updatedDaytistic = currentDaytistic.copyWith(
         activities: [activity],
       );
-      container.read(currentDaytisticProvider.notifier).daytistic =
-          updatedDaytistic;
+      container
+          .read(daytisticsProvider.notifier)
+          .updateCurrentDaytistic(updatedDaytistic);
 
-      // Act
       await activitiesService.updateActivity(
         id: activity.id,
         name: 'Swimming',
       );
 
-      // Assert
-      // Check that activity was updated in database
       final dbResult = await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
           .select()
@@ -240,47 +230,45 @@ void main() {
           .single();
       expect(dbResult['name'], 'Swimming');
 
-      // Check that the current daytistic was updated
-      final finalDaytistic = container.read(currentDaytisticProvider);
-      expect(finalDaytistic!.activities.length, 1);
+      final finalDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
+      expect(finalDaytistic.activities.length, 1);
       expect(finalDaytistic.activities[0].name, 'Swimming');
 
       expect(fakeAnalytics.capturedEvents.contains('activity_updated'), isTrue);
     });
 
     test('should update activity time', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final activity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
 
-      // Add the activity to the database and update the daytistic
       await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
           .insert(activity.toSupabase());
 
-      final updatedDaytistic = daytistic.copyWith(
+      final updatedDaytistic = currentDaytistic.copyWith(
         activities: [activity],
       );
-      container.read(currentDaytisticProvider.notifier).daytistic =
-          updatedDaytistic;
+      container
+          .read(daytisticsProvider.notifier)
+          .updateCurrentDaytistic(updatedDaytistic);
 
-      // Act
       await activitiesService.updateActivity(
         id: activity.id,
         startTime: const TimeOfDay(hour: 8, minute: 0),
         endTime: const TimeOfDay(hour: 11, minute: 0),
       );
 
-      // Assert
-      // Check that the current daytistic was updated with new times
-      final finalDaytistic = container.read(currentDaytisticProvider);
-      expect(finalDaytistic!.activities[0].startTime.hour, 8);
+      final finalDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
+      expect(finalDaytistic.activities[0].startTime.hour, 8);
       expect(finalDaytistic.activities[0].startTime.minute, 0);
       expect(finalDaytistic.activities[0].endTime.hour, 11);
       expect(finalDaytistic.activities[0].endTime.minute, 0);
@@ -335,12 +323,12 @@ void main() {
 
   group('existsActivity', () {
     test('should return true when activity exists', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final activity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
@@ -349,29 +337,23 @@ void main() {
           .from(SupabaseSettings.activitiesTableName)
           .insert(activity.toSupabase());
 
-      // Act
       final result = await activitiesService.existsActivity(activity);
-
-      // Assert
       expect(result, isTrue);
     });
 
     test('should return false when activity does not exist', () async {
-      final daytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic!;
 
-      // Arrange
       final nonExistentActivity = Activity(
         name: 'Running',
-        daytisticId: daytistic!.id,
+        daytisticId: currentDaytistic.id,
         startTime: DateTime(2025, 3, 1, 9),
         endTime: DateTime(2025, 3, 1, 10),
       );
 
-      // Act
       final result =
           await activitiesService.existsActivity(nonExistentActivity);
-
-      // Assert
       expect(result, isFalse);
     });
   });

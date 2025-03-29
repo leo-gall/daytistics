@@ -5,7 +5,7 @@ import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,10 +29,9 @@ void main() {
     mockHttpClient = MockSupabaseHttpClient();
     fakeAnalytics = FakeAnalytics();
 
-    // Pass the mock client to the Supabase client
     mockSupabase = SupabaseClient(
-      'https://mock.supabase.co', // Does not matter what URL you pass here as long as it's a valid URL
-      'fakeAnonKey', // Does not matter what string you pass here
+      'https://mock.supabase.co',
+      'fakeAnonKey',
       httpClient: mockHttpClient,
     );
     mockUser = User(
@@ -56,6 +55,7 @@ void main() {
   });
 
   tearDown(() async {
+    container.dispose();
     mockHttpClient.reset();
   });
 
@@ -66,8 +66,6 @@ void main() {
   group('fetchDaytistic', () {
     test('should return a daytistic without wellbeing and activities',
         () async {
-      // arrange
-
       final Daytistic daytistic = Daytistic(
         date: DateTime.now(),
       );
@@ -83,13 +81,9 @@ void main() {
             ).toSupabase(),
           );
 
-      // act
-
       final fetchedDaytistic = await daytisticsService.fetchDaytistic(
         daytistic.date,
       );
-
-      // assert
 
       expect(fetchedDaytistic.id, daytistic.id);
       expect(fetchedDaytistic.date, daytistic.date);
@@ -103,8 +97,6 @@ void main() {
     });
 
     test('should return a daytistic with wellbeing and activities', () async {
-      // arrange
-
       final Daytistic daytistic = Daytistic(
         date: DateTime.now(),
       );
@@ -133,13 +125,9 @@ void main() {
             activity.toSupabase(),
           );
 
-      // act
-
       final fetchedDaytistic = await daytisticsService.fetchDaytistic(
         daytistic.date,
       );
-
-      // assert
 
       expect(fetchedDaytistic.id, daytistic.id);
       expect(fetchedDaytistic.date, daytistic.date);
@@ -153,11 +141,7 @@ void main() {
 
     test('should throw a NotFoundException when no daytistic is found',
         () async {
-      // arrange
-
       final DateTime date = DateTime.now();
-
-      // assert
 
       expect(
         () async => daytisticsService.fetchDaytistic(date),
@@ -169,7 +153,6 @@ void main() {
   group('fetchOrAdd', () {
     test('should return existing daytistic when one exists for the given date',
         () async {
-      // arrange
       final Daytistic existingDaytistic = Daytistic(
         date: DateTime.now(),
       );
@@ -187,12 +170,10 @@ void main() {
             wellbeing.toSupabase(),
           );
 
-      // act
       final fetchedDaytistic = await daytisticsService.fetchOrAdd(
         existingDaytistic.date,
       );
 
-      // assert
       expect(fetchedDaytistic.id, existingDaytistic.id);
       expect(fetchedDaytistic.date, existingDaytistic.date);
       expect(fetchedDaytistic.wellbeing!.daytisticId, wellbeing.daytisticId);
@@ -202,18 +183,14 @@ void main() {
     test(
         'should create new daytistic with wellbeing when none exists for the date',
         () async {
-      // arrange
       final DateTime date = DateTime.now();
 
-      // act
       final createdDaytistic = await daytisticsService.fetchOrAdd(date);
 
-      // assert
       expect(createdDaytistic.date, date);
       expect(createdDaytistic.wellbeing, isNotNull);
       expect(createdDaytistic.wellbeing!.daytisticId, createdDaytistic.id);
 
-      // Verify the daytistic was actually inserted into the database
       final daytisticInDb = await mockSupabase
           .from(SupabaseSettings.daytisticsTableName)
           .select()
@@ -223,7 +200,6 @@ void main() {
       expect(DateTime.parse(daytisticInDb['date'] as String), date);
       expect(daytisticInDb['user_id'], mockUser.id);
 
-      // Verify the wellbeing was actually inserted into the database
       final wellbeingInDb = await mockSupabase
           .from(SupabaseSettings.wellbeingsTableName)
           .select()
@@ -239,14 +215,12 @@ void main() {
 
     test('should set the created daytistic as current in the provider',
         () async {
-      // arrange
       final DateTime date = DateTime.now();
 
-      // act
       final createdDaytistic = await daytisticsService.fetchOrAdd(date);
 
-      // assert
-      final currentDaytistic = container.read(currentDaytisticProvider);
+      final currentDaytistic =
+          container.read(daytisticsProvider).currentDaytistic;
       expect(currentDaytistic!.id, createdDaytistic.id);
       expect(currentDaytistic.date, createdDaytistic.date);
     });
@@ -254,7 +228,6 @@ void main() {
 
   group('fetchAll', () {
     test('should return all daytistics', () async {
-      // arrange
       final DateTime date1 = DateTime.now();
       final DateTime date2 = DateTime.now().add(const Duration(days: 1));
 
@@ -269,22 +242,18 @@ void main() {
             daytistic2.toSupabase(userId: mockUser.id),
           );
 
-      // act
       final List<Daytistic> fetchedDaytistics =
           await daytisticsService.fetchAll();
 
-      // assert
       expect(fetchedDaytistics.length, 2);
       expect(fetchedDaytistics[0].date, date1);
       expect(fetchedDaytistics[1].date, date2);
     });
 
     test('should return an empty list when no daytistics exist', () async {
-      // act
       final List<Daytistic> fetchedDaytistics =
           await daytisticsService.fetchAll();
 
-      // assert
       expect(fetchedDaytistics, isEmpty);
     });
   });

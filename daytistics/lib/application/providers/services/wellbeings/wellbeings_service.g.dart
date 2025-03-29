@@ -6,7 +6,7 @@ part of 'wellbeings_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$wellbeingsServiceHash() => r'4745dc2ebbf2682b6bf5377f5d57d580cdc1c132';
+String _$wellbeingsServiceHash() => r'9247692a4bd4684b22d06b59a83e0da2815dbf9e';
 
 /// See also [WellbeingsService].
 @ProviderFor(WellbeingsService)

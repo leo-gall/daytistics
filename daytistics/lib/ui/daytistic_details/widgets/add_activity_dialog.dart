@@ -1,6 +1,6 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
@@ -26,7 +26,8 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
 
   @override
   void initState() {
-    final Daytistic? currentDaytistic = ref.read(currentDaytisticProvider);
+    final Daytistic? currentDaytistic =
+        ref.read(daytisticsProvider).currentDaytistic;
 
     if (currentDaytistic == null) {
       _startTime = TimeOfDay.now();

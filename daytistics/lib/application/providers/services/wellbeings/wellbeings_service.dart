@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,7 +21,9 @@ class WellbeingsService extends _$WellbeingsService {
         .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.wellbeingsTableName)
         .upsert(wellbeing.toSupabase());
-    ref.read(currentDaytisticProvider.notifier).wellbeing = wellbeing;
+    ref
+        .read(daytisticsProvider.notifier)
+        .updateCurrentDaytisticWellbeing(wellbeing);
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'wellbeing_updated',

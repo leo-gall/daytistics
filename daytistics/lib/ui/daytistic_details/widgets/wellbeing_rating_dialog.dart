@@ -1,7 +1,7 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/services/wellbeings/wellbeings_service.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
@@ -26,7 +26,7 @@ class WellbeingRatingDialog extends ConsumerStatefulWidget {
 class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
   @override
   Widget build(BuildContext context) {
-    final Daytistic? daytistic = ref.watch(currentDaytisticProvider);
+    final Daytistic? daytistic = ref.watch(daytisticsProvider).currentDaytistic;
     if (daytistic == null) {
       return const SizedBox(); // Falls kein Daytistic geladen ist, wird ein leeres Widget zurückgegeben.
     }

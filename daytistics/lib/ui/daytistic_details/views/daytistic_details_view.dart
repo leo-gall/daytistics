@@ -1,5 +1,5 @@
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/time.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
@@ -26,7 +26,7 @@ class DaytisticDetailsView extends ConsumerStatefulWidget {
 class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
   @override
   Widget build(BuildContext context) {
-    final Daytistic? daytistic = ref.watch(currentDaytisticProvider);
+    final Daytistic? daytistic = ref.watch(daytisticsProvider).currentDaytistic;
 
     return Scaffold(
       appBar: AppBar(
