@@ -220,39 +220,40 @@ void main() {
       final createdDaytistic = await daytisticsService.fetchOrAdd(date);
 
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!;
       expect(currentDaytistic!.id, createdDaytistic.id);
       expect(currentDaytistic.date, createdDaytistic.date);
     });
   });
 
-  group('fetchAll', () {
-    test('should return all daytistics', () async {
-      final DateTime date1 = DateTime.now();
-      final DateTime date2 = DateTime.now().add(const Duration(days: 1));
+  group('fetchRecentDaytistics', () {
+    test('should return the last 7 daytistics from today', () async {
+      final List<DateTime> dates = List.generate(
+        10,
+        (index) => DateTime.now().subtract(Duration(days: index)),
+      );
 
-      final Daytistic daytistic1 = Daytistic(date: date1);
-      final Daytistic daytistic2 = Daytistic(date: date2);
+      final List<Daytistic> daytistics =
+          dates.map((date) => Daytistic(date: date)).toList();
 
-      await mockSupabase.from(SupabaseSettings.daytisticsTableName).insert(
-            daytistic1.toSupabase(userId: mockUser.id),
-          );
-
-      await mockSupabase.from(SupabaseSettings.daytisticsTableName).insert(
-            daytistic2.toSupabase(userId: mockUser.id),
-          );
+      for (final daytistic in daytistics) {
+        await mockSupabase.from(SupabaseSettings.daytisticsTableName).insert(
+              daytistic.toSupabase(userId: mockUser.id),
+            );
+      }
 
       final List<Daytistic> fetchedDaytistics =
-          await daytisticsService.fetchAll();
+          await daytisticsService.fetchRecentDaytistics();
 
-      expect(fetchedDaytistics.length, 2);
-      expect(fetchedDaytistics[0].date, date1);
-      expect(fetchedDaytistics[1].date, date2);
+      expect(fetchedDaytistics.length, 7);
+      for (int i = 0; i < 7; i++) {
+        expect(fetchedDaytistics[i].date, dates[i]);
+      }
     });
 
     test('should return an empty list when no daytistics exist', () async {
       final List<Daytistic> fetchedDaytistics =
-          await daytisticsService.fetchAll();
+          await daytisticsService.fetchRecentDaytistics();
 
       expect(fetchedDaytistics, isEmpty);
     });

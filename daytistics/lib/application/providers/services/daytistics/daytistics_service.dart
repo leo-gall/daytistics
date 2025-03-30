@@ -14,7 +14,7 @@ part 'daytistics_service.g.dart';
 
 class DaytisticsServiceState {}
 
-@riverpod
+@Riverpod(keepAlive: true)
 class DaytisticsService extends _$DaytisticsService {
   @override
   DaytisticsServiceState build() {
@@ -23,6 +23,25 @@ class DaytisticsService extends _$DaytisticsService {
 
   Future<Daytistic> fetchDaytistic(DateTime date) async {
     final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
+
+    final daytistics = ref.read(daytisticsProvider).requireValue.daytistics;
+
+    final bool isCached = daytistics.any(
+      (d) =>
+          d.date.day == date.day &&
+          d.date.month == date.month &&
+          d.date.year == date.year,
+    );
+
+    if (isCached) {
+      final Daytistic cachedDaytistic = ref
+          .read(daytisticsProvider)
+          .requireValue
+          .daytistics
+          .firstWhere((d) => d.date == date);
+
+      return cachedDaytistic;
+    }
 
     final daytisticMap = await supabase
         .from(SupabaseSettings.daytisticsTableName)
@@ -62,6 +81,8 @@ class DaytisticsService extends _$DaytisticsService {
       },
     );
 
+    ref.read(daytisticsProvider.notifier).addDaytistic(daytistic);
+
     return daytistic;
   }
 
@@ -95,20 +116,25 @@ class DaytisticsService extends _$DaytisticsService {
           'date': date.toIso8601String(),
         },
       );
-    }
 
-    ref.read(daytisticsProvider.notifier).updateCurrentDaytistic(daytistic);
+      final daytisticsNotifier = ref.read(daytisticsProvider.notifier);
+
+      daytisticsNotifier.updateCurrentDaytistic(daytistic);
+      daytisticsNotifier.addDaytistic(daytistic);
+    }
 
     return daytistic;
   }
 
-  Future<List<Daytistic>> fetchAll() async {
+  Future<List<Daytistic>> fetchRecentDaytistics({int daysBefore = 7}) async {
     final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
 
     final List<Map<String, dynamic>> daytisticsMap = await supabase
         .from(SupabaseSettings.daytisticsTableName)
         .select()
-        .eq('user_id', ref.read(userDependencyProvider)!.id);
+        .gte('date', DateTime.now().subtract(Duration(days: daysBefore)))
+        .eq('user_id', ref.read(userDependencyProvider)!.id)
+        .order('date', ascending: false);
 
     final List<Daytistic> daytistics =
         daytisticsMap.map(Daytistic.fromSupabase).toList();

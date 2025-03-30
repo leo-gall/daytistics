@@ -1,5 +1,6 @@
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/extensions/string.dart';
 import 'package:daytistics/shared/utils/internet.dart';
@@ -35,34 +36,33 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
 
     return Card(
       margin: const EdgeInsets.all(10),
-      child: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                StyledText(
-                  readableDate,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: FutureBuilder<Daytistic?>(
-                    key: ValueKey(dashboardViewModelState.selectedDate),
-                    future: ref
-                        .read(daytisticsServiceProvider.notifier)
-                        .fetchDaytistic(
-                          dashboardViewModelState.selectedDate,
-                        ),
-                    builder: (context, snapshot) {
-                      final daytistic = snapshot.data;
-                      return Column(
+      child: FutureBuilder<Daytistic?>(
+        key: ValueKey(dashboardViewModelState.selectedDate),
+        future: ref.read(daytisticsServiceProvider.notifier).fetchDaytistic(
+              dashboardViewModelState.selectedDate,
+            ),
+        builder: (context, snapshot) {
+          final daytistic = snapshot.data;
+
+          return Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    StyledText(
+                      readableDate,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           StyledText(
@@ -77,8 +77,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                           if (daytistic == null) const SizedBox(height: 50),
                           if (daytistic != null)
                             SizedBox(
-                              height:
-                                  50, // Define a height for the CarouselView
+                              height: 50,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -130,54 +129,52 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
                             ),
                           const SizedBox(height: 5),
                         ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 8,
-            top: 8,
-            child: Showcase(
-              key: widget.editDaytisticKey,
-              title: 'Edit Daytistic',
-              description: 'Click here to edit the daytistic.',
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  if (await maybeRedirectToConnectionErrorView(context)) return;
-                  await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
-                        dashboardViewModelState.selectedDate,
-                      );
-
-                  if (!context.mounted) {
-                    return;
-                  }
-
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => const DaytisticDetailsView(),
+                      ),
                     ),
-                  );
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(
-                    ColorSettings.background,
-                  ),
-                  side: WidgetStateProperty.all<BorderSide>(
-                    const BorderSide(
-                      color: ColorSettings.primary,
-                    ),
-                  ),
+                  ],
                 ),
-                icon: const Icon(Icons.edit_outlined),
-                label: const StyledText('Edit'),
               ),
-            ),
-          ),
-        ],
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Showcase(
+                  key: widget.editDaytisticKey,
+                  title: 'Edit Daytistic',
+                  description: 'Click here to edit the daytistic.',
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      if (await maybeRedirectToConnectionErrorView(context)) {
+                        return;
+                      }
+
+                      if (context.mounted) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) =>
+                                DaytisticDetailsView(daytistic: daytistic),
+                          ),
+                        );
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        ColorSettings.background,
+                      ),
+                      side: WidgetStateProperty.all<BorderSide>(
+                        const BorderSide(
+                          color: ColorSettings.primary,
+                        ),
+                      ),
+                    ),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const StyledText('Edit'),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

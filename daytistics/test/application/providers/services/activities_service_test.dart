@@ -72,7 +72,7 @@ void main() {
       expect(dbResult[0]['name'], 'Running');
 
       final updatedDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
       expect(updatedDaytistic.activities.length, 1);
       expect(updatedDaytistic.activities[0].name, 'Running');
 
@@ -134,7 +134,7 @@ void main() {
   group('deleteActivity', () {
     test('should delete an activity', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final activity = Activity(
         name: 'Running',
@@ -165,7 +165,7 @@ void main() {
       );
 
       final finalDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!;
       expect(finalDaytistic.activities.length, 0);
 
       expect(fakeAnalytics.capturedEvents.contains('activity_deleted'), isTrue);
@@ -173,7 +173,7 @@ void main() {
 
     test('should throw when activity does not exist', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final nonExistentActivity = Activity(
         name: 'Running',
@@ -198,7 +198,7 @@ void main() {
   group('updateActivity', () {
     test('should update an activity name', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final activity = Activity(
         name: 'Running',
@@ -231,7 +231,7 @@ void main() {
       expect(dbResult['name'], 'Swimming');
 
       final finalDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
       expect(finalDaytistic.activities.length, 1);
       expect(finalDaytistic.activities[0].name, 'Swimming');
 
@@ -240,7 +240,7 @@ void main() {
 
     test('should update activity time', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final activity = Activity(
         name: 'Running',
@@ -267,7 +267,7 @@ void main() {
       );
 
       final finalDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
       expect(finalDaytistic.activities[0].startTime.hour, 8);
       expect(finalDaytistic.activities[0].startTime.minute, 0);
       expect(finalDaytistic.activities[0].endTime.hour, 11);
@@ -324,7 +324,7 @@ void main() {
   group('existsActivity', () {
     test('should return true when activity exists', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final activity = Activity(
         name: 'Running',
@@ -343,7 +343,7 @@ void main() {
 
     test('should return false when activity does not exist', () async {
       final currentDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
       final nonExistentActivity = Activity(
         name: 'Running',

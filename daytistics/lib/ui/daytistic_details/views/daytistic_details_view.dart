@@ -16,7 +16,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class DaytisticDetailsView extends ConsumerStatefulWidget {
-  const DaytisticDetailsView({super.key});
+  final Daytistic? daytistic;
+
+  const DaytisticDetailsView({super.key, required this.daytistic});
 
   @override
   ConsumerState<DaytisticDetailsView> createState() =>
@@ -26,103 +28,110 @@ class DaytisticDetailsView extends ConsumerStatefulWidget {
 class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
   @override
   Widget build(BuildContext context) {
-    final Daytistic? daytistic = ref.watch(daytisticsProvider).currentDaytistic;
+    final dashboardViewModelNotifier =
+        ref.watch(dashboardViewModelProvider.notifier);
 
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: StyledText(
-          DateFormat('MM/dd/yyyy').format(daytistic!.date),
-          style: Theme.of(context).textTheme.titleMedium,
+    final dashboardViewModelState = ref.watch(dashboardViewModelProvider);
+
+    return PopScope(
+      onPopInvokedWithResult: (result, _) {
+        if (widget.daytistic != null) {
+          dashboardViewModelNotifier.updateSelectedDate(widget.daytistic!.date);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: StyledText(
+            DateFormat('MM/dd/yyyy').format(widget.daytistic != null
+                ? widget.daytistic!.date
+                : dashboardViewModelState.selectedDate),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.all_inbox_outlined),
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/conversations-list');
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.person_2_outlined),
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/profile');
+              },
+            ),
+          ],
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-            final notifier = ref.refresh(dashboardViewModelProvider.notifier);
-            notifier.updateSelectedDate(daytistic.date);
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 1,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star_border),
+              label: 'Wellbeing',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Add Activity',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book),
+              label: 'Diary',
+            ),
+          ],
+          onTap: (index) {
+            if (index == 0) {
+              WellbeingRatingDialog.showDialog(context);
+            } else if (index == 1) {
+              AddActivityDialog.showDialog(context);
+            } else if (index == 2) {
+              showToast(
+                context,
+                message: 'Diary is not implemented yet',
+                type: ToastType.info,
+              );
+            }
           },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.all_inbox_outlined),
-            onPressed: () async {
-              await Navigator.pushNamed(context, '/conversations-list');
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_2_outlined),
-            onPressed: () async {
-              await Navigator.pushNamed(context, '/profile');
-            },
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star_border),
-            label: 'Wellbeing',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add Activity',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Diary',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            WellbeingRatingDialog.showDialog(context);
-          } else if (index == 1) {
-            AddActivityDialog.showDialog(context);
-          } else if (index == 2) {
-            showToast(
-              context,
-              message: 'Diary is not implemented yet',
-              type: ToastType.info,
-            );
-          }
-        },
-      ),
-      body: RequireAuth(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 20),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: daytistic.activities.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          '${dateTimeToHourMinute(daytistic.activities[index].startTime)} - ${dateTimeToHourMinute(daytistic.activities[index].endTime)}',
-                        ),
-                        subtitle: Text(daytistic.activities[index].name),
-                        trailing: IconButton(
-                          onPressed: () => EditActivityDialog.showDialog(
-                            context,
-                            daytistic.activities[index],
+        body: RequireAuth(
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.daytistic != null
+                        ? widget.daytistic!.activities.length
+                        : 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                            '${dateTimeToHourMinute(widget.daytistic!.activities[index].startTime)} - ${dateTimeToHourMinute(widget.daytistic!.activities[index].endTime)}',
                           ),
-                          icon: const Icon(Icons.edit_outlined),
+                          subtitle:
+                              Text(widget.daytistic!.activities[index].name),
+                          trailing: IconButton(
+                            onPressed: () => EditActivityDialog.showDialog(
+                              context,
+                              widget.daytistic!.activities[index],
+                            ),
+                            icon: const Icon(Icons.edit_outlined),
+                          ),
+                          contentPadding: const EdgeInsets.only(
+                            left: 20,
+                            top: 2,
+                            right: 5,
+                            bottom: 2,
+                          ),
                         ),
-                        contentPadding: const EdgeInsets.only(
-                          left: 20,
-                          top: 2,
-                          right: 5,
-                          bottom: 2,
-                        ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

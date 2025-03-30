@@ -38,7 +38,8 @@ class ActivitiesService extends _$ActivitiesService {
       throw InvalidInputException('Start time cannot be the same as end time');
     }
 
-    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
+    final Daytistic daytistic =
+        ref.read(daytisticsProvider).requireValue.currentDaytistic!!;
 
     final startTimeAsDateTime = DateTime(
       daytistic.date.year,
@@ -87,7 +88,8 @@ class ActivitiesService extends _$ActivitiesService {
   }
 
   Future<void> deleteActivity(Activity activity) async {
-    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
+    final Daytistic daytistic =
+        ref.read(daytisticsProvider).requireValue.currentDaytistic!;
 
     if (!await existsActivity(activity)) {
       throw Exception('Activity does not exist');
@@ -126,7 +128,8 @@ class ActivitiesService extends _$ActivitiesService {
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-    final Daytistic daytistic = ref.read(daytisticsProvider).currentDaytistic!;
+    final Daytistic daytistic =
+        ref.read(daytisticsProvider).requireValue.currentDaytistic!;
 
     if (name == null && startTime == null && endTime == null) {
       throw InvalidInputException('No changes to update');

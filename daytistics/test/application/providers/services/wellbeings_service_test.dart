@@ -57,7 +57,8 @@ void main() {
 
   group('updateWellbeing', () {
     test('should update wellbeing and update current daytistic', () async {
-      final currentDay = container.read(daytisticsProvider).currentDaytistic!;
+      final currentDay =
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
       final wellbeing = Wellbeing(
         daytisticId: currentDay.id,
         meTime: 3,
@@ -82,7 +83,7 @@ void main() {
 
       // Prüfe, ob der Provider den aktuellen Daytistic aktualisiert hat
       final updatedDaytistic =
-          container.read(daytisticsProvider).currentDaytistic!;
+          container.read(daytisticsProvider).requireValue.currentDaytistic!!;
       expect(updatedDaytistic.wellbeing, isNotNull);
       expect(updatedDaytistic.wellbeing!.id, wellbeing.id);
       expect(updatedDaytistic.wellbeing!.meTime, 3);

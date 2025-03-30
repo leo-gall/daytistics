@@ -1,4 +1,7 @@
+import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/application/providers/services/notification/notification_service.dart';
+import 'package:daytistics/application/providers/state/daytistics/daytistics.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/config/theme.dart';
 import 'package:daytistics/initializers.dart';

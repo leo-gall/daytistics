@@ -27,7 +27,7 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
   @override
   void initState() {
     final Daytistic? currentDaytistic =
-        ref.read(daytisticsProvider).currentDaytistic;
+        ref.read(daytisticsProvider).requireValue.currentDaytistic;
 
     if (currentDaytistic == null) {
       _startTime = TimeOfDay.now();

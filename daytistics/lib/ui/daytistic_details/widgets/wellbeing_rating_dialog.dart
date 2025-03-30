@@ -26,7 +26,8 @@ class WellbeingRatingDialog extends ConsumerStatefulWidget {
 class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
   @override
   Widget build(BuildContext context) {
-    final Daytistic? daytistic = ref.watch(daytisticsProvider).currentDaytistic;
+    final Daytistic? daytistic =
+        ref.watch(daytisticsProvider).requireValue.currentDaytistic;
     if (daytistic == null) {
       return const SizedBox(); // Falls kein Daytistic geladen ist, wird ein leeres Widget zurückgegeben.
     }

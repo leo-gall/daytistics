@@ -6,12 +6,12 @@ part of 'daytistics.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$daytisticsHash() => r'f941e98adabd14cb0501e89df45e0066fe474543';
+String _$daytisticsHash() => r'a9a9d8e25c33f1505dcda1f169342e4d98b579ad';
 
 /// See also [Daytistics].
 @ProviderFor(Daytistics)
 final daytisticsProvider =
-    AutoDisposeNotifierProvider<Daytistics, DaytisticsState>.internal(
+    AsyncNotifierProvider<Daytistics, DaytisticsState>.internal(
   Daytistics.new,
   name: r'daytisticsProvider',
   debugGetCreateSourceHash:
@@ -20,6 +20,6 @@ final daytisticsProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$Daytistics = AutoDisposeNotifier<DaytisticsState>;
+typedef _$Daytistics = AsyncNotifier<DaytisticsState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
