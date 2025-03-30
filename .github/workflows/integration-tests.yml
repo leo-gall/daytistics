@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'daytistics/**'
+      - '.github/workflows/integration-tests.yml'
   workflow_dispatch:
 
 jobs:
