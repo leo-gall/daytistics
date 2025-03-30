@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/services/wellbeings/wellbeings_service.dart';
@@ -56,8 +58,8 @@ class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
 
                   if (await maybeRedirectToConnectionErrorView(context)) return;
 
-                  if (mounted) {
-                    await wellbeingsService.updateWellbeing(
+                  unawaited(
+                    wellbeingsService.updateWellbeing(
                       Wellbeing.fromSupabase(
                         {
                           ...wellbeingMap,
@@ -65,8 +67,8 @@ class _WellbeingRatingDialogState extends ConsumerState<WellbeingRatingDialog> {
                           'id': daytistic.wellbeing!.id,
                         },
                       ),
-                    );
-                  }
+                    ),
+                  );
                 },
                 showFullRating: true,
               ),
