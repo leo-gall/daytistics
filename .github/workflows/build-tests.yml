@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'daytistics/**'
+      - '.github/workflows/build-tests.yml'
 
 jobs:
   build-test-android:
@@ -25,6 +28,10 @@ jobs:
       - name: Download dependencies
         working-directory: daytistics
         run: flutter pub get
+
+      - name: Create .env file
+        working-directory: daytistics
+        run: touch .env
 
       - name: Build Android Executable
         working-directory: daytistics
@@ -48,6 +55,10 @@ jobs:
       - name: Download dependencies
         working-directory: daytistics
         run: flutter pub get
+
+      - name: Create .env file
+        working-directory: daytistics
+        run: touch .env
 
       - name: Build iOS Executable
         working-directory: daytistics
