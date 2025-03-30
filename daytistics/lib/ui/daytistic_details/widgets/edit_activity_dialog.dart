@@ -127,9 +127,11 @@ class _EditActivityDialogState extends ConsumerState<EditActivityDialog> {
   Future<void> _handleDeleteActivity() async {
     if (await maybeRedirectToConnectionErrorView(context)) return;
     try {
-      unawaited(ref.read(activitiesServiceProvider.notifier).deleteActivity(
-            widget.activity,
-          ));
+      unawaited(
+        ref.read(activitiesServiceProvider.notifier).deleteActivity(
+              widget.activity,
+            ),
+      );
     } on InvalidInputException catch (e) {
       if (!mounted) return;
       showErrorDialog(context, message: e.message);

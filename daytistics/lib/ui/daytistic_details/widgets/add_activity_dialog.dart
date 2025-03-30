@@ -95,11 +95,13 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
     try {
-      unawaited(ref.read(activitiesServiceProvider.notifier).addActivity(
-            name: _activityController.text,
-            startTime: _startTime,
-            endTime: _endTime,
-          ));
+      unawaited(
+        ref.read(activitiesServiceProvider.notifier).addActivity(
+              name: _activityController.text,
+              startTime: _startTime,
+              endTime: _endTime,
+            ),
+      );
     } on InvalidInputException catch (e) {
       if (!mounted) return;
       showErrorDialog(context, message: e.message);
