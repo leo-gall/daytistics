@@ -35,7 +35,7 @@ jobs:
 
       - name: Build Android Executable
         working-directory: daytistics
-        run: flutter build apk
+        run: flutter build apk --debug
 
   build-test-ios:
     name: Test if iOS Build is Successful
