@@ -9,6 +9,9 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'daytistics/**'
+      - '.github/workflows/lints.yml'
   workflow_dispatch:
 
 jobs:
