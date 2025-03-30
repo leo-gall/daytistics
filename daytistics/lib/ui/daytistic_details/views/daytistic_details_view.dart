@@ -32,7 +32,9 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
       appBar: AppBar(
         titleSpacing: 0,
         title: StyledText(
-          DateFormat('MM/dd/yyyy').format(daytistic!.date),
+          DateFormat('MM/dd/yyyy').format(
+            daytistic != null ? daytistic.date : DateTime.now(),
+          ),
           style: Theme.of(context).textTheme.titleMedium,
         ),
         leading: IconButton(
@@ -40,7 +42,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
           onPressed: () {
             Navigator.pop(context);
             final notifier = ref.refresh(dashboardViewModelProvider.notifier);
-            notifier.updateSelectedDate(daytistic.date);
+            notifier.updateSelectedDate(daytistic!.date);
           },
         ),
         actions: <Widget>[
@@ -95,13 +97,14 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView> {
               const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                  itemCount: daytistic.activities.length,
+                  itemCount:
+                      daytistic != null ? daytistic.activities.length : 0,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   itemBuilder: (context, index) {
                     return Card(
                       child: ListTile(
                         title: Text(
-                          '${dateTimeToHourMinute(daytistic.activities[index].startTime)} - ${dateTimeToHourMinute(daytistic.activities[index].endTime)}',
+                          '${dateTimeToHourMinute(daytistic!.activities[index].startTime)} - ${dateTimeToHourMinute(daytistic.activities[index].endTime)}',
                         ),
                         subtitle: Text(daytistic.activities[index].name),
                         trailing: IconButton(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/daytistics/daytistics_service.dart';
 import 'package:daytistics/config/settings.dart';
@@ -147,9 +149,11 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
               child: OutlinedButton.icon(
                 onPressed: () async {
                   if (await maybeRedirectToConnectionErrorView(context)) return;
-                  await ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
-                        dashboardViewModelState.selectedDate,
-                      );
+                  unawaited(
+                    ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
+                          dashboardViewModelState.selectedDate,
+                        ),
+                  );
 
                   if (!context.mounted) {
                     return;
