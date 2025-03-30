@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
@@ -93,11 +95,11 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
     try {
-      await ref.read(activitiesServiceProvider.notifier).addActivity(
+      unawaited(ref.read(activitiesServiceProvider.notifier).addActivity(
             name: _activityController.text,
             startTime: _startTime,
             endTime: _endTime,
-          );
+          ));
     } on InvalidInputException catch (e) {
       if (!mounted) return;
       showErrorDialog(context, message: e.message);

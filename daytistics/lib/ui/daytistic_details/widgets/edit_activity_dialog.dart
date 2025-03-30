@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
 import 'package:daytistics/shared/exceptions.dart';
@@ -103,12 +105,14 @@ class _EditActivityDialogState extends ConsumerState<EditActivityDialog> {
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
     try {
-      await ref.read(activitiesServiceProvider.notifier).updateActivity(
-            id: widget.activity.id,
-            name: _activityController.text,
-            startTime: _startTime,
-            endTime: _endTime,
-          );
+      unawaited(
+        ref.read(activitiesServiceProvider.notifier).updateActivity(
+              id: widget.activity.id,
+              name: _activityController.text,
+              startTime: _startTime,
+              endTime: _endTime,
+            ),
+      );
     } on InvalidInputException catch (e) {
       if (!mounted) return;
       showErrorDialog(context, message: e.message);
@@ -123,9 +127,9 @@ class _EditActivityDialogState extends ConsumerState<EditActivityDialog> {
   Future<void> _handleDeleteActivity() async {
     if (await maybeRedirectToConnectionErrorView(context)) return;
     try {
-      await ref.read(activitiesServiceProvider.notifier).deleteActivity(
+      unawaited(ref.read(activitiesServiceProvider.notifier).deleteActivity(
             widget.activity,
-          );
+          ));
     } on InvalidInputException catch (e) {
       if (!mounted) return;
       showErrorDialog(context, message: e.message);
