@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxtjs/tailwindcss": "6.13.1",
+    "@nuxtjs/tailwindcss": "6.13.2",
     "@openpanel/web": "^1.0.1",
     "esbuild": ">=0.25.1",
     "nuxt": "^3.16.1",
