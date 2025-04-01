@@ -1,6 +1,7 @@
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
+import 'package:daytistics/main.dart';
 
 enum ToastType {
   success,
@@ -81,9 +82,9 @@ void showConfirmationDialog(
   );
 }
 
-void showToast(
-  BuildContext context, {
+void showToast({
   required String message,
+  BuildContext? context,
   ToastType type = ToastType.success,
   int duration = 1,
 }) {
@@ -92,13 +93,22 @@ void showToast(
       : type == ToastType.error
           ? ColorSettings.error
           : ColorSettings.info;
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: backgroundColor,
-      duration: Duration(seconds: duration),
-      content: Text(message),
-    ),
+
+  final snackBar = SnackBar(
+    backgroundColor: backgroundColor,
+    duration: Duration(seconds: duration),
+    content: Text(message),
   );
+
+  if (context != null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      snackBar,
+    );
+  } else {
+    DaytisticsApp.scaffoldMessengerKey.currentState?.showSnackBar(
+      snackBar,
+    );
+  }
 }
 
 void showBottomDialog(

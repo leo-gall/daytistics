@@ -44,6 +44,8 @@ class DaytisticsApp extends ConsumerStatefulWidget {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
 
+  static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
   @override
   ConsumerState<DaytisticsApp> createState() => _DaytisticsAppState();
 }
@@ -67,6 +69,7 @@ class _DaytisticsAppState extends ConsumerState<DaytisticsApp> {
       locale: const Locale('en', 'US'),
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
+      scaffoldMessengerKey: DaytisticsApp.scaffoldMessengerKey,
 
       // routing
       initialRoute: '/',
