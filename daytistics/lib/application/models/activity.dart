@@ -52,4 +52,24 @@ class Activity {
       'updated_at': updatedAt!.toIso8601String(),
     };
   }
+
+  Activity copyWith({
+    String? id,
+    String? name,
+    String? daytisticId,
+    DateTime? startTime,
+    DateTime? endTime,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Activity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      daytisticId: daytisticId ?? this.daytisticId,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }

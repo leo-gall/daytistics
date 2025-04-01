@@ -2,9 +2,7 @@ import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -75,11 +73,9 @@ class ActivitiesService extends _$ActivitiesService {
     return true;
   }
 
-  Future<void> deleteActivity(Activity activity) async {
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
-
+  Future<bool> deleteActivity(Activity activity) async {
     if (!await existsActivity(activity)) {
-      throw Exception('Activity does not exist');
+      return false;
     }
 
     await ref
@@ -87,15 +83,6 @@ class ActivitiesService extends _$ActivitiesService {
         .from(SupabaseSettings.activitiesTableName)
         .delete()
         .eq('id', activity.id);
-
-    final updatedActivities = daytistic.activities
-        .where((element) => element.id != activity.id)
-        .toList();
-
-    final Daytistic updatedDaytistic =
-        daytistic.copyWith(activities: updatedActivities);
-
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_deleted',
@@ -105,41 +92,40 @@ class ActivitiesService extends _$ActivitiesService {
         'end_time': activity.endTime.toIso8601String(),
       },
     );
+
+    return true;
   }
 
-  Future<void> updateActivity({
-    required String id,
+  Future<bool> updateActivity({
+    required Activity activity,
+    required Daytistic daytistic,
     String? name,
     TimeOfDay? startTime,
     TimeOfDay? endTime,
   }) async {
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
-
     if (name == null && startTime == null && endTime == null) {
-      throw InvalidInputException('No changes to update');
+      return false;
     }
 
     if (name != null && name.isEmpty) {
-      throw InvalidInputException('Name cannot be empty');
+      return false;
     }
 
     if (startTime != null && endTime != null) {
       if (startTime.isAfter(endTime)) {
-        throw InvalidInputException('Start time cannot be after end time');
+        return false;
       }
 
       if (startTime == endTime) {
-        throw InvalidInputException(
-          'Start time cannot be the same as end time',
-        );
+        return false;
       }
     } else if (startTime != null || endTime != null) {
-      throw InvalidInputException('Both start and end time must be provided');
+      return false;
     }
 
-    final activity = Activity(
-      id: id,
-      name: name ?? '',
+    final updatedActivity = Activity(
+      id: activity.id,
+      name: name ?? activity.name,
       daytisticId: daytistic.id,
       startTime: startTime != null
           ? DateTime(
@@ -162,22 +148,13 @@ class ActivitiesService extends _$ActivitiesService {
     );
 
     if (!await existsActivity(activity)) {
-      throw Exception('Activity does not exist');
+      return false;
     }
 
     await ref
         .read(supabaseClientDependencyProvider)
         .from(SupabaseSettings.activitiesTableName)
-        .upsert(activity.toSupabase());
-
-    final updatedActivities = daytistic.activities
-        .map((element) => element.id == activity.id ? activity : element)
-        .toList();
-
-    final Daytistic updatedDaytistic =
-        daytistic.copyWith(activities: updatedActivities);
-
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
+        .upsert(updatedActivity.toSupabase());
 
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_updated',
@@ -187,6 +164,8 @@ class ActivitiesService extends _$ActivitiesService {
         'end_time': activity.endTime.toIso8601String(),
       },
     );
+
+    return true;
   }
 
   Future<bool> existsActivity(Activity activity) async {

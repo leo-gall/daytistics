@@ -1,7 +1,7 @@
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/main.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
-import 'package:daytistics/main.dart';
 
 enum ToastType {
   success,
