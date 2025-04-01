@@ -161,7 +161,7 @@ void main() {
 
       expect(
         () async => daytisticsService.fetchDaytistic(date),
-        throwsA(isA<NotFoundException>()),
+        throwsA(isA<SupabaseException>()),
       );
     });
   });

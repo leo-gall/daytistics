@@ -39,10 +39,10 @@ class ConversationsService {
     } on FunctionException catch (e) {
       final String error = e.details['error'] as String;
 
-      throw ServerException(error);
+      throw SupabaseException(error);
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
-      throw ServerException('An unknown error occurred');
+      throw SupabaseException('An unknown error occurred');
     }
 
     if (conversation == null) {

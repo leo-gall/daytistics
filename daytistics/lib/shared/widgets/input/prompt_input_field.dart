@@ -135,7 +135,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
             _controller.text,
             conversation: ref.read(currentConversationProvider),
           );
-    } on ServerException catch (e) {
+    } on SupabaseException catch (e) {
       if (mounted) {
         showToast(
           context: context,
