@@ -15,7 +15,7 @@
     "esbuild": ">=0.25.2",
     "nuxt": "^3.16.1",
     "nuxt-swiper": "2.0.0",
-    "posthog-js": "^1.232.4",
+    "posthog-js": "^1.234.4",
     "vue": "latest",
     "vue-router": "latest"
   },
