@@ -32,7 +32,7 @@ class DaytisticsService extends _$DaytisticsService {
         .maybeSingle();
 
     if (daytisticMap == null) {
-      throw NotFoundException('No daytistic found for the provided date.');
+      throw SupabaseException('No daytistic found for the provided date.');
     }
 
     final Daytistic daytistic = Daytistic.fromSupabase(daytisticMap);
@@ -72,7 +72,7 @@ class DaytisticsService extends _$DaytisticsService {
 
     try {
       daytistic = await fetchDaytistic(date);
-    } on NotFoundException {
+    } on SupabaseException {
       daytistic = Daytistic(
         date: date,
       );

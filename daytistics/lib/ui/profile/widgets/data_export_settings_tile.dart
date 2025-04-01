@@ -58,7 +58,7 @@ class DataExportSettingsTile extends AbstractSettingsTile {
         subject: 'Data export',
         text: 'Download your data export below as a JSON file.',
       );
-    } on ServerException catch (_) {
+    } on SupabaseException catch (_) {
       if (context.mounted) {
         showToast(
           context: context,

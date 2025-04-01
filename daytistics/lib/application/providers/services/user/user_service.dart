@@ -186,7 +186,7 @@ class UserService {
           'status': response.status.toString(),
         },
       );
-      throw ServerException('Failed to export data.');
+      throw SupabaseException('Failed to export data.');
     }
   }
 }
