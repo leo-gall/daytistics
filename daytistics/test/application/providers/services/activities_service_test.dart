@@ -57,13 +57,17 @@ void main() {
   group('addActivity', () {
     test('should add an activity to a daytistic', () async {
       // Act
-      await activitiesService.addActivity(
+      final success = await activitiesService.addActivity(
         name: 'Running',
         startTime: const TimeOfDay(hour: 9, minute: 0),
         endTime: const TimeOfDay(hour: 10, minute: 0),
+        daytistic: container.read(currentDaytisticProvider)!,
       );
 
       // Assert
+
+      expect(success, isTrue);
+
       // Check that activity was inserted into database
       final dbResult = await mockSupabase
           .from(SupabaseSettings.activitiesTableName)
@@ -71,66 +75,49 @@ void main() {
       expect(dbResult.length, 1);
       expect(dbResult[0]['name'], 'Running');
 
-      // Check that the current daytistic was updated
-      final updatedDaytistic = container.read(currentDaytisticProvider);
-      expect(updatedDaytistic!.activities.length, 1);
-      expect(updatedDaytistic.activities[0].name, 'Running');
-
       expect(fakeAnalytics.capturedEvents.contains('activity_added'), isTrue);
     });
 
-    test('should throw when name is empty', () async {
-      // Assert
-      expect(
-        () => activitiesService.addActivity(
-          name: '',
-          startTime: const TimeOfDay(hour: 9, minute: 0),
-          endTime: const TimeOfDay(hour: 10, minute: 0),
-        ),
-        throwsA(
-          isA<InvalidInputException>().having(
-            (e) => e.message,
-            'message',
-            'Name cannot be empty',
-          ),
-        ),
+    test('should return false when name is empty', () async {
+      final daytistic = container.read(currentDaytisticProvider);
+
+      final success = await activitiesService.addActivity(
+        name: '',
+        startTime: const TimeOfDay(hour: 9, minute: 0),
+        endTime: const TimeOfDay(hour: 10, minute: 0),
+        daytistic: daytistic!,
       );
+
+      // Assert
+      expect(success, isFalse);
     });
 
-    test('should throw when start time is after end time', () async {
-      // Assert
-      expect(
-        () => activitiesService.addActivity(
-          name: 'Running',
-          startTime: const TimeOfDay(hour: 11, minute: 0),
-          endTime: const TimeOfDay(hour: 10, minute: 0),
-        ),
-        throwsA(
-          isA<InvalidInputException>().having(
-            (e) => e.message,
-            'message',
-            'Start time cannot be after end time',
-          ),
-        ),
+    test('should return false when start time is after end time', () async {
+      final daytistic = container.read(currentDaytisticProvider);
+
+      final success = await activitiesService.addActivity(
+        name: 'Running',
+        startTime: const TimeOfDay(hour: 11, minute: 0),
+        endTime: const TimeOfDay(hour: 10, minute: 0),
+        daytistic: daytistic!,
       );
+
+      // Assert
+      expect(success, isFalse);
     });
 
-    test('should throw when start time equals end time', () async {
-      // Assert
-      expect(
-        () => activitiesService.addActivity(
-          name: 'Running',
-          startTime: const TimeOfDay(hour: 10, minute: 0),
-          endTime: const TimeOfDay(hour: 10, minute: 0),
-        ),
-        throwsA(
-          isA<InvalidInputException>().having(
-            (e) => e.message,
-            'message',
-            'Start time cannot be the same as end time',
-          ),
-        ),
+    test('should return false when start time equals end time', () async {
+      final daytistic = container.read(currentDaytisticProvider);
+
+      final success = await activitiesService.addActivity(
+        name: 'Running',
+        startTime: const TimeOfDay(hour: 10, minute: 0),
+        endTime: const TimeOfDay(hour: 10, minute: 0),
+        daytistic: daytistic!,
       );
+
+      // Assert
+      expect(success, isFalse);
     });
   });
 

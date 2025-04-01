@@ -21,24 +21,19 @@ class ActivitiesService extends _$ActivitiesService {
     return ActivitiesServiceState();
   }
 
-  Future<void> addActivity({
+  /// Adds an activity with the name [name] and the start and end times
+  /// [startTime] and [endTime] to the given [daytistic].
+  ///
+  /// Returns `true` if the activity was added successfully, otherwise `false`.
+  Future<bool> addActivity({
     required String name,
     required TimeOfDay startTime,
     required TimeOfDay endTime,
+    required Daytistic daytistic,
   }) async {
-    if (name.isEmpty) {
-      throw InvalidInputException('Name cannot be empty');
+    if (name.isEmpty || startTime.isAfter(endTime) || startTime == endTime) {
+      return false;
     }
-
-    if (startTime.isAfter(endTime)) {
-      throw InvalidInputException('Start time cannot be after end time');
-    }
-
-    if (startTime == endTime) {
-      throw InvalidInputException('Start time cannot be the same as end time');
-    }
-
-    final Daytistic daytistic = ref.read(currentDaytisticProvider)!;
 
     final startTimeAsDateTime = DateTime(
       daytistic.date.year,
@@ -68,12 +63,6 @@ class ActivitiesService extends _$ActivitiesService {
         .from(SupabaseSettings.activitiesTableName)
         .upsert(activity.toSupabase());
 
-    final Daytistic updatedDaytistic = daytistic.copyWith(
-      activities: [...daytistic.activities, activity],
-    );
-
-    ref.read(currentDaytisticProvider.notifier).daytistic = updatedDaytistic;
-
     await ref.read(analyticsDependencyProvider).trackEvent(
       eventName: 'activity_added',
       properties: {
@@ -82,6 +71,8 @@ class ActivitiesService extends _$ActivitiesService {
         'end_time': endTimeAsDateTime.toIso8601String(),
       },
     );
+
+    return true;
   }
 
   Future<void> deleteActivity(Activity activity) async {
