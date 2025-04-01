@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/shared/exceptions.dart';
+import 'package:daytistics/shared/extensions/time.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/time_picker_input_field.dart';
@@ -92,26 +93,67 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
   }
 
   Future<void> _handleAddActivity() async {
+    final currentDaytisticNotifier =
+        ref.read(currentDaytisticProvider.notifier);
+
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
-    try {
-      unawaited(
-        ref.read(activitiesServiceProvider.notifier).addActivity(
-              name: _activityController.text,
-              startTime: _startTime,
-              endTime: _endTime,
-            ),
-      );
-    } on InvalidInputException catch (e) {
-      if (!mounted) return;
-      showErrorDialog(context, message: e.message);
+    if (_activityController.text.isEmpty && mounted) {
+      showErrorDialog(context, message: 'Please enter an activity name');
       return;
     }
 
-    if (!mounted) return;
+    if ((_startTime.isAfter(_endTime) || _startTime == _endTime) && mounted) {
+      showErrorDialog(context, message: 'Start time cannot be after end time');
+      return;
+    }
 
-    Navigator.pop(context);
+    final daytistic = ref.read(currentDaytisticProvider)!;
 
-    showToast(context, message: 'Activity added successfully');
+    final Daytistic updatedDaytistic = daytistic.copyWith(
+      activities: [
+        ...daytistic.activities,
+        Activity(
+          name: _activityController.text,
+          daytisticId: daytistic.id,
+          startTime: _startTime.toDateTime(),
+          endTime: _endTime.toDateTime(),
+        ),
+      ],
+    );
+
+    currentDaytisticNotifier.daytistic = updatedDaytistic;
+
+    if (mounted) {
+      showToast(context: context, message: 'Activity added successfully');
+      Navigator.pop(context);
+    }
+
+    await ref
+        .read(activitiesServiceProvider.notifier)
+        .addActivity(
+          name: _activityController.text,
+          startTime: _startTime,
+          endTime: _endTime,
+          daytistic: daytistic,
+        )
+        .then(
+      (success) {
+        if (!success) {
+          showToast(message: 'Failed to add activity', type: ToastType.error);
+
+          // undo the changes
+          currentDaytisticNotifier.daytistic = daytistic.copyWith(
+            activities: daytistic.activities
+                .where((element) => element.name != _activityController.text)
+                .toList(),
+          );
+        }
+      },
+    );
+
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 }

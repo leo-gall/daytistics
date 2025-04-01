@@ -138,7 +138,7 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
     } on ServerException catch (e) {
       if (mounted) {
         showToast(
-          context,
+          context: context,
           message: e.message,
           type: ToastType.error,
           duration: 3,

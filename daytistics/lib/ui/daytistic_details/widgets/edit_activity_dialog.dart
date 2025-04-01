@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/providers/services/activities/activities_service.dart';
-import 'package:daytistics/shared/exceptions.dart';
+import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
+import 'package:daytistics/shared/extensions/time.dart';
 import 'package:daytistics/shared/utils/dialogs.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/time_picker_input_field.dart';
@@ -100,47 +101,117 @@ class _EditActivityDialogState extends ConsumerState<EditActivityDialog> {
   }
 
   Future<void> _handleEditActivity() async {
-    if (!mounted || !context.mounted) return;
+    final currentDaytisticNotifier =
+        ref.read(currentDaytisticProvider.notifier);
 
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
-    try {
-      unawaited(
-        ref.read(activitiesServiceProvider.notifier).updateActivity(
-              id: widget.activity.id,
-              name: _activityController.text,
-              startTime: _startTime,
-              endTime: _endTime,
-            ),
-      );
-    } on InvalidInputException catch (e) {
-      if (!mounted) return;
-      showErrorDialog(context, message: e.message);
+    if (_activityController.text.isEmpty) {
+      if (mounted) showErrorDialog(context, message: 'Name cannot be empty');
+      return;
     }
 
-    // ignore: use_build_context_synchronously
-    Navigator.pop(context);
+    if (_startTime.isAfter(_endTime)) {
+      if (mounted) {
+        showErrorDialog(
+          context,
+          message: 'Start time cannot be after end time',
+        );
+      }
+      return;
+    }
 
-    if (mounted) showToast(context, message: 'Activity updated successfully');
+    if (_startTime == _endTime) {
+      if (mounted) {
+        showErrorDialog(
+          context,
+          message: 'Start time cannot be the same as end time',
+        );
+      }
+      return;
+    }
+
+    final daytistic = ref.read(currentDaytisticProvider)!;
+
+    final updatedActivities = daytistic.activities
+        .map(
+          (element) => element.id == widget.activity.id
+              ? widget.activity.copyWith(
+                  name: _activityController.text,
+                  startTime: _startTime.toDateTime(),
+                  endTime: _endTime.toDateTime(),
+                )
+              : element,
+        )
+        .toList();
+
+    final updatedDaytistic = daytistic.copyWith(activities: updatedActivities);
+
+    currentDaytisticNotifier.daytistic = updatedDaytistic;
+
+    if (mounted) {
+      Navigator.pop(context);
+      showToast(context: context, message: 'Activity updated successfully');
+    }
+
+    await ref
+        .read(activitiesServiceProvider.notifier)
+        .updateActivity(
+          activity: widget.activity,
+          daytistic: daytistic,
+          name: _activityController.text,
+          startTime: _startTime,
+          endTime: _endTime,
+        )
+        .then(
+      (success) {
+        if (!success) {
+          showToast(
+            message: 'Failed to update activity',
+            type: ToastType.error,
+          );
+          currentDaytisticNotifier.daytistic =
+              daytistic.copyWith(activities: daytistic.activities);
+        }
+      },
+    );
   }
 
   Future<void> _handleDeleteActivity() async {
+    final daytistic = ref.read(currentDaytisticProvider)!;
+    final currentDaytisticNotifier =
+        ref.read(currentDaytisticProvider.notifier);
+
     if (await maybeRedirectToConnectionErrorView(context)) return;
-    try {
-      unawaited(
-        ref.read(activitiesServiceProvider.notifier).deleteActivity(
-              widget.activity,
-            ),
-      );
-    } on InvalidInputException catch (e) {
-      if (!mounted) return;
-      showErrorDialog(context, message: e.message);
-    }
+
+    final updatedActivities = daytistic.activities
+        .where((element) => element.id != widget.activity.id)
+        .toList();
+
+    final updatedDaytistic = daytistic.copyWith(activities: updatedActivities);
+
+    currentDaytisticNotifier.daytistic = updatedDaytistic;
 
     if (mounted) {
       Navigator.pop(context);
 
-      showToast(context, message: 'Activity deleted successfully');
+      showToast(context: context, message: 'Activity deleted successfully');
     }
+
+    await ref
+        .read(activitiesServiceProvider.notifier)
+        .deleteActivity(
+          widget.activity,
+        )
+        .then((success) {
+      if (!success) {
+        showToast(
+          message: 'Failed to delete activity',
+          type: ToastType.error,
+        );
+        currentDaytisticNotifier.daytistic =
+            daytistic.copyWith(activities: daytistic.activities);
+      }
+    });
   }
 }

@@ -67,7 +67,7 @@ class SettingsProfileSection extends AbstractSettingsSection {
                       .updateDailyReminderTime(timeOfDay: null);
                   if (context.mounted) {
                     showToast(
-                      context,
+                      context: context,
                       message: 'Daily reminder disabled.',
                     );
                   }
