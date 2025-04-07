@@ -98,7 +98,6 @@ jobs:
           cat <<EOT >> .env
           SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
           OPENPANEL_CLIENT_ID=${{ secrets.OPENPANEL_CLIENT_ID }}
@@ -170,7 +169,6 @@ jobs:
           cat <<EOT >> .env
           SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          POSTHOG_API_KEY=${{ secrets.POSTHOG_API_KEY }}
           SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID=${{ secrets.SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID }}
           SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
           OPENPANEL_CLIENT_ID=${{ secrets.OPENPANEL_CLIENT_ID }}
