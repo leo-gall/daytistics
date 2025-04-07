@@ -2,6 +2,7 @@ import 'package:daytistics/application/models/daytistic.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:daytistics/ui/daytistic_details/widgets/activities_list.dart';
@@ -92,6 +93,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView>
         ),
       ),
       appBar: AppBar(
+        flexibleSpace: const StyledAppBarFlexibableSpace(),
         titleSpacing: 0,
         title: StyledText(
           formattedDate,
