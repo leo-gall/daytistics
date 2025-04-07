@@ -27,7 +27,6 @@ Future<void> main() async {
     },
     appRunner: () async {
       await initSupabase();
-      await initPosthog();
       await initAwesomeNotifications();
 
       runApp(

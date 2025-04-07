@@ -151,7 +151,7 @@ class UserService {
 
   /// Exports user data to a JSON file.
   ///
-  /// This function calls a Supabase function to export the data, captures an event in PostHog,
+  /// This function calls a Supabase function to export the data, captures an event in the configured analytics service,
   /// and saves the data to a JSON file in the application documents directory.
   ///
   /// Returns:

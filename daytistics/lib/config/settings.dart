@@ -18,14 +18,6 @@ class SupabaseSettings {
   static const String settingsTableName = 'user_settings';
 }
 
-class PosthogSettings {
-  static String apiKey = const String.fromEnvironment('POSTHOG_API_KEY');
-  static String host = const String.fromEnvironment(
-    'POSTHOG_HOST',
-    defaultValue: 'https://eu.i.posthog.com',
-  );
-}
-
 class SentrySettings {
   static String dsn = const String.fromEnvironment('SENTRY_FLUTTER_DSN');
 }
