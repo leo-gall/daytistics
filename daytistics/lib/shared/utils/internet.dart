@@ -27,8 +27,9 @@ Future<bool> checkSupabaseConnection() async {
 }
 
 Future<bool> maybeRedirectToConnectionErrorView(BuildContext context) async {
-  final isNetworkConnected = await checkNetworkConnection();
   final isSupabaseConnected = await checkSupabaseConnection();
+  final isNetworkConnected =
+      isSupabaseConnected || await checkNetworkConnection();
 
   if ((!isNetworkConnected || !isSupabaseConnected) && context.mounted) {
     await Navigator.of(context).pushNamed('/');
