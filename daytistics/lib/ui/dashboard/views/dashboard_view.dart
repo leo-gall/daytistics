@@ -5,6 +5,7 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_calendar.dart';
 import 'package:daytistics/ui/dashboard/widgets/dashboard_date_card.dart';
@@ -115,6 +116,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           return Scaffold(
             resizeToAvoidBottomInset: false,
             appBar: AppBar(
+              flexibleSpace: const StyledAppBarFlexibableSpace(),
               title: Row(
                 children: <Widget>[
                   const SizedBox(width: 4),

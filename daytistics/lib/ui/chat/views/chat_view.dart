@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/widgets/input/prompt_input_field.dart';
+import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:daytistics/ui/chat/widgets/llm_chat_message.dart';
@@ -27,6 +28,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const StyledAppBarFlexibableSpace(),
         titleSpacing: 0,
         title: StyledText(
           ref.read(currentConversationProvider)?.title ?? 'Chat',

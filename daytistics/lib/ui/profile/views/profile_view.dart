@@ -5,6 +5,7 @@ import 'package:daytistics/application/providers/services/user/user_service.dart
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
+import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:daytistics/ui/profile/widgets/critical_actions_profile_section.dart';
@@ -33,6 +34,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const StyledAppBarFlexibableSpace(),
         titleSpacing: 0,
         title: Row(
           children: <Widget>[

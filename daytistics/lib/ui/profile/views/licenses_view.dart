@@ -1,4 +1,5 @@
 import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
 import 'package:flutter/foundation.dart';
@@ -11,6 +12,7 @@ class LicensesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        flexibleSpace: const StyledAppBarFlexibableSpace(),
         titleSpacing: 0,
         title: Row(
           children: <Widget>[

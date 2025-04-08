@@ -25,7 +25,7 @@ class SentrySettings {
 class ColorSettings {
   static const Color primary = Color(0xFF0E9F6E);
   static const Color primaryAccent = Color(0xFF384B41);
-  static const Color secondary = Color.fromRGBO(92, 107, 192, 1);
+  static const Color secondary = Colors.green;
   static const Color secondaryAccent = Color(0xFF0064A6);
   static const Color background = Color(0xFFE5E5E5);
   static const Color textDark = Color.fromRGBO(60, 59, 59, 1);

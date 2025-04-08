@@ -113,8 +113,9 @@ class _StartupViewState extends State<StartupView> {
 
   Future<void> _checkInternet() async {
     try {
-      final bool connectedToNetwork = await checkNetworkConnection();
       final bool connectedToSupabase = await checkSupabaseConnection();
+      final bool connectedToNetwork =
+          connectedToSupabase || await checkNetworkConnection();
 
       if (connectedToNetwork && connectedToSupabase) {
         setState(() {
@@ -169,12 +170,12 @@ class _StartupViewState extends State<StartupView> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    TextButton(
+                    ElevatedButton(
                       onPressed: _restartApp,
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.refresh, color: Colors.white),
+                          Icon(Icons.refresh, color: ColorSettings.primary),
                           SizedBox(width: 5),
                           StyledText('Retry'),
                         ],
