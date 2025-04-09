@@ -12,3 +12,8 @@ export function validateZodSchema<T>(schema: z.ZodType<T>, data: unknown) {
     };
   }
 }
+
+// deno-lint-ignore no-explicit-any
+export function hasThrownGraphQLError(data: any): boolean {
+  return data.errors && data.errors.length > 0;
+}
