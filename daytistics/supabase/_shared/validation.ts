@@ -13,7 +13,8 @@ export function validateZodSchema<T>(schema: z.ZodType<T>, data: unknown) {
   }
 }
 
-// deno-lint-ignore no-explicit-any
-export function hasThrownGraphQLError(data: any): boolean {
-  return data.errors && data.errors.length > 0;
+export async function hasThrownGraphQLError(res_: Response): Promise<boolean> {
+  const res = res_.clone();
+  const json = await res.json();
+  return json.errors && json.errors.length > 0;
 }

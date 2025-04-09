@@ -9,19 +9,19 @@ import * as Sentry from "npm:@sentry/deno";
 import { initSentry, initSupabase } from "@shared/adapters";
 import { validateZodSchema } from "@shared/validation";
 import { z } from "npm:zod";
-import { User } from "https://jsr.io/@supabase/supabase-js/2.48.1/src/index.ts";
 import { addToRoadmap } from "@application/roadmap";
 
 const AddToRoadmapObject = z.object({
   title: z.string(),
   description: z.string(),
+  kind: z.enum(["bug", "feature"]).optional(),
 });
 
 Deno.serve(async (req) => {
   initSentry();
 
   try {
-    const { user, error: supabaseInitError } = await initSupabase(req, {
+    const { error: supabaseInitError } = await initSupabase(req, {
       withAuth: true,
     });
     if (supabaseInitError) return supabaseInitError;
@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     if (validateError) return validateError;
 
     try {
-      await addToRoadmap(body.title, body.description);
+      await addToRoadmap(body.title, body.description, body.kind);
     } catch (error) {
       Sentry.captureException(error as Error);
       await Sentry.flush();

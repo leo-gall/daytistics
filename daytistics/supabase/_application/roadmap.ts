@@ -22,7 +22,7 @@ async function getProjectNodeId(projectId: number) {
     },
   );
 
-  if (hasThrownGraphQLError(projectNodeIdResponse)) {
+  if (await hasThrownGraphQLError(projectNodeIdResponse)) {
     throw new Error(
       `Failed to get project node ID: ${await projectNodeIdResponse.text()}`,
     );
@@ -38,6 +38,7 @@ async function addDraftToProject(
   projectNodeId: string,
   title: string,
   description: string,
+  kind: "bug" | "feature" = "feature",
 ) {
   const addItemToProjectResponse = await fetch(
     `https://api.github.com/graphql`,
@@ -48,7 +49,7 @@ async function addDraftToProject(
         query: `mutation {
           addProjectV2DraftIssue(input: {
             projectId: "${projectNodeId}",
-            title: "[FROM-APP] ${title}",
+            title: "[${kind.toUpperCase()}] ${title}",
             body: """${description}""",
           }) {
             projectItem {
@@ -60,17 +61,17 @@ async function addDraftToProject(
     },
   );
 
-  const { data: { addProjectV2DraftIssue: { projectItem } } } =
-    await addItemToProjectResponse.json();
-
-  if (hasThrownGraphQLError(addItemToProjectResponse)) {
+  if (await hasThrownGraphQLError(addItemToProjectResponse)) {
     throw new Error(
       `Failed to add draft issue to project: ${await addItemToProjectResponse
         .text()}`,
     );
   }
 
-  return projectItem as string;
+  const { data: { addProjectV2DraftIssue: { projectItem } } } =
+    await addItemToProjectResponse.json();
+
+  return projectItem.id as string;
 }
 
 async function updateDraftStatus(
@@ -119,7 +120,7 @@ async function updateDraftStatus(
     },
   );
 
-  if (hasThrownGraphQLError(statusFieldIdResponse)) {
+  if (await hasThrownGraphQLError(statusFieldIdResponse)) {
     throw new Error(
       `Failed to get status field ID: ${await statusFieldIdResponse.text()}`,
     );
@@ -156,7 +157,7 @@ async function updateDraftStatus(
     },
   );
 
-  if (hasThrownGraphQLError(updateStatusResponse)) {
+  if (await hasThrownGraphQLError(updateStatusResponse)) {
     throw new Error(
       `Failed to update draft issue status in project: ${await updateStatusResponse
         .text()}`,
@@ -167,12 +168,14 @@ async function updateDraftStatus(
 export async function addToRoadmap(
   title: string,
   description: string,
+  kind: "bug" | "feature" = "feature",
 ) {
   const projectNodeId = await getProjectNodeId(PROJECT_ID);
   const projectItemId = await addDraftToProject(
     projectNodeId,
     title,
     description,
+    kind,
   );
   await updateDraftStatus(projectNodeId, projectItemId);
 }
