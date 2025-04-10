@@ -30,7 +30,7 @@ class HelpProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await FeatureRequestModal.showModal(context);
+                await FeatureRequestDialog.show(context);
               },
             ),
             SettingsTile.navigation(
