@@ -26,9 +26,9 @@ class FeatureRequestModal extends ConsumerStatefulWidget {
 class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String error = '';
   bool hasSubmitted = false;
   bool loading = false;
+  bool canSubmit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +47,9 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
                   decoration: const InputDecoration(
                     labelText: 'Title',
                   ),
+                  onChanged: (value) => setState(() {
+                    canSubmit = value.isNotEmpty;
+                  }),
                 ),
                 TextField(
                   controller: _descriptionController,
@@ -56,13 +59,6 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
                   minLines: 3,
                   maxLines: 5,
                 ),
-                if (error.isNotEmpty)
-                  StyledText(
-                    error,
-                    style: const TextStyle(
-                      color: ColorSettings.error,
-                    ),
-                  ),
               ]
             : [
                 const StyledText(
@@ -93,10 +89,12 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () async => handleSubmit(),
+                  onPressed: canSubmit ? () async => handleSubmit() : null,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
-                      ColorSettings.primary,
+                      canSubmit
+                          ? ColorSettings.primary
+                          : ColorSettings.primary.withAlpha(100),
                     ),
                   ),
                   child: const StyledText(
@@ -142,13 +140,6 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
     setState(() {
       loading = true;
     });
-
-    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      setState(() {
-        error = 'Please fill out all fields.';
-      });
-      return;
-    }
 
     await ref.read(feedbackServiceProvider.notifier).createFeatureRequest(
           _titleController.text,

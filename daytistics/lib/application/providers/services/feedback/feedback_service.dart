@@ -16,7 +16,7 @@ class FeedbackService extends _$FeedbackService {
     await ref.read(supabaseClientDependencyProvider).functions.invoke(
       'add-to-roadmap',
       body: {
-        'roadmap': 'features',
+        'kind': 'feature',
         'title': title,
         'description': description,
       },
@@ -27,7 +27,7 @@ class FeedbackService extends _$FeedbackService {
     await ref.read(supabaseClientDependencyProvider).functions.invoke(
       'add-to-roadmap',
       body: {
-        'roadmap': 'bugs',
+        'kind': 'bug',
         'title': title,
         'description': description,
       },
