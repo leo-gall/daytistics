@@ -142,7 +142,7 @@ class _StyledScaffoldDrawerState extends ConsumerState<StyledScaffoldDrawer> {
                     padding: EdgeInsets.zero,
                     children: [
                       DrawerHeader(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: ColorSettings.primary,
                         ),
                         child: Column(
@@ -210,7 +210,7 @@ class _StyledScaffoldDrawerState extends ConsumerState<StyledScaffoldDrawer> {
                       if (_conversations.isEmpty && !_isLoading)
                         const Center(child: Text('No conversations found'))
                       else
-                        _buildConversationList()
+                        _buildConversationList(),
                     ],
                   ),
                 ],

@@ -1,9 +1,6 @@
 import 'package:daytistics/config/settings.dart';
-import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 class StyledAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconButton? shoppingCartOverride;
@@ -37,7 +34,7 @@ class StyledAppBar extends StatelessWidget implements PreferredSizeWidget {
         shoppingCartOverride ??
             IconButton(
               onPressed: () {},
-              icon: Icon(
+              icon: const Icon(
                 Icons.shopping_cart_outlined,
                 size: 30,
               ),
