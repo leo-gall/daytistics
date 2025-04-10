@@ -44,7 +44,7 @@ class HelpProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await BugReportModal.showModal(context);
+                await BugReportDialog.show(context);
               },
             ),
             SettingsTile.navigation(
