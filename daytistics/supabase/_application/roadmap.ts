@@ -129,8 +129,11 @@ async function updateDraftStatus(
   const statusFieldData = (await statusFieldIdResponse.json()).data.node
     .fields
     .nodes
-    .find((field: { name: string }) => field.name === "Status")!;
+    .find((field: { name: string }) => field.name === "Status");
 
+  if (!statusFieldData) {
+    throw new Error("The 'Status' field is missing from the project fields.");
+  }
   const statusOptionId = statusFieldData.options.find(
     (option: { name: string }) => option.name === "Todo (From App)",
   )?.id;
