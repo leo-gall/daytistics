@@ -6,46 +6,49 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BugReportModal extends ConsumerStatefulWidget {
-  const BugReportModal({super.key});
+class BugReportDialog extends ConsumerStatefulWidget {
+  const BugReportDialog({super.key});
 
-  static Future<void> showModal(BuildContext context) async {
+  static Future<void> show(BuildContext context) async {
     await showDialog<AlertDialog>(
       context: context,
       builder: (context) {
-        return const BugReportModal();
+        return const BugReportDialog();
       },
     );
   }
 
   @override
-  ConsumerState<BugReportModal> createState() => _BugReportModalState();
+  ConsumerState<BugReportDialog> createState() => _BugReportDialogState();
 }
 
-class _BugReportModalState extends ConsumerState<BugReportModal> {
+class _BugReportDialogState extends ConsumerState<BugReportDialog> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String error = '';
-  bool loading = false;
-  bool hasSubmitted = false;
+  bool _hasSubmitted = false;
+  bool _loading = false;
+  bool _canSubmit = false;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: StyledText(
-        hasSubmitted ? 'Thank you!' : 'Bug Report',
+        _hasSubmitted ? 'Thank you!' : 'Bug Report',
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16,
-        children: !hasSubmitted
+        children: !_hasSubmitted
             ? [
                 TextField(
                   controller: _titleController,
                   decoration: const InputDecoration(
                     labelText: 'Title',
                   ),
+                  onChanged: (value) => setState(() {
+                    _canSubmit = value.isNotEmpty;
+                  }),
                 ),
                 TextField(
                   controller: _descriptionController,
@@ -55,13 +58,6 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
                   minLines: 3,
                   maxLines: 5,
                 ),
-                if (error.isNotEmpty)
-                  StyledText(
-                    error,
-                    style: const TextStyle(
-                      color: ColorSettings.error,
-                    ),
-                  ),
               ]
             : [
                 const StyledText(
@@ -70,9 +66,9 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
               ],
       ),
       actionsOverflowButtonSpacing: 16,
-      actions: !hasSubmitted
+      actions: !_hasSubmitted
           ? [
-              if (loading)
+              if (_loading)
                 const CircularProgressIndicator()
               else ...[
                 TextButton(
@@ -92,10 +88,12 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () async => handleSubmit(),
+                  onPressed: _canSubmit ? () async => handleSubmit() : null,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
-                      ColorSettings.primary,
+                      _canSubmit
+                          ? ColorSettings.primary
+                          : ColorSettings.primary.withAlpha(100),
                     ),
                   ),
                   child: const StyledText(
@@ -139,15 +137,8 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
     setState(() {
-      loading = true;
+      _loading = true;
     });
-
-    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      setState(() {
-        error = 'Please fill out all fields.';
-      });
-      return;
-    }
 
     await ref.read(feedbackServiceProvider.notifier).createBugReport(
           _titleController.text,
@@ -155,8 +146,8 @@ class _BugReportModalState extends ConsumerState<BugReportModal> {
         );
 
     setState(() {
-      hasSubmitted = true;
-      loading = false;
+      _hasSubmitted = true;
+      _loading = false;
     });
   }
 }

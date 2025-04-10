@@ -3,8 +3,8 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/utils/internet.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 
-import 'package:daytistics/ui/profile/widgets/bug_report_modal.dart';
-import 'package:daytistics/ui/profile/widgets/feature_request_modal.dart';
+import 'package:daytistics/ui/profile/widgets/bug_report_dialog.dart';
+import 'package:daytistics/ui/profile/widgets/feature_request_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -30,7 +30,7 @@ class HelpProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await FeatureRequestModal.showModal(context);
+                await FeatureRequestDialog.show(context);
               },
             ),
             SettingsTile.navigation(
@@ -44,7 +44,7 @@ class HelpProfileSection extends AbstractSettingsSection {
                 style: TextStyle(color: ColorSettings.textLight),
               ),
               onPressed: (context) async {
-                await BugReportModal.showModal(context);
+                await BugReportDialog.show(context);
               },
             ),
             SettingsTile.navigation(

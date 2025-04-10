@@ -12,3 +12,9 @@ export function validateZodSchema<T>(schema: z.ZodType<T>, data: unknown) {
     };
   }
 }
+
+export async function hasThrownGraphQLError(res_: Response): Promise<boolean> {
+  const res = res_.clone();
+  const json = await res.json();
+  return json.errors && json.errors.length > 0;
+}

@@ -6,47 +6,48 @@ import 'package:daytistics/shared/widgets/styled/styled_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FeatureRequestModal extends ConsumerStatefulWidget {
-  const FeatureRequestModal({super.key});
+class FeatureRequestDialog extends ConsumerStatefulWidget {
+  const FeatureRequestDialog({super.key});
 
-  static Future<void> showModal(BuildContext context) async {
+  static Future<void> show(BuildContext context) async {
     await showDialog<AlertDialog>(
       context: context,
-      builder: (context) {
-        return const FeatureRequestModal();
-      },
+      builder: (context) => const FeatureRequestDialog(),
     );
   }
 
   @override
-  ConsumerState<FeatureRequestModal> createState() =>
-      _FeatureRequestModalState();
+  ConsumerState<FeatureRequestDialog> createState() =>
+      _FeatureRequestDialogState();
 }
 
-class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
+class _FeatureRequestDialogState extends ConsumerState<FeatureRequestDialog> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String error = '';
-  bool hasSubmitted = false;
-  bool loading = false;
+  bool _hasSubmitted = false;
+  bool _loading = false;
+  bool _canSubmit = false;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: StyledText(
-        hasSubmitted ? 'Thank you!' : 'Feature Request',
+        _hasSubmitted ? 'Thank you!' : 'Feature Request',
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16,
-        children: !hasSubmitted
+        children: !_hasSubmitted
             ? [
                 TextField(
                   controller: _titleController,
                   decoration: const InputDecoration(
                     labelText: 'Title',
                   ),
+                  onChanged: (value) => setState(() {
+                    _canSubmit = value.isNotEmpty;
+                  }),
                 ),
                 TextField(
                   controller: _descriptionController,
@@ -56,13 +57,6 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
                   minLines: 3,
                   maxLines: 5,
                 ),
-                if (error.isNotEmpty)
-                  StyledText(
-                    error,
-                    style: const TextStyle(
-                      color: ColorSettings.error,
-                    ),
-                  ),
               ]
             : [
                 const StyledText(
@@ -71,9 +65,9 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
               ],
       ),
       actionsOverflowButtonSpacing: 16,
-      actions: !hasSubmitted
+      actions: !_hasSubmitted
           ? [
-              if (loading)
+              if (_loading)
                 const CircularProgressIndicator()
               else ...[
                 TextButton(
@@ -93,10 +87,12 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () async => handleSubmit(),
+                  onPressed: _canSubmit ? () async => handleSubmit() : null,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(
-                      ColorSettings.primary,
+                      _canSubmit
+                          ? ColorSettings.primary
+                          : ColorSettings.primary.withAlpha(100),
                     ),
                   ),
                   child: const StyledText(
@@ -140,15 +136,8 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
     if (await maybeRedirectToConnectionErrorView(context)) return;
 
     setState(() {
-      loading = true;
+      _loading = true;
     });
-
-    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
-      setState(() {
-        error = 'Please fill out all fields.';
-      });
-      return;
-    }
 
     await ref.read(feedbackServiceProvider.notifier).createFeatureRequest(
           _titleController.text,
@@ -156,8 +145,8 @@ class _FeatureRequestModalState extends ConsumerState<FeatureRequestModal> {
         );
 
     setState(() {
-      hasSubmitted = true;
-      loading = false;
+      _hasSubmitted = true;
+      _loading = false;
     });
   }
 }
