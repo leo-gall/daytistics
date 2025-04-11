@@ -53,38 +53,40 @@ class _ChatViewState extends ConsumerState<ChatView> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: <Widget>[
-                  // sample message on the right
-                  for (final ConversationMessage message in messages) ...[
-                    UserChatMessage(
-                      message.query,
-                    ),
-                    LLMChatMessage(
-                      message,
-                    ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: <Widget>[
+                    // sample message on the right
+                    for (final ConversationMessage message in messages) ...[
+                      UserChatMessage(
+                        message.query,
+                      ),
+                      LLMChatMessage(
+                        message,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-          // adds a shadow to the input field
-          PromptInputField(
-            onChat: (_, __) async {
-              // scroll to the bottom of the list
-              await _scrollController.animateTo(
-                _scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-              );
-            },
-          ),
-        ],
+            // adds a shadow to the input field
+            PromptInputField(
+              onChat: (_, __) async {
+                // scroll to the bottom of the list
+                await _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -65,85 +65,87 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
           ),
         ],
       ),
-      body: Consumer(
-        builder: (context, ref, child) {
-          final String? email = ref
-              .watch(supabaseClientDependencyProvider)
-              .auth
-              .currentUser
-              ?.email;
+      body: SafeArea(
+        child: Consumer(
+          builder: (context, ref, child) {
+            final String? email = ref
+                .watch(supabaseClientDependencyProvider)
+                .auth
+                .currentUser
+                ?.email;
 
-          // postframe callback
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-            final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+            // postframe callback
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+              final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
-            late String deviceName;
+              late String deviceName;
 
-            if (Platform.isIOS) {
-              final IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
-              deviceName = iosInfo.utsname.machine;
-            } else if (Platform.isAndroid) {
-              final AndroidDeviceInfo androidInfo =
-                  await deviceInfoPlugin.androidInfo;
-              deviceName = androidInfo.model;
-            }
+              if (Platform.isIOS) {
+                final IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
+                deviceName = iosInfo.utsname.machine;
+              } else if (Platform.isAndroid) {
+                final AndroidDeviceInfo androidInfo =
+                    await deviceInfoPlugin.androidInfo;
+                deviceName = androidInfo.model;
+              }
 
-            setState(() {
-              version = packageInfo.version;
-              deviceName =
-                  deviceName.isNotEmpty ? deviceName : 'unknown device';
+              setState(() {
+                version = packageInfo.version;
+                deviceName =
+                    deviceName.isNotEmpty ? deviceName : 'unknown device';
+              });
             });
-          });
 
-          return RequireAuth(
-            child: SettingsList(
-              lightTheme: SettingsThemeData(
-                settingsListBackground: ColorSettings.background,
-                settingsSectionBackground: Colors.grey[200],
-              ),
-              sections: [
-                // const OauthProfileSection(),
-                const SettingsProfileSection(),
-                const InfoProfileSection(),
-                const HelpProfileSection(),
-                const LegalProfileSection(),
-                const CriticalActionsProfileSection(),
-                CustomSettingsSection(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      StyledText(
-                        version,
-                        style: const TextStyle(
-                          color: ColorSettings.textDark,
-                          fontSize: 12,
-                        ),
-                      ),
-                      StyledText(
-                        deviceName,
-                        style: const TextStyle(
-                          color: ColorSettings.textDark,
-                          fontSize: 12,
-                        ),
-                      ),
-                      StyledText(
-                        (email != null && email.isNotEmpty)
-                            ? email
-                            : 'Anonymous User',
-                        style: const TextStyle(
-                          color: ColorSettings.textDark,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+            return RequireAuth(
+              child: SettingsList(
+                lightTheme: SettingsThemeData(
+                  settingsListBackground: ColorSettings.background,
+                  settingsSectionBackground: Colors.grey[200],
                 ),
-              ],
-            ),
-          );
-        },
+                sections: [
+                  // const OauthProfileSection(),
+                  const SettingsProfileSection(),
+                  const InfoProfileSection(),
+                  const HelpProfileSection(),
+                  const LegalProfileSection(),
+                  const CriticalActionsProfileSection(),
+                  CustomSettingsSection(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        StyledText(
+                          version,
+                          style: const TextStyle(
+                            color: ColorSettings.textDark,
+                            fontSize: 12,
+                          ),
+                        ),
+                        StyledText(
+                          deviceName,
+                          style: const TextStyle(
+                            color: ColorSettings.textDark,
+                            fontSize: 12,
+                          ),
+                        ),
+                        StyledText(
+                          (email != null && email.isNotEmpty)
+                              ? email
+                              : 'Anonymous User',
+                          style: const TextStyle(
+                            color: ColorSettings.textDark,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

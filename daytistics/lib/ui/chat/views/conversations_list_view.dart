@@ -85,17 +85,19 @@ class _ConversationsListViewState extends ConsumerState<ConversationsListView> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: _conversations.isEmpty && !_isLoading
-                  ? const Center(child: Text('No conversations found'))
-                  : _buildConversationList(),
-            ),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                child: _conversations.isEmpty && !_isLoading
+                    ? const Center(child: Text('No conversations found'))
+                    : _buildConversationList(),
+              ),
+            ],
+          ),
         ),
       ),
     );

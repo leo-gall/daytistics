@@ -154,30 +154,32 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
               ],
             ),
-            body: Center(
-              child: Column(
-                children: <Widget>[
-                  const SizedBox(height: 20),
-                  Showcase(
-                    key: _startConversation,
-                    title: 'Chat',
-                    description: 'Type in your question and press enter.',
-                    child: PromptInputField(
-                      onChat: (query, reply) =>
-                          Navigator.pushNamed(context, '/chat'),
+            body: SafeArea(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    const SizedBox(height: 20),
+                    Showcase(
+                      key: _startConversation,
+                      title: 'Chat',
+                      description: 'Type in your question and press enter.',
+                      child: PromptInputField(
+                        onChat: (query, reply) =>
+                            Navigator.pushNamed(context, '/chat'),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Showcase(
-                      key: _selectDate,
-                      title: 'Calendar',
-                      description:
-                          'Select a date, where you want to view the daytistic.',
-                      child: const DashboardCalendar(),
+                    Expanded(
+                      child: Showcase(
+                        key: _selectDate,
+                        title: 'Calendar',
+                        description:
+                            'Select a date, where you want to view the daytistic.',
+                        child: const DashboardCalendar(),
+                      ),
                     ),
-                  ),
-                  DashboardDateCard(editDaytisticKey: _editDaytistic),
-                ],
+                    DashboardDateCard(editDaytisticKey: _editDaytistic),
+                  ],
+                ),
               ),
             ),
           );
