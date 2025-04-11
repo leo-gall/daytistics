@@ -7,7 +7,7 @@ analyze-flutter:
 	flutter analyze
 	dart run custom_lint
 
-analyze-supabase:
+analyze-deno:
 	deno lint
 
 test-all:
@@ -17,7 +17,7 @@ test-all:
 test-flutter:
 	flutter test
 
-test-supabase:
+test-deno:
 	deno test --env-file=./.env --allow-all
 
 run-functions:

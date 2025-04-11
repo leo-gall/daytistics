@@ -6,7 +6,6 @@ import {
   ConversationMessage,
   Daytistic,
 } from "../_shared/types.ts";
-import { decrypt, encrypt } from "../_shared/encryption.ts";
 import { fetchDaytistics } from "./daytistics.ts";
 
 const TOOLS: OpenAI.ChatCompletionTool[] = [
@@ -166,12 +165,12 @@ async function fetchConversationContext(
     for (const message of conversation_messages.data!) {
       messages.push({
         role: "user",
-        content: await decrypt(message.query, options.user),
+        content: message.query,
       });
 
       messages.push({
         role: "assistant",
-        content: await decrypt(message.reply, options.user),
+        content: message.reply,
       });
     }
   }
@@ -181,7 +180,6 @@ async function fetchConversationContext(
 
 export async function addMessageToConversation(
   supabase: SupabaseClient,
-  user: User,
   options: {
     conversationId: string;
     query: string;
@@ -189,14 +187,11 @@ export async function addMessageToConversation(
     toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[];
   },
 ) {
-  const encryptedQuery = await encrypt(options.query, user!);
-  const encryptedReply = await encrypt(options.reply!, user!);
-
   await supabase.from("conversation_messages").insert([
     {
       id: uuidv4(),
-      query: encryptedQuery,
-      reply: encryptedReply,
+      query: options.query,
+      reply: options.reply,
       conversation_id: options.conversationId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -322,11 +317,11 @@ export async function fetchConversations(
       if (!messagesError && messagesData) {
         if (!options?.encrypted) {
           const decryptedMessages = await Promise.all(
-            messagesData.map(async (message) => {
+            messagesData.map((message) => {
               return {
                 ...message,
-                query: await decrypt(message.query, user),
-                reply: await decrypt(message.reply, user),
+                query: message.query,
+                reply: message.reply,
               };
             }),
           );
