@@ -52,32 +52,34 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView>
       key: const ValueKey('daytistic-details-scaffold'),
       bottomNavigationBar: Material(
         color: Colors.grey[200],
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: Colors.grey, width: 0.5),
+        child: SafeArea(
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Colors.grey, width: 0.5),
+              ),
             ),
-          ),
-          child: TabBar(
-            key: const ValueKey('daytistic-tabs'),
-            controller: _tabController,
-            labelColor: ColorSettings.primary,
-            unselectedLabelColor: ColorSettings.primary,
-            indicatorColor: ColorSettings.primary,
-            dividerColor: Colors.transparent,
-            tabs: const [
-              Tab(
-                text: 'Activities',
-                icon: Icon(
-                  Icons.track_changes,
-                  color: ColorSettings.primary,
+            child: TabBar(
+              key: const ValueKey('daytistic-tabs'),
+              controller: _tabController,
+              labelColor: ColorSettings.primary,
+              unselectedLabelColor: ColorSettings.primary,
+              indicatorColor: ColorSettings.primary,
+              dividerColor: Colors.transparent,
+              tabs: const [
+                Tab(
+                  text: 'Activities',
+                  icon: Icon(
+                    Icons.track_changes,
+                    color: ColorSettings.primary,
+                  ),
                 ),
-              ),
-              Tab(
-                text: 'Wellbeing',
-                icon: Icon(Icons.star, color: ColorSettings.primary),
-              ),
-            ],
+                Tab(
+                  text: 'Wellbeing',
+                  icon: Icon(Icons.star, color: ColorSettings.primary),
+                ),
+              ],
+            ),
           ),
         ),
       ),

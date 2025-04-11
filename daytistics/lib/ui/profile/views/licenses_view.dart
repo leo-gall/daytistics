@@ -24,69 +24,71 @@ class LicensesView extends StatelessWidget {
           ],
         ),
       ),
-      body: FutureBuilder<List<LicenseEntry>>(
-        future: LicenseRegistry.licenses.toList(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No licenses available.'));
-          }
+      body: SafeArea(
+        child: FutureBuilder<List<LicenseEntry>>(
+          future: LicenseRegistry.licenses.toList(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No licenses available.'));
+            }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: StyledText(
-                    'Thanks to the following open-source projects, which made this app possible:',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    child: StyledText(
+                      'Thanks to the following open-source projects, which made this app possible:',
+                      style: TextStyle(fontStyle: FontStyle.italic),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: ListView(
-                    children: snapshot.data!.map((license) {
-                      return Card(
-                        elevation: 2,
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: ExpansionTile(
-                          tilePadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          title: StyledText(
-                            license.packages.join(', ').toUpperCase(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: ColorSettings.textDark,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: StyledText(
-                                license.paragraphs
-                                    .map((e) => e.text)
-                                    .join('\n'),
-                              ),
+                  Expanded(
+                    child: ListView(
+                      children: snapshot.data!.map((license) {
+                        return Card(
+                          elevation: 2,
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          child: ExpansionTile(
+                            tilePadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                            title: StyledText(
+                              license.packages.join(', ').toUpperCase(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: ColorSettings.textDark,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: StyledText(
+                                  license.paragraphs
+                                      .map((e) => e.text)
+                                      .join('\n'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
