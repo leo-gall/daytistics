@@ -1,11 +1,5 @@
 name: Integration Tests
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'daytistics/supabase'
-      - '.github/workflows/integration-tests.yml'
   pull_request:
     branches:
       - main

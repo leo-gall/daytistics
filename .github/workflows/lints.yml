@@ -1,11 +1,5 @@
 name: Linting
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'daytistics/**'
-      - '.github/workflows/lints.yml'
   pull_request:
     branches:
       - main
