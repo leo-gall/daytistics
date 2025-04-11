@@ -10,7 +10,6 @@ import 'package:daytistics/ui/chat/views/chat_view.dart';
 import 'package:daytistics/ui/chat/views/conversations_list_view.dart';
 import 'package:daytistics/ui/dashboard/views/dashboard_view.dart';
 import 'package:daytistics/ui/onboarding/views/onboarding_view.dart';
-import 'package:daytistics/ui/profile/views/about_view.dart';
 import 'package:daytistics/ui/profile/views/licenses_view.dart';
 import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +79,6 @@ class _DaytisticsAppState extends ConsumerState<DaytisticsApp> {
             const ConversationsListView(),
         '/profile': (BuildContext context) => const ProfileView(),
         '/profile/licenses': (BuildContext context) => const LicensesView(),
-        '/profile/about': (BuildContext context) => const AboutView(),
         '/onboarding': (BuildContext context) => const OnboardingView(),
       },
     );
