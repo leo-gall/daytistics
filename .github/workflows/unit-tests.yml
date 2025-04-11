@@ -1,11 +1,5 @@
 name: Unit Tests
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'daytistics/**'
-      - '.github/workflows/unit-tests.yml'
   pull_request:
     branches:
       - main
