@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    await Conversations.addMessageToConversation(supabase, user!, {
+    await Conversations.addMessageToConversation(supabase, {
       query: validatedBody.data.query,
       reply: llmResponse.reply!,
       conversationId: conversationId,
