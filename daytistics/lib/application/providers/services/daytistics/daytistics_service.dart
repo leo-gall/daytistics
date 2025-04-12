@@ -1,9 +1,11 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/models/diary_entry.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
 import 'package:daytistics/application/providers/di/user/user.dart';
+import 'package:daytistics/application/providers/services/diary/diary_service.dart';
 import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
 import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/exceptions.dart';
@@ -53,6 +55,9 @@ class DaytisticsService extends _$DaytisticsService {
 
     daytistic.activities = activitiesMap.map(Activity.fromSupabase).toList();
 
+    daytistic.diaryEntry =
+        await ref.read(diaryServiceProvider).fetchDiaryEntry(daytistic.id);
+
     ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
     await ref.read(analyticsDependencyProvider).trackEvent(
@@ -81,6 +86,12 @@ class DaytisticsService extends _$DaytisticsService {
         daytisticId: daytistic.id,
       );
 
+      daytistic.diaryEntry = DiaryEntry(
+        daytisticId: daytistic.id,
+        shortEntry: '',
+        happinessMoment: '',
+      );
+
       await supabase.from(SupabaseSettings.daytisticsTableName).upsert(
             daytistic.toSupabase(userId: ref.read(userDependencyProvider)!.id),
           );
@@ -88,6 +99,10 @@ class DaytisticsService extends _$DaytisticsService {
       await supabase
           .from(SupabaseSettings.wellbeingsTableName)
           .upsert(daytistic.wellbeing!.toSupabase());
+
+      await ref.read(diaryServiceProvider).upsertDiaryEntry(
+            daytistic.diaryEntry!,
+          );
 
       await ref.read(analyticsDependencyProvider).trackEvent(
         eventName: 'daytistic_created',
