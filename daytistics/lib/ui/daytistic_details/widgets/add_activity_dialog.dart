@@ -25,7 +25,7 @@ class AddActivityDialog extends ConsumerStatefulWidget {
 class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
   final TextEditingController _activityController = TextEditingController();
   late TimeOfDay _startTime;
-  TimeOfDay _endTime = TimeOfDay.now();
+  late TimeOfDay _endTime;
 
   @override
   void initState() {
@@ -39,6 +39,11 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
         _startTime = currentDaytistic.activities.isNotEmpty
             ? TimeOfDay.fromDateTime(currentDaytistic.activities.last.endTime)
             : const TimeOfDay(hour: 0, minute: 0);
+
+        _endTime = TimeOfDay(
+          hour: _startTime.hour + 1 > 23 ? 0 : _startTime.hour + 1,
+          minute: _startTime.minute,
+        );
       });
     }
 
