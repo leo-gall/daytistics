@@ -126,7 +126,13 @@ async function testWithExceededConversationMessages(
 
   await supabase.from("conversation_messages").insert(messages);
 
-  const { error } = await supabase.functions.invoke(
+  // list messages
+  const { data: conversationMessages } = await supabase
+    .from("conversation_messages")
+    .select()
+    .eq("conversation_id", messages[0].conversation_id);
+
+  const { error, data } = await supabase.functions.invoke(
     "send-conversation-message",
     {
       body: {
@@ -134,6 +140,11 @@ async function testWithExceededConversationMessages(
       },
     },
   );
+
+  // dbeug print
+  console.log("Error:", error);
+  console.log("Data:", data);
+  console.log(conversationMessages);
 
   assertFalse(error === null);
 }
@@ -185,7 +196,7 @@ Deno.test(
       );
     });
 
-    await t.step("Exceeded token budget", async () => {
+    await t.step("Exceeded conversation messaged", async () => {
       await testWithExceededConversationMessages(supabase);
     });
 
