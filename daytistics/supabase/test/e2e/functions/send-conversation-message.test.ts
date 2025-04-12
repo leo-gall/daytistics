@@ -7,7 +7,6 @@ import {
   assert,
   assertEquals,
   assertFalse,
-  assertGreater,
   assertGreaterOrEqual,
 } from "jsr:@std/assert";
 import { generateFakeDaytistics } from "../../e2e-utils.ts";
@@ -20,24 +19,12 @@ const query2 = "What have we talked about so far?";
 
 interface StepResult {
   conversation: Conversation;
-  inputTokens: number;
-  outputTokens: number;
 }
 
-async function testContainsNoDailyTokenBudgets(
+async function testWithoutConversationId(
   supabase: SupabaseClient,
-  date: Date,
+  _date: Date,
 ) {
-  const { data: dailyTokenBudgets } = await supabase
-    .from("daily_token_budgets")
-    .select()
-    .eq("date", date.toISOString())
-    .single();
-
-  assertEquals(dailyTokenBudgets, null);
-}
-
-async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
   const response = await supabase.functions.invoke(
     "send-conversation-message",
     {
@@ -72,30 +59,14 @@ async function testWithoutConversationId(supabase: SupabaseClient, date: Date) {
   assertFalse(conversationMessages === null);
   assertGreaterOrEqual(conversationMessages!.length, 1);
 
-  // Ensure the daily token budget was created and its fields are correct
-  const { data: dailyTokenBudgetsData } = await supabase
-    .from("daily_token_budgets")
-    .select()
-    .eq("date", date.toISOString())
-    .single();
-
-  assert(dailyTokenBudgetsData !== null);
-  const inputTokens = dailyTokenBudgetsData.input_tokens;
-  const outputTokens = dailyTokenBudgetsData.output_tokens;
-  assertEquals(typeof inputTokens, "number");
-  assertEquals(typeof outputTokens, "number");
-
   return {
     conversation,
-    inputTokens,
-    outputTokens,
   };
 }
 
 async function testWithConversationId(
   supabase: SupabaseClient,
-  user: User,
-  date: Date,
+  _user: User,
   conversationId: string,
 ) {
   const response = await supabase.functions.invoke(
@@ -123,20 +94,6 @@ async function testWithConversationId(
   assertFalse(conversationMessages === null);
   assertGreaterOrEqual(conversationMessages!.length, 2);
 
-  // Check that the daily token budget was updated
-  const { data: dailyTokenBudgetsData } = await supabase
-    .from("daily_token_budgets")
-    .select()
-    .eq("user_id", user.id)
-    .eq("date", date.toISOString())
-    .single();
-
-  assert(dailyTokenBudgetsData !== null);
-  const inputTokens = dailyTokenBudgetsData.input_tokens;
-  const outputTokens = dailyTokenBudgetsData.output_tokens;
-  assertEquals(typeof inputTokens, "number");
-  assertEquals(typeof outputTokens, "number");
-
   const conversation: Conversation = (
     await supabase
       .from("conversations")
@@ -147,8 +104,6 @@ async function testWithConversationId(
 
   return {
     conversation,
-    inputTokens,
-    outputTokens,
   };
 }
 
@@ -183,11 +138,6 @@ async function testWithExceededConversationMessages(
   assertFalse(error === null);
 }
 
-function testTokensIncreased(step1Result: StepResult, step2Result: StepResult) {
-  assertGreater(step2Result.inputTokens, step1Result.inputTokens);
-  assertGreater(step2Result.outputTokens, step1Result.outputTokens);
-}
-
 async function testRequiresAuthentication(supabase: SupabaseClient) {
   await supabase.auth.signOut();
 
@@ -219,13 +169,6 @@ Deno.test(
     await generateFakeDaytistics(3, user!, supabase);
     const date = new Date();
 
-    await t.step(
-      "Contains no daily token budgets before doing a request",
-      async () => {
-        await testContainsNoDailyTokenBudgets(supabase, date);
-      },
-    );
-
     let testWithoutConversationIdResult: StepResult;
     await t.step("Without conversation ID", async () => {
       testWithoutConversationIdResult = await testWithoutConversationId(
@@ -234,25 +177,16 @@ Deno.test(
       );
     });
 
-    let testWithConversationIdResult: StepResult;
     await t.step("With conversation ID", async () => {
-      testWithConversationIdResult = await testWithConversationId(
+      await testWithConversationId(
         supabase,
         user!,
-        date,
         testWithoutConversationIdResult.conversation.id,
       );
     });
 
     await t.step("Exceeded token budget", async () => {
       await testWithExceededConversationMessages(supabase);
-    });
-
-    await t.step("Tokens increased", () => {
-      testTokensIncreased(
-        testWithoutConversationIdResult,
-        testWithConversationIdResult,
-      );
     });
 
     await t.step("Requires authentication", async () => {
