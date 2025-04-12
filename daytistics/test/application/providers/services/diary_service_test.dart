@@ -89,7 +89,9 @@ void main() {
       expect(updatedResult['daytistic_id'], updatedDiaryEntry.daytisticId);
       expect(updatedResult['short_entry'], updatedDiaryEntry.shortEntry);
       expect(
-          updatedResult['happiness_moment'], updatedDiaryEntry.happinessMoment);
+        updatedResult['happiness_moment'],
+        updatedDiaryEntry.happinessMoment,
+      );
     });
 
     test('fetchDiaryEntry should return correct DiaryEntry', () async {
