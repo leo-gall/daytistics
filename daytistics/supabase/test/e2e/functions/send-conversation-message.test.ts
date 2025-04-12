@@ -109,7 +109,9 @@ async function testWithConversationId(
 
 async function testWithExceededConversationMessages(
   supabase: SupabaseClient,
+  conversationId: string,
 ) {
+  // FIX: it failes currently because its the wrong conversation id
   const messages = Array.from(
     { length: config.conversations.options.freeMessagesPerDaytistic + 1 },
     (_, i) =>
@@ -117,7 +119,7 @@ async function testWithExceededConversationMessages(
         i.toString(),
         "query",
         "reply",
-        "conversation_id",
+        conversationId,
         new Date().toISOString(),
         new Date().toISOString(),
         [],
@@ -130,13 +132,14 @@ async function testWithExceededConversationMessages(
   const { data: conversationMessages } = await supabase
     .from("conversation_messages")
     .select()
-    .eq("conversation_id", messages[0].conversation_id);
+    .eq("conversation_id", conversationId);
 
   const { error, data } = await supabase.functions.invoke(
     "send-conversation-message",
     {
       body: {
         query: query1,
+        conversation_id: conversationId,
       },
     },
   );
@@ -197,7 +200,10 @@ Deno.test(
     });
 
     await t.step("Exceeded conversation messaged", async () => {
-      await testWithExceededConversationMessages(supabase);
+      await testWithExceededConversationMessages(
+        supabase,
+        testWithoutConversationIdResult.conversation.id,
+      );
     });
 
     await t.step("Requires authentication", async () => {
