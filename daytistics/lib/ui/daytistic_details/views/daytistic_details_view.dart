@@ -4,6 +4,7 @@ import 'package:daytistics/config/settings.dart';
 import 'package:daytistics/shared/widgets/security/require_auth.dart';
 import 'package:daytistics/shared/widgets/styled/styled_app_bar_flexibable_space.dart';
 import 'package:daytistics/shared/widgets/styled/styled_text.dart';
+import 'package:daytistics/ui/daytistic_details/views/daytistic_details_diary_view.dart';
 
 import 'package:daytistics/ui/daytistic_details/widgets/activities_list.dart';
 import 'package:daytistics/ui/daytistic_details/widgets/add_activity_dialog.dart';
@@ -29,7 +30,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView>
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 2,
+      length: 3,
       vsync: this,
     );
   }
@@ -76,7 +77,11 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView>
                 ),
                 Tab(
                   text: 'Wellbeing',
-                  icon: Icon(Icons.star, color: ColorSettings.primary),
+                  icon: Icon(Icons.star_outline, color: ColorSettings.primary),
+                ),
+                Tab(
+                  text: 'Diary',
+                  icon: Icon(Icons.book_outlined, color: ColorSettings.primary),
                 ),
               ],
             ),
@@ -125,6 +130,7 @@ class _DaytisticDetailsViewState extends ConsumerState<DaytisticDetailsView>
               children: [
                 ActivitiesList(daytistic: daytistic),
                 const WellbeingRating(),
+                const DaytisticDetailsDiaryView(),
               ],
             ),
           ),

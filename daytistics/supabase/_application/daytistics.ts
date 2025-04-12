@@ -1,6 +1,7 @@
 import { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 import {
   DatabaseActivity,
+  DatabaseDiaryEntry,
   DatabaseWellbeing,
   Daytistic,
 } from "../_shared/types.ts";
@@ -13,7 +14,7 @@ export async function fetchDaytistics(
       start: Date;
       end: Date;
     };
-  }
+  },
 ): Promise<Daytistic[]> {
   let query = supabase.from("daytistics").select("*");
 
@@ -39,6 +40,17 @@ export async function fetchDaytistics(
     ).data as DatabaseWellbeing;
     if (wellbeing) {
       daytistic.wellbeing = wellbeing;
+    }
+
+    const diaryEntry = (
+      await supabase
+        .from("diary_entries")
+        .select("*")
+        .eq("daytistic_id", daytistic.id)
+        .single()
+    ).data as DatabaseDiaryEntry;
+    if (diaryEntry) {
+      daytistic.diary_entry = diaryEntry;
     }
 
     const activities = await supabase

@@ -1,5 +1,6 @@
 import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
+import 'package:daytistics/application/models/diary_entry.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
@@ -64,7 +65,7 @@ void main() {
   });
 
   group('fetchDaytistic', () {
-    test('should return a daytistic without wellbeing and activities',
+    test('should return a daytistic without wellbeing, diary and activities',
         () async {
       // arrange
 
@@ -102,7 +103,8 @@ void main() {
       );
     });
 
-    test('should return a daytistic with wellbeing and activities', () async {
+    test('should return a daytistic with wellbeing, diary and activities',
+        () async {
       // arrange
 
       final Daytistic daytistic = Daytistic(
@@ -120,6 +122,16 @@ void main() {
 
       await mockSupabase.from(SupabaseSettings.wellbeingsTableName).insert(
             wellbeing.toSupabase(),
+          );
+
+      final DiaryEntry diaryEntry = DiaryEntry(
+        daytisticId: daytistic.id,
+        shortEntry: 'Short entry',
+        happinessMoment: 'Happiness moment',
+      );
+
+      await mockSupabase.from(SupabaseSettings.diaryEntriesTableName).insert(
+            diaryEntry.toJson(),
           );
 
       final Activity activity = Activity(
@@ -144,6 +156,8 @@ void main() {
       expect(fetchedDaytistic.id, daytistic.id);
       expect(fetchedDaytistic.date, daytistic.date);
       expect(fetchedDaytistic.wellbeing!.daytisticId, wellbeing.daytisticId);
+      expect(fetchedDaytistic.activities.length, 1);
+      expect(fetchedDaytistic.diaryEntry?.id, diaryEntry.id);
 
       expect(
         fakeAnalytics.capturedEvents.contains('daytistic_fetched'),
@@ -200,7 +214,7 @@ void main() {
     });
 
     test(
-        'should create new daytistic with wellbeing when none exists for the date',
+        'should create new daytistic with wellbeing & diary entry when none exists for the date',
         () async {
       // arrange
       final DateTime date = DateTime.now();
@@ -219,6 +233,7 @@ void main() {
           .select()
           .eq('id', createdDaytistic.id)
           .single();
+
       expect(daytisticInDb['id'], createdDaytistic.id);
       expect(DateTime.parse(daytisticInDb['date'] as String), date);
       expect(daytisticInDb['user_id'], mockUser.id);
@@ -230,6 +245,17 @@ void main() {
           .eq('daytistic_id', createdDaytistic.id)
           .single();
       expect(wellbeingInDb['daytistic_id'], createdDaytistic.id);
+
+      // Verify the diary entry was actually inserted into the database
+      final diaryEntryInDb = await mockSupabase
+          .from(SupabaseSettings.diaryEntriesTableName)
+          .select()
+          .eq('daytistic_id', createdDaytistic.id)
+          .single();
+
+      expect(diaryEntryInDb['daytistic_id'], createdDaytistic.id);
+      expect(diaryEntryInDb['short_entry'], '');
+      expect(diaryEntryInDb['happiness_moment'], '');
 
       expect(
         fakeAnalytics.capturedEvents.contains('daytistic_created'),

@@ -37,9 +37,17 @@ export interface DatabaseDaytistic {
   updated_at: string;
 }
 
+export interface DatabaseDiaryEntry {
+  id: string;
+  daytistic_id: string;
+  short_entry: string;
+  happiness_moment: string;
+}
+
 export interface Daytistic extends DatabaseDaytistic {
   wellbeing: DatabaseWellbeing;
   activities: DatabaseActivity[];
+  diary_entry: DatabaseDiaryEntry;
 }
 
 export class ConversationMessage {
@@ -58,7 +66,7 @@ export class ConversationMessage {
     conversation_id: string,
     created_at: string,
     updated_at: string,
-    called_functions: string[]
+    called_functions: string[],
   ) {
     this.id = id;
     this.query = query;
@@ -77,7 +85,7 @@ export class ConversationMessage {
       supabaseData.conversation_id,
       supabaseData.created_at,
       supabaseData.updated_at,
-      supabaseData.called_functions
+      supabaseData.called_functions,
     );
   }
 
@@ -108,7 +116,7 @@ export class Conversation {
     created_at: string,
     updated_at: string,
     user_id: string,
-    messages: ConversationMessage[]
+    messages: ConversationMessage[],
   ) {
     this.id = id;
     this.title = title;
@@ -125,7 +133,7 @@ export class Conversation {
       supabaseData.created_at,
       supabaseData.updated_at,
       supabaseData.user_id,
-      (supabaseData.messages || []).map(ConversationMessage.fromSupabase)
+      (supabaseData.messages || []).map(ConversationMessage.fromSupabase),
     );
   }
 

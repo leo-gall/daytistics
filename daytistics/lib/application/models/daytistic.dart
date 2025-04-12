@@ -1,4 +1,5 @@
 import 'package:daytistics/application/models/activity.dart';
+import 'package:daytistics/application/models/diary_entry.dart';
 import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:supabase_flutter/supabase_flutter.dart';
@@ -9,12 +10,14 @@ class Daytistic {
   DateTime date;
   late List<Activity> activities;
   late Wellbeing? wellbeing;
+  late DiaryEntry? diaryEntry;
   late DateTime createdAt;
   late DateTime updatedAt;
 
   Daytistic({
     required this.date,
     this.wellbeing,
+    this.diaryEntry,
     String? id,
     List<Activity>? activities,
     DateTime? createdAt,
@@ -39,12 +42,11 @@ class Daytistic {
     );
   }
 
-  // STATE MANAGEMENT METHODS
-
   Daytistic copyWith({
     String? id,
     DateTime? date,
     List<Activity>? activities,
+    DiaryEntry? diaryEntry,
     Wellbeing? wellbeing,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -53,13 +55,12 @@ class Daytistic {
       id: id ?? this.id,
       date: date ?? this.date,
       activities: activities ?? this.activities,
+      diaryEntry: diaryEntry ?? this.diaryEntry,
       wellbeing: wellbeing ?? this.wellbeing,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-
-  // TRANSFORMER METHODS
 
   Map<String, dynamic> toSupabase({String? userId}) {
     return {
