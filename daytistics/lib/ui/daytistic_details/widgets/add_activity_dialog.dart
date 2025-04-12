@@ -151,9 +151,5 @@ class AddActivityDialogState extends ConsumerState<AddActivityDialog> {
         }
       },
     );
-
-    if (mounted) {
-      Navigator.pop(context);
-    }
   }
 }
