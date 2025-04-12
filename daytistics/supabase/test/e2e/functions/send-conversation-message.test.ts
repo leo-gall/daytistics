@@ -11,7 +11,7 @@ import {
   assertGreaterOrEqual,
 } from "jsr:@std/assert";
 import { generateFakeDaytistics } from "../../e2e-utils.ts";
-import { Conversation } from "../../../_shared/types.ts";
+import { Conversation, ConversationMessage } from "../../../_shared/types.ts";
 import config from "../../../config.ts";
 
 const query1 =
@@ -152,18 +152,24 @@ async function testWithConversationId(
   };
 }
 
-async function testWithExceededTokenBudget(
+async function testWithExceededConversationMessages(
   supabase: SupabaseClient,
-  date: Date,
 ) {
-  const _ = await supabase
-    .from("daily_token_budgets")
-    .update({
-      output_tokens: config.conversations.options.maxFreeOutputTokensPerDay! +
-        1,
-    })
-    .eq("date", date.toISOString().split("T")[0])
-    .select();
+  const messages = Array.from(
+    { length: config.conversations.options.freeMessagesPerDaytistic + 1 },
+    (_, i) =>
+      new ConversationMessage(
+        i.toString(),
+        "query",
+        "reply",
+        "conversation_id",
+        new Date().toISOString(),
+        new Date().toISOString(),
+        [],
+      ),
+  );
+
+  await supabase.from("conversation_messages").insert(messages);
 
   const { error } = await supabase.functions.invoke(
     "send-conversation-message",
@@ -239,7 +245,7 @@ Deno.test(
     });
 
     await t.step("Exceeded token budget", async () => {
-      await testWithExceededTokenBudget(supabase, date);
+      await testWithExceededConversationMessages(supabase);
     });
 
     await t.step("Tokens increased", () => {

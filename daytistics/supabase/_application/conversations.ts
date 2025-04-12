@@ -7,6 +7,7 @@ import {
   Daytistic,
 } from "../_shared/types.ts";
 import { fetchDaytistics } from "./daytistics.ts";
+import config from "../config.ts";
 
 const TOOLS: OpenAI.ChatCompletionTool[] = [
   {
@@ -345,6 +346,25 @@ export async function fetchConversations(
   }
 
   return conversations;
+}
+
+export async function hasExceededDaytisticMessageLimit(
+  supabase: SupabaseClient,
+  conversationId: string | null | undefined,
+): Promise<boolean> {
+  const messages = await supabase.from("conversation_messages").select(
+    "id",
+  ).eq(
+    "conversation_id",
+    conversationId,
+  ).gt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000));
+
+  if (messages.error) {
+    return false;
+  }
+
+  return messages.data.length >=
+    config.conversations.options.freeMessagesPerDaytistic;
 }
 
 export async function hasConversationAnalyticsEnabled(

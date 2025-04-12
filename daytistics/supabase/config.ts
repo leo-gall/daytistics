@@ -19,7 +19,7 @@ export default {
                 
                 Your goal is to empower users to reflect on their day, celebrate their successes, and identify small, actionable steps to enhance their routines and well-being. 
                 Respond in plain text only. Do not use Markdown, formatting, or special characters.`,
-            maxFreeOutputTokensPerDay: 2500,
+            freeMessagesPerDaytistic: 3,
             title: {
                 model: "gpt-3.5-turbo",
                 prompt:
