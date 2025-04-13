@@ -4,6 +4,7 @@ import 'package:daytistics/application/models/conversation.dart';
 import 'package:daytistics/application/models/conversation_message.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
 import 'package:daytistics/application/providers/di/supabase/supabase.dart';
+import 'package:daytistics/application/providers/di/user/user.dart';
 import 'package:daytistics/application/providers/state/current_conversation/current_conversation.dart';
 import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +17,13 @@ class ConversationsService {
   final CurrentConversation currentConversationNotifier;
   final Analytics analytics;
   final SupabaseClient supabase;
+  final User? user;
 
   ConversationsService({
     required this.currentConversationNotifier,
     required this.analytics,
     required this.supabase,
+    required this.user,
   });
 
   Future<String> sendMessage(
@@ -84,21 +87,26 @@ class ConversationsService {
     required int offset,
     int? amount,
   }) async {
-    final response = await supabase.functions.invoke(
-      'fetch-conversations',
-      body: {
-        'offset': offset,
-        'amount': amount,
-      },
+    final response = await supabase
+        .from('conversations')
+        .select()
+        .eq('user_id', user!.id)
+        .order('updated_at', ascending: false)
+        .range(offset, offset + (amount ?? 10) - 1);
+
+    final List<Conversation> conversations = await Future.wait(
+      response.map((data) async {
+        final conversation = Conversation.fromSupabase(data);
+        final messages = await supabase
+            .from('conversation_messages')
+            .select()
+            .eq('conversation_id', conversation.id)
+            .order('created_at', ascending: true);
+        return conversation.copyWith(
+          messages: messages.map(ConversationMessage.fromSupabase).toList(),
+        );
+      }),
     );
-
-    final conversations = <Conversation>[];
-    final List<dynamic> responseData = response.data as List<dynamic>;
-
-    for (final conversation in responseData) {
-      conversations
-          .add(Conversation.fromSupabase(conversation as Map<String, dynamic>));
-    }
 
     await analytics.trackEvent(eventName: 'conversations_fetched');
 
@@ -120,10 +128,12 @@ ConversationsService conversationsService(Ref ref) {
       ref.watch(currentConversationProvider.notifier);
   final analytics = ref.watch(analyticsDependencyProvider);
   final supabase = ref.watch(supabaseClientDependencyProvider);
+  final user = ref.watch(userDependencyProvider);
 
   return ConversationsService(
     currentConversationNotifier: currentConversationNotifier,
     analytics: analytics,
     supabase: supabase,
+    user: user,
   );
 }
