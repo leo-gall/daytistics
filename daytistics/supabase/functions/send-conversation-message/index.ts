@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({
           error:
-            `You have reached the maximum number of messages for today. Please try again tomorrow.`,
+            `You have reached the maximum number of messages for this conversation. Please try again tomorrow.`,
         }),
         {
           status: 403,
