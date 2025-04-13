@@ -8,6 +8,7 @@
     "@shared/validation": "../../_shared/validation.ts",
     "@application/conversations": "../../_application/conversations.ts",
     "@application/daytistics": "../../_application/daytistics.ts",
-    "@application/roadmap": "../../_application/roadmap.ts"
+    "@application/roadmap": "../../_application/roadmap.ts",
+    "@config": "../../config.ts"
   }
 }

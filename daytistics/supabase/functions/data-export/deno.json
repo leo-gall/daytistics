@@ -7,6 +7,7 @@
     "@shared/adapters": "../../_shared/adapters.ts",
     "@shared/validation": "../../_shared/validation.ts",
     "@application/conversations": "../../_application/conversations.ts",
-    "@application/daytistics": "../../_application/daytistics.ts"
+    "@application/daytistics": "../../_application/daytistics.ts",
+    "@config": "../../config.ts"
   }
 }
