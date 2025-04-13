@@ -357,7 +357,7 @@ export async function hasExceededDaytisticMessageLimit(
   ).eq(
     "conversation_id",
     conversationId,
-  ).gt("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000));
+  );
 
   if (messages.error) {
     return false;

@@ -8,25 +8,10 @@ import {
   DatabaseWellbeing,
 } from "../_shared/types.ts";
 
-export async function doAsTempUser(
-  supabase: SupabaseClient,
-  callback: (user: User, session: Session) => Promise<void>
-) {
-  const {
-    data: { user, session },
-    error,
-  } = await supabase.auth.signInAnonymously();
-  if (error) throw error;
-
-  await callback(user!, session!);
-
-  await supabase.auth.signOut();
-}
-
 export async function generateFakeDaytistics(
   amount: number,
   user: User,
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
 ) {
   const daytistics: DatabaseDaytistic[] = [];
   const wellbeings: DatabaseWellbeing[] = [];
@@ -74,14 +59,14 @@ export async function generateFakeDaytistics(
         daytistic_id: daytistic.id,
         start_time: new Date(
           date.getTime() +
-            faker.number.int({ min: 0, max: 12 * 60 * 60 * 1000 })
+            faker.number.int({ min: 0, max: 12 * 60 * 60 * 1000 }),
         ).toISOString(),
         end_time: new Date(
           date.getTime() +
             faker.number.int({
               min: 12 * 60 * 60 * 1000,
               max: 24 * 60 * 60 * 1000,
-            })
+            }),
         ).toISOString(),
         created_at: date.toISOString(),
         updated_at: date.toISOString(),
@@ -106,7 +91,7 @@ export async function generateConversations(
   user: User,
   supabase: SupabaseClient,
   conversationsCount: number,
-  messagesPerConversation: number
+  messagesPerConversation: number,
 ) {
   for (let i = 0; i < conversationsCount; i++) {
     const conversationId = uuidv4();
