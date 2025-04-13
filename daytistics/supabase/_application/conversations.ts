@@ -7,6 +7,7 @@ import {
   Daytistic,
 } from "../_shared/types.ts";
 import { fetchDaytistics } from "./daytistics.ts";
+import config from "../config.ts";
 
 const TOOLS: OpenAI.ChatCompletionTool[] = [
   {
@@ -90,9 +91,6 @@ export async function sendConversationMessage(
     TOOLS,
   );
 
-  let outputTokens = completion!.usage?.completion_tokens || 0;
-  let inputTokens = completion!.usage?.prompt_tokens || 0;
-
   const toolCalls = completion!.choices[0].message.tool_calls;
 
   let reply: string | null;
@@ -131,9 +129,6 @@ export async function sendConversationMessage(
       TOOLS,
     );
 
-    outputTokens += feededCompletion.usage?.completion_tokens || 0;
-    inputTokens += feededCompletion.usage?.prompt_tokens || 0;
-
     reply = feededCompletion.choices[0].message.content;
   } else {
     reply = completion!.choices[0].message.content;
@@ -141,8 +136,6 @@ export async function sendConversationMessage(
 
   return {
     reply,
-    outputTokens,
-    inputTokens,
     messages,
     toolCalls,
   };
@@ -261,8 +254,6 @@ export async function generateConversationTitleFromQuery(
       '"',
       "",
     ),
-    outputTokens: completion.usage?.completion_tokens || 0,
-    inputTokens: completion.usage?.prompt_tokens || 0,
   };
 }
 
@@ -347,6 +338,25 @@ export async function fetchConversations(
   return conversations;
 }
 
+export async function hasExceededDaytisticMessageLimit(
+  supabase: SupabaseClient,
+  conversationId: string | null | undefined,
+): Promise<boolean> {
+  const messages = await supabase.from("conversation_messages").select(
+    "id",
+  ).eq(
+    "conversation_id",
+    conversationId,
+  );
+
+  if (messages.error) {
+    return false;
+  }
+
+  return messages.data.length >=
+    config.conversations.options.freeMessagesPerDaytistic;
+}
+
 export async function hasConversationAnalyticsEnabled(
   user: User,
   supabase: SupabaseClient,
@@ -358,12 +368,4 @@ export async function hasConversationAnalyticsEnabled(
     .single();
 
   return settings?.conversation_analytics ?? false;
-}
-
-export interface FeatureFlags {
-  max_free_output_tokens_per_day: number;
-  model: string;
-  prompt: string;
-  title_model: string;
-  title_prompt: string;
 }

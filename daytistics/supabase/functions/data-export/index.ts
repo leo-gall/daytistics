@@ -41,26 +41,21 @@ async function fetchTableData(
   supabase: SupabaseClient,
   options: {
     user: User;
-  }
+  },
 ) {
   const conversations = await Conversations.fetchConversations(
     options.user,
     supabase,
-    { encrypted: false }
+    { encrypted: false },
   );
 
   const daytistics = await Daytistics.fetchDaytistics(supabase);
 
   const userSettings = await supabase.from("user_settings").select("*");
 
-  const dailyTokenBudgets = await supabase
-    .from("daily_token_budgets")
-    .select("*");
-
   return {
     conversations,
     daytistics,
     userSettings: userSettings.data,
-    dailyTokenBudgets: dailyTokenBudgets.data,
   };
 }

@@ -7,7 +7,6 @@ import { validateZodSchema } from "@shared/validation";
 import { initSentry, initSupabase } from "@shared/adapters";
 
 import * as Conversations from "@application/conversations";
-import * as DailyTokenBudgets from "@application/tokens_budgets";
 import config from "@config";
 
 const BodySchema = z.object({
@@ -47,14 +46,23 @@ Deno.serve(async (req) => {
       apiKey: Deno.env.get("OPENAI_API_KEY") as string,
     });
 
-    // Check if the user has exceeded the number of tokens for today
-    const { error: exceededError } = await DailyTokenBudgets
-      .hasExceededTokensToday(
+    if (
+      await Conversations.hasExceededDaytisticMessageLimit(
         supabase,
-        user!,
-        config.conversations.options.maxFreeOutputTokensPerDay,
+        validatedBody.data.conversation_id,
+      )
+    ) {
+      return new Response(
+        JSON.stringify({
+          error:
+            `You have reached the maximum number of messages for this conversation. Please try again tomorrow.`,
+        }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        },
       );
-    if (exceededError) return exceededError;
+    }
 
     const llmResponse = await Conversations.sendConversationMessage(
       supabase,
@@ -92,11 +100,6 @@ Deno.serve(async (req) => {
       reply: llmResponse.reply!,
       conversationId: conversationId,
       toolCalls: llmResponse.toolCalls || [],
-    });
-
-    await DailyTokenBudgets.updateTokensBudget(supabase, user!, {
-      inputTokens: validatedBody.data.query.length,
-      outputTokens: llmResponse.reply!.length,
     });
 
     return new Response(
