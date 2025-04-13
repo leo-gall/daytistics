@@ -48,3 +48,4 @@ flutter:
     - .env
     - assets/svg/
     - assets/jpeg/
+    - assets/google_fonts/
