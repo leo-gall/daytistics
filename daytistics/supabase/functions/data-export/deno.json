@@ -7,7 +7,6 @@
     "@shared/adapters": "../../_shared/adapters.ts",
     "@shared/validation": "../../_shared/validation.ts",
     "@application/conversations": "../../_application/conversations.ts",
-    "@application/tokens_budgets": "../../_application/tokens_budgets.ts",
     "@application/daytistics": "../../_application/daytistics.ts"
   }
 }

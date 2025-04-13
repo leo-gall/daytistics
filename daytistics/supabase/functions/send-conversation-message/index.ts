@@ -46,7 +46,6 @@ Deno.serve(async (req) => {
       apiKey: Deno.env.get("OPENAI_API_KEY") as string,
     });
 
-    // Check if the user has exceeded the number of tokens for today
     if (
       await Conversations.hasExceededDaytisticMessageLimit(
         supabase,
