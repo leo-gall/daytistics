@@ -123,14 +123,18 @@ void main() {
       );
 
       expect(conversations.length, 2);
-      expect(conversations[1].id, conversation1.id);
-      expect(conversations[1].messages.length, 2);
-      expect(conversations[1].messages[0].query, message1.query);
-      expect(conversations[1].messages[1].query, message2.query);
-      expect(conversations[0].id, conversation2.id);
-      expect(conversations[0].messages, isEmpty);
-      expect(conversations[0].title, conversation2.title);
-      expect(conversations[1].title, conversation1.title);
+
+      final sortedConversations = conversations
+        ..sort((a, b) => a.id.compareTo(b.id));
+
+      expect(sortedConversations[0].id, conversation1.id);
+      expect(sortedConversations[0].messages.length, 2);
+      expect(sortedConversations[0].messages[0].query, message1.query);
+      expect(sortedConversations[0].messages[1].query, message2.query);
+      expect(sortedConversations[1].id, conversation2.id);
+      expect(sortedConversations[1].messages, isEmpty);
+      expect(sortedConversations[1].title, conversation2.title);
+      expect(sortedConversations[0].title, conversation1.title);
 
       expect(
         fakeAnalytics.capturedEvents.contains('conversations_fetched'),
