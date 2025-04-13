@@ -1,4 +1,4 @@
-import { Session, SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
+import { SupabaseClient, User } from "jsr:@supabase/supabase-js@2";
 import { faker } from "npm:@faker-js/faker";
 import { v4 as uuidv4 } from "npm:uuid";
 import {
