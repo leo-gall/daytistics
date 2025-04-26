@@ -10,6 +10,7 @@ import 'package:daytistics/shared/exceptions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -44,6 +45,8 @@ class UserService {
     await ref
         .read(analyticsDependencyProvider)
         .trackEvent(eventName: 'sign_out');
+
+    await Restart.restartApp();
   }
 
   Future<void> signInWithApple() async {
@@ -147,6 +150,8 @@ class UserService {
     await ref
         .read(analyticsDependencyProvider)
         .trackEvent(eventName: 'account_deleted');
+
+    await Restart.restartApp();
   }
 
   /// Exports user data to a JSON file.
