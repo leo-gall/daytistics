@@ -39,10 +39,16 @@ class ConversationsService {
           'conversation_id': conversation?.id,
         },
       );
-    } on FunctionException catch (e) {
-      final String error = e.details['error'] as String;
+    } on FunctionException catch (error) {
+      late String errorMessage;
 
-      throw SupabaseException(error);
+      if (error.details != null && error.details['error'] != null) {
+        errorMessage = error.details['error'] as String;
+      } else {
+        errorMessage = error.reasonPhrase ?? 'An unknown error occurred';
+      }
+
+      throw SupabaseException(errorMessage);
       // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       throw SupabaseException('An unknown error occurred');
