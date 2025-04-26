@@ -144,12 +144,14 @@ class _PromptInputFieldState extends ConsumerState<PromptInputField> {
           duration: 3,
         );
       }
-    }
 
-    setState(() {
-      _controller.clear();
-      _loading = false;
-    });
+      return;
+    } finally {
+      setState(() {
+        _controller.clear();
+        _loading = false;
+      });
+    }
 
     if (widget.onChat != null) {
       widget.onChat?.call(_controller.text, reply);

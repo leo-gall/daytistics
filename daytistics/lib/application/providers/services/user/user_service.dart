@@ -39,8 +39,11 @@ class UserService {
             .currentUser
             ?.isAnonymous ??
         true;
-    if (isAnonymous) await deleteAccount();
-    await ref.read(supabaseClientDependencyProvider).auth.signOut();
+    if (isAnonymous) {
+      await deleteAccount();
+    } else {
+      await ref.read(supabaseClientDependencyProvider).auth.signOut();
+    }
 
     await ref
         .read(analyticsDependencyProvider)
@@ -143,9 +146,10 @@ class UserService {
   }
 
   Future<void> deleteAccount() async {
-    await ref
-        .read(supabaseClientDependencyProvider)
-        .rpc<dynamic>('delete_account');
+    final supabase = ref.read(supabaseClientDependencyProvider);
+    await supabase.rpc<dynamic>('delete_account');
+
+    await supabase.auth.signOut();
 
     await ref
         .read(analyticsDependencyProvider)
