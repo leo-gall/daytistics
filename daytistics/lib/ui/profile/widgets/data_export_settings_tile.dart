@@ -53,10 +53,12 @@ class DataExportSettingsTile extends AbstractSettingsTile {
     final String filePath = await ref.read(userServiceProvider).exportData();
 
     try {
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: 'Data export',
-        text: 'Download your data export below as a JSON file.',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(filePath)],
+          subject: 'Data export',
+          text: 'Download your data export below as a JSON file.',
+        ),
       );
     } on SupabaseException catch (_) {
       if (context.mounted) {
