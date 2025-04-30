@@ -27,7 +27,7 @@ dependencies:
   riverpod_annotation: '^2.6.1'
   sentry_flutter: ^8.13.2
   settings_ui: ^2.0.2
-  share_plus: ^10.1.4
+  share_plus: ^11.0.0
   showcaseview: ^4.0.1
   sign_in_with_apple: ^7.0.1
   supabase_flutter: '^2.8.3'
