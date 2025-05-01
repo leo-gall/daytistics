@@ -15,6 +15,7 @@ import 'package:daytistics/ui/profile/views/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openpanel_flutter/openpanel_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
@@ -25,6 +26,7 @@ Future<void> main() async {
       options.dsn = SentrySettings.dsn;
     },
     appRunner: () async {
+      await initOpenpanel();
       await initSupabase();
       await initAwesomeNotifications();
 
@@ -68,6 +70,9 @@ class _DaytisticsAppState extends ConsumerState<DaytisticsApp> {
       debugShowCheckedModeBanner: false,
       theme: daytisticsTheme,
       scaffoldMessengerKey: DaytisticsApp.scaffoldMessengerKey,
+      navigatorObservers: [
+        OpenpanelObserver(),
+      ],
 
       // routing
       initialRoute: '/',
