@@ -102,7 +102,7 @@ jobs:
           SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
           OPENPANEL_CLIENT_ID=${{ secrets.OPENPANEL_STAGING_CLIENT_ID }}
           OPENPANEL_CLIENT_SECRET=${{ secrets.OPENPANEL_STAGING_CLIENT_SECRET }}
-          OPENPANEL_URL=${{ secrets.OPENPANEL_STAGING_URL }}
+          OPENPANEL_URL=${{ secrets.OPENPANEL_URL }}
           EOT
 
       - uses: maierj/fastlane-action@v3.1.0
@@ -178,7 +178,7 @@ jobs:
           SENTRY_FLUTTER_DSN=${{ secrets.SENTRY_FLUTTER_DSN }}
           OPENPANEL_CLIENT_ID=${{ secrets.OPENPANEL_STAGING_CLIENT_ID }}
           OPENPANEL_CLIENT_SECRET=${{ secrets.OPENPANEL_STAGING_CLIENT_SECRET }}
-          OPENPANEL_URL=${{ secrets.OPENPANEL_STAGING_URL }}
+          OPENPANEL_URL=${{ secrets.OPENPANEL_URL }}
           EOT
 
       - uses: maierj/fastlane-action@v3.1.0
