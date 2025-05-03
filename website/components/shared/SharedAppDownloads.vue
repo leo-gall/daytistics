@@ -4,7 +4,8 @@
   >
     <!-- Google Play Button -->
     <a
-      href="https://play.google.com/store"
+      v-if="androidRelease"
+      href="https://play.google.com/store/apps/details?id=com.daytistics.daytistics"
       class="flex items-center bg-[#34A853] text-white px-4 py-2.5 rounded-md font-sans text-base hover:-translate-y-0.5 transform transition-transform"
     >
       <svg
@@ -32,7 +33,8 @@
     </a>
     <!-- App Store Button -->
     <a
-      href="https://www.apple.com/app-store/"
+      v-if="iosRelease"
+      href="https://apps.apple.com/de/app/daytistics/id6742466141?l=en-GB"
       class="flex items-center bg-black text-white px-4 py-2.5 rounded-md font-sans text-base hover:-translate-y-0.5 transform transition-transform"
     >
       <svg
@@ -51,3 +53,8 @@
     </a>
   </div>
 </template>
+
+<script lang="ts" setup>
+const iosRelease = useRuntimeConfig().public.iosRelease;
+const androidRelease = useRuntimeConfig().public.androidRelease;
+</script>

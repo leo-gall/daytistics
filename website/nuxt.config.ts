@@ -8,6 +8,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       phase: process.env.PHASE as "development" | "testing" | "released",
+      iosRelease: process.env.IOS_RELEASE === "true",
+      androidRelease: process.env.ANDROID_RELEASE === "true",
       openPanelClientId: "",
     },
     emailOctopusListId: "",

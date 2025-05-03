@@ -16,9 +16,8 @@
     </p>
 
     <p class="text-gray-600 dark:text-gray-300 mb-8">
-      Daytistics has officially released and is now available on both the App
-      Store and Google Play! Download today and let us know what you think -
-      your feedback helps us make the app even better!
+      Daytistics has officially released! Download today and let us know what
+      you think - your feedback helps us make the app even better!
     </p>
     <SharedAppDownloads />
 
