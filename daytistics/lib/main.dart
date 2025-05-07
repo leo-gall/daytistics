@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openpanel_flutter/openpanel_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,22 @@ Future<void> main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = SentrySettings.dsn;
+      options.beforeSend = (event, hint) async {
+        final user = Supabase.instance.client.auth.currentUser;
+
+        if (user == null) {
+          return event;
+        }
+
+        return event.copyWith(
+          user: SentryUser(
+            id: user.id,
+            email: user.email,
+          ),
+        );
+      };
+
+      debugPrint('Sentry initialized with DSN: ${options.dsn}');
     },
     appRunner: () async {
       await initOpenpanel();

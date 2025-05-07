@@ -47,6 +47,7 @@ class _SignInViewState extends State<SignInView> {
   }
 
   void _openLogInAsGuestModal() {
+    throw UnimplementedError();
     showBottomDialog(context, child: const GuestSigninDialog());
   }
 }

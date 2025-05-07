@@ -148,6 +148,7 @@ class _DashboardDateCardState extends ConsumerState<DashboardDateCard> {
               description: 'Click here to edit the daytistic.',
               child: OutlinedButton.icon(
                 onPressed: () async {
+                  throw UnimplementedError();
                   if (await maybeRedirectToConnectionErrorView(context)) return;
                   unawaited(
                     ref.read(daytisticsServiceProvider.notifier).fetchOrAdd(
