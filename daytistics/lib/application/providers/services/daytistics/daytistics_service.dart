@@ -1,83 +1,120 @@
-import 'package:daytistics/application/models/activity.dart';
 import 'package:daytistics/application/models/daytistic.dart';
-import 'package:daytistics/application/models/diary_entry.dart';
-import 'package:daytistics/application/models/wellbeing.dart';
 import 'package:daytistics/application/providers/di/analytics/analytics.dart';
-import 'package:daytistics/application/providers/di/supabase/supabase.dart';
-import 'package:daytistics/application/providers/di/user/user.dart';
-import 'package:daytistics/application/providers/services/diary/diary_service.dart';
-import 'package:daytistics/application/providers/state/current_daytistic/current_daytistic.dart';
-import 'package:daytistics/config/settings.dart';
+import 'package:daytistics/application/providers/di/sembast/sembast.dart';
 import 'package:daytistics/shared/exceptions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sembast/sembast_io.dart';
 
 part 'daytistics_service.g.dart';
 
-class DaytisticsServiceState {}
+class ActivitiesService {
+  late final Database _db;
+  late final Analytics _analytics;
+  final _daytisticsStore = stringMapStoreFactory.store('daytistics');
 
-@riverpod
-class DaytisticsService extends _$DaytisticsService {
-  @override
-  DaytisticsServiceState build() {
-    return DaytisticsServiceState();
+  Future<Activity> create(Activity activity) async {
+    final parentDaytistic = await _daytisticsStore.findFirst(
+      _db,
+      finder: Finder(filter: Filter.equals('id', activity.daytisticId)),
+    );
+
+    if (parentDaytistic == null) {
+      throw SembastException('No daytistic found for the provided id.');
+    }
+
+    final parentDaytisticJson = parentDaytistic.value;
+    final List<Map<String, dynamic>> activities =
+        (parentDaytisticJson['activities'] as List<dynamic>?)
+                ?.map((e) => e as Map<String, dynamic>)
+                .toList() ??
+            [];
+    activities.add(activity.toJson());
+    parentDaytisticJson['activities'] = activities;
+
+    await _daytisticsStore.update(
+      _db,
+      parentDaytisticJson,
+      finder: Finder(filter: Filter.equals('id', activity.daytisticId)),
+    );
+
+    await _analytics.trackEvent(
+      eventName: 'activity_added',
+      properties: {
+        'start_time': activity.startTime.toIso8601String(),
+        'end_time': activity.endTime.toIso8601String(),
+      },
+    );
+
+    return activity;
+  }
+
+  Future<void> delete(String id) {
+    return _daytisticsStore.delete(
+      
+    )
+  }
+  Future<void> update(String id, Map<String, dynamic> fields) async {
+    late Activity activity;
+    try {
+      activity = Activity.fromJson({
+        'id': id,
+        ...fields,
+      });
+    } on FormatException {
+      throw Exception('Invalid activity data.');
+    }
+
+    final parentDaytistic = await _daytisticsStore.findFirst(
+      _db,
+      finder: Finder(filter: Filter.equals('id', activity.daytisticId)),
+    );
+
+    await _daytisticsStore.update(
+      _db,
+      activity.toJson(),
+      finder: Finder(filter: Filter.equals('id', activity.daytisticId)),
+    );
+  }
+}
+
+class DaytisticsService {
+  late final Database _db;
+  late final Analytics _analytics;
+  final _daytisticsStore = stringMapStoreFactory.store('daytistics');
+
+  DaytisticsService({
+    required Database sembast,
+    required Analytics analytics,
+  }) {
+    _db = sembast;
+    _analytics = analytics;
   }
 
   Future<Daytistic> fetchDaytistic(DateTime date) async {
-    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
+    final daytisticSnapshot = await _daytisticsStore.findFirst(
+      _db,
+      finder: Finder(filter: Filter.equals('date', date.toIso8601String())),
+    );
 
-    final daytisticMap = await supabase
-        .from(SupabaseSettings.daytisticsTableName)
-        .select()
-        .eq('user_id', ref.read(userDependencyProvider)!.id)
-        .eq('date', date.toIso8601String())
-        .maybeSingle();
-
-    if (daytisticMap == null) {
+    if (daytisticSnapshot == null) {
       throw SupabaseException('No daytistic found for the provided date.');
     }
 
-    final Daytistic daytistic = Daytistic.fromSupabase(daytisticMap);
+    final Daytistic daytistic = Daytistic.fromJson(daytisticSnapshot.value);
 
-    final wellbeings = await supabase
-        .from(SupabaseSettings.wellbeingsTableName)
-        .select()
-        .eq('daytistic_id', daytistic.id);
-
-    if (wellbeings.isNotEmpty) {
-      daytistic.wellbeing = Wellbeing.fromSupabase(wellbeings.first);
-    }
-
-    final List<Map<String, dynamic>> activitiesMap = await supabase
-        .from(SupabaseSettings.activitiesTableName)
-        .select()
-        .eq('daytistic_id', daytistic.id);
-
-    daytistic.activities = activitiesMap.map(Activity.fromSupabase).toList();
-
-    daytistic.diaryEntry =
-        await ref.read(diaryServiceProvider).fetchDiaryEntry(daytistic.id);
-
-    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
-
-    await ref.read(analyticsDependencyProvider).trackEvent(
-      eventName: 'daytistic_fetched',
-      properties: {
-        'date': date.toIso8601String(),
-      },
-    );
+    // TODO: in view
+    // ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
     return daytistic;
   }
 
   Future<Daytistic> fetchOrAdd(DateTime date) async {
-    final SupabaseClient supabase = ref.read(supabaseClientDependencyProvider);
-
     late Daytistic daytistic;
 
     try {
       daytistic = await fetchDaytistic(date);
-    } on SupabaseException {
+    } on SembastException {
       daytistic = Daytistic(
         date: date,
       );
@@ -92,19 +129,12 @@ class DaytisticsService extends _$DaytisticsService {
         happinessMoment: '',
       );
 
-      await supabase.from(SupabaseSettings.daytisticsTableName).upsert(
-            daytistic.toSupabase(userId: ref.read(userDependencyProvider)!.id),
-          );
+      await _daytisticsStore.add(
+        _db,
+        daytistic.toJson(),
+      );
 
-      await supabase
-          .from(SupabaseSettings.wellbeingsTableName)
-          .upsert(daytistic.wellbeing!.toSupabase());
-
-      await ref.read(diaryServiceProvider).upsertDiaryEntry(
-            daytistic.diaryEntry!,
-          );
-
-      await ref.read(analyticsDependencyProvider).trackEvent(
+      await _analytics.trackEvent(
         eventName: 'daytistic_created',
         properties: {
           'date': date.toIso8601String(),
@@ -112,8 +142,19 @@ class DaytisticsService extends _$DaytisticsService {
       );
     }
 
-    ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
+    // TODO: in view
+    // ref.read(currentDaytisticProvider.notifier).daytistic = daytistic;
 
     return daytistic;
   }
+}
+
+@riverpod
+Future<DaytisticsService> daytisticsService(Ref ref) async {
+  final sembast = await ref.watch(sembastDependencyProvider.future);
+  final analytics = ref.watch(analyticsDependencyProvider);
+  return DaytisticsService(
+    sembast: sembast!,
+    analytics: analytics,
+  );
 }

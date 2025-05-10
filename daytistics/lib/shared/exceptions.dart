@@ -3,3 +3,8 @@ class SupabaseException implements Exception {
 
   SupabaseException(this.message);
 }
+
+class SembastException implements Exception {
+  final String message;
+  SembastException(this.message);
+}
